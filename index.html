@@ -384,6 +384,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .prcard ol{margin:.45rem 0 0;padding-left:1.2rem;font-size:.85rem;color:var(--muted)}
 .lbnote{background:var(--surface);border-radius:14px;padding:.8rem 1rem;margin:.4rem 0 .6rem}
 .lbnote p{margin:0 0 .6rem}
+.bknag{border-left:6px solid var(--warn);border-radius:0 14px 14px 0;margin-bottom:1rem}
+.bknag strong{display:block;margin-bottom:.3rem}
 #tab-leaders h3:first-of-type{margin-top:.8rem}
 .podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:.5rem;margin:1.2rem 0 0;padding:0 .2rem}
 .pod{display:flex;flex-direction:column;align-items:center;min-width:0}
@@ -434,6 +436,49 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .gl-mute[aria-pressed="true"] .snd-on,.gl-mute:not([aria-pressed="true"]) .snd-off{display:none}
 .geta{fill:var(--track-ink);font-family:var(--num);font-weight:600;font-size:11px}
 .wdur{font-size:.85rem;font-weight:600;color:var(--infield)}
+.wkstep{display:flex;align-items:center;gap:.5rem;margin:.6rem 0 0}
+.wkstep button{min-width:48px;font-size:1.4rem;padding:0}
+#lbLabel{flex:1;text-align:center;font-weight:600}
+.pod:not(.empty) .pav{cursor:pointer;transition:transform .12s}
+.pod:not(.empty) .pav:active{transform:scale(.92)}
+.mrow{display:grid;grid-template-columns:1.9rem minmax(0,1fr) 2.6rem 2.6rem 2.6rem;align-items:center;gap:.5rem;padding:.5rem .4rem;border-bottom:1px solid var(--rule)}
+.mrow.me{background:var(--surface);border-radius:10px;border-bottom-color:transparent}
+.mrow.head{font-size:.8rem;color:var(--muted);padding-top:0}
+.mname{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc{text-align:center;font-family:var(--num);font-weight:600;font-size:1.35rem}
+.mdot{display:inline-block;width:1.15rem;height:1.15rem;border-radius:50%;justify-self:center}
+.mdot.g,.bdisc.gold{background:#F2D57E}.mdot.s,.bdisc.silver{background:#DDE2E0}.mdot.b,.bdisc.bronze{background:#E7C3A2}
+.mdot.g{background:#D4A72C}.mdot.s{background:#B9C1BE}.mdot.b{background:#C08552}
+.wres{padding:.55rem 0;border-bottom:1px solid var(--rule)}
+.wres .wlab{display:block;font-size:.82rem;color:var(--muted);margin-bottom:.3rem}
+.wmed{display:inline-flex;align-items:center;gap:.35rem;margin:0 .9rem .2rem 0;font-size:.9rem;font-weight:600}
+.wmed .pav{width:1.5rem;height:1.5rem;font-size:.7rem}
+.wmed .mdot{width:.8rem;height:.8rem}
+.badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:.6rem 0 1.4rem}
+.badge{background:var(--surface);border-radius:14px;padding:.75rem .35rem .6rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.3rem;border:none;font-weight:400;min-height:auto;color:var(--ink)}
+.bdisc{width:3.1rem;height:3.1rem;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.55rem;box-shadow:inset 0 0 0 4px rgba(0,0,0,.12);flex:none}
+.bdisc.special{background:#D9C8F0}
+.badge.locked .bdisc{background:var(--rule)}
+.badge.locked .bdisc span{filter:grayscale(1);opacity:.45}
+.bname{font-weight:600;font-size:.84rem;line-height:1.2}
+.bwhen{font-size:.74rem;color:var(--muted)}
+.bprog{width:80%;height:4px;background:var(--rule);border-radius:2px;overflow:hidden}
+.bprog i{display:block;height:100%;background:var(--infield)}
+.bcard{display:flex;gap:.9rem;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--rule)}
+.bcard > div{display:flex;flex-direction:column}
+.bcard .bdisc{width:3.6rem;height:3.6rem;font-size:1.8rem}
+.sbtl{touch-action:none;margin:.7rem 0 .3rem;background:var(--paper);border-radius:12px;padding:.5rem;cursor:pointer;-webkit-user-select:none;user-select:none}
+.sbtl svg{display:block;width:100%;height:auto}
+.sbsel{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-dasharray:4 3}
+.sbval{fill:var(--ink);font-family:var(--num);font-weight:600;font-size:11px;text-anchor:middle}
+.ckd0{fill:var(--ink)}.ckd1{fill:var(--paper)}
+.sbedit{background:var(--paper);border-radius:12px;padding:.7rem .8rem;margin:.6rem 0}
+.sbhead{display:flex;justify-content:space-between;margin-bottom:.5rem}
+#builder .link{min-height:44px}
+/* glance view: finish button once the workout is done */
+.gl-finish{width:100%;min-height:clamp(48px,7vh,60px);margin-top:.6rem;font-size:1.15rem;background:var(--track-ink);color:var(--track);border-color:var(--track-ink);animation:finpulse 1.6s ease-in-out infinite}
+@keyframes finpulse{50%{box-shadow:0 0 0 6px rgba(251,246,238,.35)}}
+@media (prefers-reduced-motion:reduce){.gl-finish{animation:none}}
 </style>
 </head>
 <body>
@@ -516,6 +561,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <!-- ================= HISTORY ================= -->
 <section class="tab" id="tab-history" hidden>
   <h2>History</h2>
+  <div id="bkNagH"></div>
   <div class="goalbox" id="goalbox"></div>
   <button class="sm" id="lastWeekBtn" style="margin-bottom:1.2rem">Last week’s summary</button>
   <div class="seg" id="chartSeg" role="group" aria-label="Chart">
@@ -537,18 +583,26 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <section class="tab" id="tab-leaders" hidden>
   <h2>Leaderboard</h2>
   <div id="lbNote"></div>
-  <div class="seg" id="lbSeg" role="group" aria-label="Week"><button data-w="0" aria-pressed="true">This week</button><button data-w="1" aria-pressed="false">Last week</button></div>
+  <div class="seg" id="lbMode" role="group" aria-label="Period"><button data-m="week" aria-pressed="true">Weekly</button><button data-m="all" aria-pressed="false">All time</button></div>
+  <div class="wkstep" id="lbStep"><button class="sm" id="lbPrev" aria-label="Previous week">‹</button><span id="lbLabel">This week</span><button class="sm" id="lbNext" aria-label="Next week">›</button></div>
   <div class="podium" id="podium" role="list" aria-label="Distance podium"></div>
   <div class="podbase"></div>
   <p class="fhint podnote" id="podNote"></p>
   <h3>Most distance</h3>
   <ul class="lb" id="lbWeek"></ul>
+  <h3>Medal table</h3>
+  <p class="fhint">Every Sunday at midnight, the top three for the week win gold, silver and bronze.</p>
+  <div id="lbMedals"></div>
   <h3>Personal records</h3>
   <p class="fhint">Fastest efforts by anyone on this phone, found anywhere inside their runs.</p>
   <div class="prgrid" id="lbPrs"></div>
   <h3>All-time</h3>
   <div class="prgrid" id="lbAll"></div>
+  <h3>Badges</h3>
+  <p class="fhint" id="badgeCount"></p>
+  <div class="badges" id="badges"></div>
 </section>
+<dialog id="badgeDlg"></dialog>
 
 <!-- ================= SETTINGS ================= -->
 <section class="tab" id="tab-settings" hidden>
@@ -603,6 +657,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <p class="fhint" id="controlStatus"></p>
 
   <h3>Backup</h3>
+  <p class="fhint" id="bkStatus"></p>
   <p class="fhint">Your runs live in this browser only. Back up now and then, and before clearing Chrome’s data.</p>
   <div class="row"><button class="sm" id="backup">Back up everything</button><button class="sm" id="restoreBtn">Restore from backup</button></div>
   <input type="file" id="restoreFile" accept=".json,application/json" hidden>
@@ -659,6 +714,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
         <div class="gl-cg"><button class="gl-cbtn" data-gc="in-" aria-label="Lower incline">−</button><div class="gl-cread"><span class="v" id="glInVal">0%</span><span class="l" id="glInLabel">Incline</span></div><button class="gl-cbtn" data-gc="in+" aria-label="Raise incline">+</button></div>
         <button class="gl-stop" data-gc="stop">Stop belt</button>
       </div>
+      <button class="gl-finish" id="glFinish" hidden>Finish and save</button>
     </div>
   </div>
   <p class="gl-hint">Tap the big numbers, Close, or swipe back to exit</p>
@@ -683,7 +739,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <div class="splitbadge" id="splitBadge" aria-hidden="true" hidden></div>
 
 <script>
-(() => {
+(async () => {
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
@@ -716,11 +772,78 @@ const scoped = k => (profiles.current === 'default' || k === DEVKEY || k === PRO
 function saveProfiles(){ try { localStorage.setItem(PROFKEY, JSON.stringify(profiles)); return true; } catch(e){ return false; } }
 const avatarInner = p => p.photo ? `<img src="${p.photo}" alt="">` : esc((p.name.trim()[0] || '?').toUpperCase());
 const curProfile = () => profiles.list.find(x => x.id === profiles.current) || profiles.list[0];
+// runs and in-progress drafts live in IndexedDB (hundreds of MB available); everything small stays in localStorage
+const BIG_BASES = ['tm-runs-v1', 'tm-draft-v1'];
+const isBig = k => BIG_BASES.some(b => k === b || k.startsWith(b + '@'));
+const bigCache = new Map();
+let idb = null, idbPending = Promise.resolve();
+function idbOpen(){
+  return new Promise(res => {
+    try {
+      const rq = indexedDB.open('treadmill-log', 1);
+      rq.onupgradeneeded = () => rq.result.createObjectStore('kv');
+      rq.onsuccess = () => res(rq.result);
+      rq.onerror = rq.onblocked = () => res(null);
+    } catch(e){ res(null); }
+  });
+}
+function idbAll(db){
+  return new Promise(res => {
+    const out = [];
+    try {
+      const cur = db.transaction('kv', 'readonly').objectStore('kv').openCursor();
+      cur.onsuccess = () => { const c = cur.result; if (c){ out.push([c.key, c.value]); c.continue(); } else res(out); };
+      cur.onerror = () => res(out);
+    } catch(e){ res(out); }
+  });
+}
+function idbPut(k, v){
+  if (!idb) return Promise.resolve(false);
+  return new Promise(res => {
+    try {
+      const tx = idb.transaction('kv', 'readwrite'), os = tx.objectStore('kv');
+      if (v === undefined) os.delete(k); else os.put(v, k);
+      tx.oncomplete = () => res(true);
+      tx.onerror = tx.onabort = () => res(false);
+    } catch(e){ res(false); }
+  });
+}
+async function bigStoreInit(){
+  idb = await idbOpen();
+  if (!idb) return; // no IndexedDB (rare): keep using localStorage
+  (await idbAll(idb)).forEach(([k, v]) => bigCache.set(k, v));
+  // move runs saved by older versions out of localStorage
+  for (const k of Object.keys(localStorage).filter(isBig)){
+    let v; try { v = JSON.parse(localStorage.getItem(k)); } catch(e){ continue; }
+    const have = bigCache.get(k);
+    if (!bigCache.has(k) || (Array.isArray(v) && Array.isArray(have) && v.length > have.length)) bigCache.set(k, v);
+    if (await idbPut(k, bigCache.get(k))) localStorage.removeItem(k);
+  }
+}
+function bigGet(sk, d){
+  if (!idb){ try { const v = localStorage.getItem(sk); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+  return bigCache.has(sk) ? bigCache.get(sk) : d;
+}
+function bigSet(sk, v){
+  if (!idb){ try { localStorage.setItem(sk, JSON.stringify(v)); return true; } catch(e){ return false; } }
+  bigCache.set(sk, v);
+  idbPending = idbPending.then(() => idbPut(sk, v)).then(ok => { if (!ok) setTimeout(() => toast('Couldn’t save to phone storage. Back up your runs.'), 0); });
+  return true;
+}
+function bigDel(sk){
+  if (!idb){ try { localStorage.removeItem(sk); } catch(e){} return; }
+  bigCache.delete(sk); idbPending = idbPending.then(() => idbPut(sk, undefined));
+}
 const store = {
-  get(k, d){ try { const v = localStorage.getItem(scoped(k)); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
-  set(k, v){ try { localStorage.setItem(scoped(k), JSON.stringify(v)); return true; } catch(e){ return false; } },
-  del(k){ try { localStorage.removeItem(scoped(k)); } catch(e){} }
+  get(k, d){ if (isBig(k)) return bigGet(scoped(k), d); try { const v = localStorage.getItem(scoped(k)); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ if (isBig(k)) return bigSet(scoped(k), v); try { localStorage.setItem(scoped(k), JSON.stringify(v)); return true; } catch(e){ return false; } },
+  del(k){ if (isBig(k)) return bigDel(scoped(k)); try { localStorage.removeItem(scoped(k)); } catch(e){} }
 };
+// read or write another profile's data (used by the leaderboard, badges and full backups)
+const keyFor = (base, id) => id === 'default' ? base : `${base}@${id}`;
+function rawGet(base, id, d){ const k = keyFor(base, id); if (isBig(base)) return bigGet(k, d); try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+function rawSet(base, id, v){ const k = keyFor(base, id); if (isBig(base)) return bigSet(k, v); try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
+await bigStoreInit();
 const settings = Object.assign({ confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
 // older versions defaulted the goal to 20 km without it ever being set; treat that as not set
 if (!settings.goalSet && settings.weeklyGoal === 20000) settings.weeklyGoal = 0;
@@ -859,6 +982,7 @@ function populateVoices(){
 if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', populateVoices);
 
 /* ---------- confetti ---------- */
+const CTS = .5, CDRAG = Math.pow(.985, CTS); // confetti time scale: 0.5 = half speed
 const CONFETTI_COLOURS = ['#B5372A', '#2D6A45', '#62B07F', '#E0B060', '#F28C38', '#FBF6EE', '#3A6EA5'];
 let confettiParts = [], confettiRaf = null;
 const SPR = 128;
@@ -906,11 +1030,28 @@ const CONFETTI_THEMES = {
   maltipoo: () => [['#F4E6CF', '#E3C79E'], ['#E9B98A', '#CF955E'], ['#FBF8F2', '#EADFCD']].map(([f, e]) => sprite(x => drawMaltipoo(x, f, e))),
   guinea: () => [['#FBF6EE', '#D98B3A', '#2B2420'], ['#A86A3C', '#FBF6EE', null], ['#EFD9B4', '#C68A4F', null]].map(([b, q, r]) => sprite(x => drawGuinea(x, b, q, r)))
 };
+function drawPoo(x){
+  const brown = '#8B5A2B', dark = '#5E3A17', light = '#B07C45';
+  const tier = (cy, rx, ry) => {
+    x.fillStyle = brown; x.beginPath(); x.ellipse(0, cy, rx, ry, 0, 0, 7); x.fill();
+    x.strokeStyle = dark; x.lineWidth = 1.6; x.stroke();
+    x.fillStyle = light; x.beginPath(); x.ellipse(-rx * .35, cy - ry * .35, rx * .3, ry * .25, -.3, 0, 7); x.fill();
+  };
+  tier(18, 26, 10); tier(5, 20, 9); tier(-7, 13, 8);
+  x.fillStyle = brown; x.beginPath(); x.moveTo(-6, -12); x.quadraticCurveTo(2, -30, 7, -22); x.quadraticCurveTo(9, -15, 6, -11); x.closePath(); x.fill();
+  x.strokeStyle = dark; x.lineWidth = 1.6; x.stroke();
+  for (const sd of [-1, 1]){
+    x.fillStyle = '#fff'; x.beginPath(); x.ellipse(sd * 7, 3, 4.2, 5, 0, 0, 7); x.fill();
+    x.fillStyle = '#1E1A17'; x.beginPath(); x.arc(sd * 7 + 1, 4, 2.2, 0, 7); x.fill();
+  }
+  x.strokeStyle = '#1E1A17'; x.lineWidth = 1.8; x.lineCap = 'round'; x.beginPath(); x.arc(0, 12, 6, .25, Math.PI - .25); x.stroke();
+}
+CONFETTI_THEMES.poo = () => [sprite(drawPoo)];
 const spriteCache = {};
 const themeSprites = k => spriteCache[k] || (spriteCache[k] = CONFETTI_THEMES[k]());
 function pickTheme(){
   const t = settings.confettiTheme || 'classic';
-  if (t === 'surprise'){ const ks = Object.keys(CONFETTI_THEMES); return ks[(Math.random() * ks.length) | 0]; }
+  if (t === 'surprise'){ const ks = Object.keys(CONFETTI_THEMES).filter(k => k !== 'poo'); return ks[(Math.random() * ks.length) | 0]; }
   return t in CONFETTI_THEMES ? t : 'classic';
 }
 
@@ -952,9 +1093,9 @@ function confettiFrame(){
   x.clearRect(0, 0, innerWidth, innerHeight);
   confettiParts = confettiParts.filter(p => p.life < p.max && p.y < innerHeight + 40);
   for (const p of confettiParts){
-    p.life++; p.wob += 0.13;
-    p.vx *= 0.985; p.vy = p.vy * 0.985 + 0.3;
-    p.x += p.vx + Math.sin(p.wob) * 0.7; p.y += p.vy; p.r += p.vr;
+    p.life += CTS; p.wob += 0.13 * CTS;
+    p.vx *= CDRAG; p.vy = p.vy * CDRAG + 0.3 * CTS;
+    p.x += (p.vx + Math.sin(p.wob) * 0.7) * CTS; p.y += p.vy * CTS; p.r += p.vr * CTS;
     x.globalAlpha = Math.min(1, (p.max - p.life) / 30);
     x.save(); x.translate(p.x, p.y);
     if (p.img){ x.rotate(Math.sin(p.r) * .6); const sc = .9 + .1 * Math.cos(p.wob); x.drawImage(p.img, -p.s / 2, -p.s / 2 * sc, p.s, p.s * sc); }
@@ -1035,6 +1176,16 @@ function superConfetti(){
   if (settings.cues && !spr) [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, i === 3 ? .5 : .16), i * 140));
 }
 
+// a burst from any point on screen: 'theme' uses the chosen confetti style, 'poo' is for 2nd and 3rd place
+function burstAt(ox, oy, kind){
+  const c = $('#confetti'), dpr = window.devicePixelRatio || 1;
+  c.width = innerWidth * dpr; c.height = innerHeight * dpr;
+  if (kind === 'poo'){ launch(ox, oy, 34, 0, Math.PI * 2, 3, 11, .9, themeSprites('poo'), 6); themeSound('poo'); return; }
+  const theme = pickTheme();
+  if (theme === 'classic'){ launch(ox, oy, 160, 0, Math.PI * 2, 3, 13, .8, null, 7); popSound(.55, 1300); crackle(.9, .07, .1); }
+  else { launch(ox, oy, 46, 0, Math.PI * 2, 3, 12, .9, themeSprites(theme), 6); themeSound(theme, false); }
+}
+
 /* ---------- themed soundtracks, synthesised with Web Audio ---------- */
 const midiHz = n => 440 * Math.pow(2, (n - 69) / 12);
 function note(freq, t, dur, type = 'sine', gain = .15, filt = 0){
@@ -1081,9 +1232,27 @@ function wheek(t, pt = 1, gain = .11){ // guinea pig "wheek"
   g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .04); g.gain.setValueAtTime(gain, t + .22); g.gain.exponentialRampToValueAtTime(.0001, t + .32);
   o.connect(g).connect(a.destination); o.start(t); l.start(t); o.stop(t + .34); l.stop(t + .34);
 }
+function plop(t, gain = .35){
+  const a = actx, o = a.createOscillator(), g = a.createGain(); o.type = 'sine';
+  o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(70, t + .16);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .2);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + .22);
+}
+function sadTrombone(t){ // "wah wah wah wahhh"
+  [[50, .35], [49, .35], [48, .35], [47, 1]].reduce((tt, [n, d], i) => {
+    const a = actx, o = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(midiHz(n), tt);
+    if (i === 3){ const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = 6; lg.gain.value = 5; l.connect(lg).connect(o.frequency); l.start(tt); l.stop(tt + d); }
+    f.type = 'lowpass'; f.frequency.value = 900;
+    g.gain.setValueAtTime(.0001, tt); g.gain.exponentialRampToValueAtTime(.12, tt + .04); g.gain.setValueAtTime(.12, tt + d - .08); g.gain.exponentialRampToValueAtTime(.0001, tt + d);
+    o.connect(f).connect(g).connect(a.destination); o.start(tt); o.stop(tt + d + .02);
+    return tt + d;
+  }, t);
+}
 function themeSound(theme, big){
   if (!sfxOK()) return;
   const t = actx.currentTime + .03;
+  if (theme === 'poo'){ plop(t); plop(t + .16, .25); sadTrombone(t + .4); return; }
   if (theme === 'sausages'){ // sizzle plus an oom-pah polka
     sizzle(t, big ? 3 : 1.1, big ? .1 : .08);
     tune(big ? [48, 0, 55, 0, 48, 0, 55, 0, 53, 0, 55, 0, 48] : [48, 0, 55, 0, 48], t, .16, (n, tt) => note(midiHz(n), tt, .14, 'sawtooth', .09, 600));
@@ -1265,7 +1434,7 @@ function finishRun(){
   else {
     const rec = toRecord(run), runs = store.get(KEY, []);
     runs.unshift(rec);
-    if (store.set(KEY, runs)){ toast('Run saved'); savedId = rec.id; exportAfterRun(rec); planCheck(rec); }
+    if (store.set(KEY, runs)){ toast('Run saved'); savedId = rec.id; exportAfterRun(rec); planCheck(rec); setTimeout(checkNewBadges, 2600); }
     else toast('Couldn’t save: browser storage is full or blocked. Back up and delete old runs.');
   }
   store.del(DRAFT);
@@ -1294,7 +1463,13 @@ function getWorkout(id){
   return allWorkouts().find(w => w.id === id) || null;
 }
 
+const STEP_TYPES = { warm: 'Warm-up', work: 'Run', rest: 'Recover', walk: 'Walk', cool: 'Cool-down' };
+const stepKind = t => t === 'work' ? 'work' : t === 'warm' ? 'warm' : t === 'cool' ? 'cool' : 'rest';
 function summary(w){
+  if (w.kind === 'steps'){
+    const st = w.steps, runs = st.filter(x => x.type === 'work').length, top = Math.max(...st.map(x => x.speed)), inc = Math.max(...st.map(x => x.incline || 0));
+    return `${st.length} step${st.length === 1 ? '' : 's'}${runs ? `, ${runs} run${runs === 1 ? '' : 's'}` : ''}, up to ${speedText(top)}${inc ? `, up to ${inc}% incline` : ''}`;
+  }
   if (w.kind === 'goal') return `${distShort(w.dist)} in ${fmtTime(w.time)}, ${fP(w.time / (w.dist / 1000))} /${dU()}`;
   const p = [];
   if (w.warm.min > 0) p.push(`${w.warm.min} min warm-up`);
@@ -1313,6 +1488,12 @@ function summary(w){
   return p.join(', ');
 }
 function expand(w){
+  if (w.kind === 'steps'){
+    const totals = {}, seen = {};
+    w.steps.forEach(x => totals[x.type] = (totals[x.type] || 0) + 1);
+    return w.steps.map(x => { seen[x.type] = (seen[x.type] || 0) + 1;
+      return { label: STEP_TYPES[x.type] + (totals[x.type] > 1 ? ` ${seen[x.type]} of ${totals[x.type]}` : ''), kind: stepKind(x.type), by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 }; });
+  }
   const st = [], mk = (label, kind, x) => ({ label, kind, by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 });
   const hasCool = w.cool.min > 0;
   if (w.warm.min > 0) st.push(mk('Warm-up', 'warm', { by: 'time', value: w.warm.min * 60, speed: w.warm.speed, incline: w.warm.incline }));
@@ -1654,7 +1835,7 @@ function renderLive(){
   const z = zoneOf(live.hr);
   $('#hrL').textContent = z ? `bpm, Z${z}` : 'bpm';
   $('#steps').textContent = settings.height ? (r ? Math.round(r.steps).toLocaleString('en-GB') : 0) : '–';
-  $('#stepsL').textContent = !settings.height ? 'Steps: add height' : cadenceAt(live.speed) ? `Steps, ${cadenceAt(live.speed)}/min` : 'Steps';
+  $('#stepsL').textContent = !settings.height ? 'Steps' : cadenceAt(live.speed) ? `Steps, ${cadenceAt(live.speed)}/min` : 'Steps';
   $('#kcal').textContent = !r ? '–' : settings.weight ? Math.round(r.kcalEst) : r.hasKcal ? r.kcal : '–';
   $('#kcalL').textContent = 'kcal';
   const connected = !!ch || isDemo;
@@ -1682,7 +1863,7 @@ function renderRunWorkout(){
   $('#woSum').textContent = w ? summary(w) : 'No targets. Just run.';
   $('#woTimeline').innerHTML = w ? workoutTimeline(w, workoutProgress(w)) : '';
   $('#woLab').textContent = !w ? 'Workout' : (wo && run && wo.def.id === w.id) ? (wo.done ? 'Workout complete' : `Workout, ${fmtTime(remainingSeconds(w))} to finish`) : `Workout, takes ${durLabel(w).toLowerCase()}`;
-  $('#stepPanel').hidden = !(w && w.kind === 'int');
+  $('#stepPanel').hidden = !(w && w.kind !== 'goal');
   $('#pacer').hidden = !(w && w.kind === 'goal');
   if (!w) return;
 
@@ -1785,6 +1966,168 @@ function pickWorkout(id){
   const w = getWorkout(selected);
   toast(w ? `${w.name} selected` : 'Free run selected');
   showTab('run');
+}
+
+/* ---------- step-by-step workout builder with an editable bar graph ---------- */
+function openStepBuilder(src){
+  const d = $('#builder');
+  const fromDef = def => expand(def).map(x => ({ type: x.kind === 'work' ? 'work' : x.kind === 'warm' ? 'warm' : x.kind === 'cool' ? 'cool' : (x.label.startsWith('Walk') ? 'walk' : 'rest'), by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 }));
+  const B = {
+    id: src && src.id && String(src.id).startsWith('c-') ? src.id : 'c-' + Date.now(),
+    name: src ? src.name : '',
+    steps: src ? (src.kind === 'steps' ? JSON.parse(JSON.stringify(src.steps)) : fromDef(src)) : [
+      { type: 'warm', by: 'time', value: 300, speed: 7, incline: 1 }, { type: 'work', by: 'time', value: 240, speed: 10, incline: 1 },
+      { type: 'rest', by: 'time', value: 120, speed: 6, incline: 1 }, { type: 'work', by: 'time', value: 240, speed: 10, incline: 1 },
+      { type: 'cool', by: 'time', value: 300, speed: 6, incline: 1 }],
+    sel: 0, maxS: 14, maxI: 10
+  };
+  const W = 320, FW = 22, BW = W - FW, top = 18, sh = 74, gap = 8, ih = 28, H = top + sh + gap + ih + 14;
+  const durs = () => B.steps.map(stepSeconds);
+  const rescale = () => { B.maxS = Math.max(14, Math.ceil(Math.max(...B.steps.map(x => x.speed))) + 2); B.maxI = Math.max(10, Math.ceil(Math.max(...B.steps.map(x => x.incline || 0))) + 2); };
+  rescale();
+  d.innerHTML = `<h3>${src ? 'Edit workout' : 'Create workout'}</h3>
+    <label class="f wide"><span>Name</span><input type="text" id="sbName" value="${esc(B.name)}" placeholder="e.g. Sunday hills"></label>
+    <label class="f wide"><span>Start from</span><select id="sbFrom"><option value="">Keep these steps</option>${PRESETS.filter(x => x.kind !== 'goal').map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>
+    <div class="sbtl" id="sbTl"></div>
+    <p class="fhint" style="margin-top:0">Tap a bar to edit it. Drag a bar up or down to change its speed, or drag in the lower strip to change the incline.</p>
+    <div class="sbedit" id="sbEdit"></div>
+    <div class="row"><button class="sm" id="sbAdd">Add step</button><button class="sm" id="sbSetBtn">Add interval set</button></div>
+    <div class="sbedit" id="sbSet" hidden>
+      <div class="fg">
+        <label class="f"><span>Repeats</span><input type="number" inputmode="numeric" id="sbReps" value="4" min="1" max="30"></label>
+        <label class="f"><span>Run (min)</span><input type="number" inputmode="decimal" id="sbOn" value="1" step="0.25" min="0.25"></label>
+        <label class="f"><span>Run speed (${sU()})</span><input type="number" inputmode="decimal" id="sbOnSp" value="${toDispSpeed(12).toFixed(1)}" step="0.1"></label>
+        <label class="f"><span>Recover (min)</span><input type="number" inputmode="decimal" id="sbOff" value="1" step="0.25" min="0"></label>
+        <label class="f"><span>Recover speed (${sU()})</span><input type="number" inputmode="decimal" id="sbOffSp" value="${toDispSpeed(6).toFixed(1)}" step="0.1"></label>
+      </div>
+      <div class="row"><button class="sm primary" id="sbSetAdd">Add after selected step</button><button class="sm" id="sbSetCancel">Cancel</button></div>
+    </div>
+    <button class="link" id="sbGoal">Make a goal-pace workout instead</button>
+    <p class="err" id="sbErr"></p>
+    <div class="drow"><button id="sbCancel">Cancel</button><button class="primary" id="sbSave">Save workout</button></div>`;
+  const tl = d.querySelector('#sbTl'), ed = d.querySelector('#sbEdit');
+  function renderTl(){
+    const ds = durs(), total = ds.reduce((a, b) => a + b, 0) || 1, fastest = Math.max(...B.steps.map(x => x.speed));
+    let x = 0, svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Workout steps: pace and incline">`;
+    svg += `<text x="0" y="10" class="ax">Fastest ${fP(3600 / fastest)} /${dU()}</text><text x="${W}" y="10" class="ax" text-anchor="end">${fmtTime(total)} total</text>`;
+    B.steps.forEach((st, i) => {
+      const w = ds[i] / total * BW, h = Math.max(3, sh * st.speed / B.maxS), hi = ih * (st.incline || 0) / B.maxI;
+      svg += `<rect x="${(x + .7).toFixed(1)}" y="${(top + sh - h).toFixed(1)}" width="${Math.max(1, w - 1.4).toFixed(1)}" height="${h.toFixed(1)}" rx="2" class="${st.type === 'work' ? 'tlw' : 'tlr'}"/>`;
+      if (hi > 0) svg += `<rect x="${(x + .7).toFixed(1)}" y="${(top + sh + gap + ih - hi).toFixed(1)}" width="${Math.max(1, w - 1.4).toFixed(1)}" height="${hi.toFixed(1)}" rx="1.5" class="tli"/>`;
+      if (i === B.sel){
+        svg += `<rect x="${(x - .3).toFixed(1)}" y="${top - 6}" width="${(w + .6).toFixed(1)}" height="${sh + gap + ih + 8}" rx="3" class="sbsel"/>`;
+        svg += `<text x="${(x + w / 2).toFixed(1)}" y="${(top + sh - h - 3).toFixed(1)}" class="sbval">${toDispSpeed(st.speed).toFixed(1)}</text>`;
+      }
+      x += w;
+    });
+    svg += `<line x1="0" x2="${BW}" y1="${top + sh + .5}" y2="${top + sh + .5}" class="tlbase"/><line x1="0" x2="${BW}" y1="${top + sh + gap + ih + .5}" y2="${top + sh + gap + ih + .5}" class="tlbase"/>`;
+    const fx = BW + 6;
+    svg += `<line x1="${fx}" x2="${fx}" y1="${top - 4}" y2="${H - 12}" class="tlbase" style="stroke:var(--ink)"/>`;
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) svg += `<rect x="${fx + .8 + c * 4.5}" y="${top - 4 + r * 4.5}" width="4.5" height="4.5" class="ckd${(r + c) % 2}"/>`;
+    svg += `<text x="0" y="${H - 2}" class="ax">Bars: pace (taller is faster)</text><text x="${W}" y="${H - 2}" class="ax" text-anchor="end">Strip: incline</text>`;
+    tl.innerHTML = svg + '</svg>';
+  }
+  function amtParts(st){
+    if (st.by === 'time') return st.value >= 60 && st.value % 60 === 0 ? [st.value / 60, 'min'] : [st.value, 's'];
+    return st.value >= unitM() ? [+(st.value / unitM()).toFixed(2), 'big'] : [Math.round(st.value), 'm'];
+  }
+  function renderEd(){
+    const st = B.steps[B.sel], [amt, unit] = amtParts(st);
+    ed.innerHTML = `<div class="sbhead"><strong>Step ${B.sel + 1} of ${B.steps.length}</strong><span class="muted">${fmtTime(stepSeconds(st))}</span></div>
+      <div class="fg">
+        <label class="f"><span>Type</span><select data-f="type">${Object.entries(STEP_TYPES).map(([k, v]) => `<option value="${k}"${k === st.type ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="f"><span>Amount</span><input type="number" inputmode="decimal" step="any" min="0" data-f="amt" value="${amt}"></label>
+        <label class="f"><span>Unit</span><select data-f="unit">${[['s', 'seconds'], ['min', 'minutes'], ['m', 'metres'], ['big', isMi() ? 'miles' : 'kilometres']].map(([v, l]) => `<option value="${v}"${v === unit ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+        <label class="f"><span>Speed (${sU()})</span><input type="number" inputmode="decimal" step="0.1" data-f="speed" value="${toDispSpeed(st.speed).toFixed(1)}"></label>
+        <label class="f"><span>Incline (%)</span><input type="number" inputmode="decimal" step="0.5" min="0" data-f="incline" value="${st.incline || 0}"></label>
+      </div>
+      <div class="row">
+        <button class="sm" data-a="left"${B.sel === 0 ? ' disabled' : ''} aria-label="Move step earlier">‹ Earlier</button>
+        <button class="sm" data-a="right"${B.sel === B.steps.length - 1 ? ' disabled' : ''} aria-label="Move step later">Later ›</button>
+        <button class="sm" data-a="dup">Duplicate</button>
+        <button class="sm danger" data-a="del"${B.steps.length < 2 ? ' disabled' : ''}>Delete</button>
+      </div>`;
+  }
+  const render = () => { renderTl(); renderEd(); };
+  const readStep = () => {
+    const st = B.steps[B.sel], q = f => ed.querySelector(`[data-f="${f}"]`);
+    st.type = q('type').value;
+    const v = parseFloat(q('amt').value), u = q('unit').value;
+    if (v > 0){ if (u === 's'){ st.by = 'time'; st.value = Math.round(v); } else if (u === 'min'){ st.by = 'time'; st.value = Math.round(v * 60); } else if (u === 'm'){ st.by = 'dist'; st.value = Math.round(v); } else { st.by = 'dist'; st.value = Math.round(v * unitM()); } }
+    const sp = fromDispSpeed(parseFloat(q('speed').value)); if (sp >= 1 && sp <= 25) st.speed = Math.round(sp * 10) / 10;
+    const inc = parseFloat(q('incline').value); if (inc >= 0 && inc <= 15) st.incline = Math.round(inc * 2) / 2;
+  };
+  ed.addEventListener('input', () => { readStep(); rescale(); renderTl(); ed.querySelector('.sbhead .muted').textContent = fmtTime(stepSeconds(B.steps[B.sel])); });
+  ed.addEventListener('change', () => { readStep(); rescale(); render(); });
+  ed.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const i = B.sel, a = b.dataset.a;
+    if (a === 'left' && i > 0){ [B.steps[i - 1], B.steps[i]] = [B.steps[i], B.steps[i - 1]]; B.sel--; }
+    if (a === 'right' && i < B.steps.length - 1){ [B.steps[i + 1], B.steps[i]] = [B.steps[i], B.steps[i + 1]]; B.sel++; }
+    if (a === 'dup'){ B.steps.splice(i + 1, 0, { ...B.steps[i] }); B.sel++; }
+    if (a === 'del' && B.steps.length > 1){ B.steps.splice(i, 1); B.sel = Math.min(i, B.steps.length - 1); }
+    rescale(); render();
+  });
+  // tap to select, drag to reshape
+  let drag = null;
+  const geom = e => { const r = tl.querySelector('svg').getBoundingClientRect(), k = W / r.width; return { vx: (e.clientX - r.left) * k, vy: (e.clientY - r.top) * k, k }; };
+  const stepAt = vx => { const ds = durs(), total = ds.reduce((a, b) => a + b, 0) || 1; let x = 0; for (let i = 0; i < ds.length; i++){ x += ds[i] / total * BW; if (vx <= x) return i; } return vx <= BW + FW ? ds.length - 1 : -1; };
+  tl.addEventListener('pointerdown', e => {
+    const g = geom(e), i = stepAt(g.vx); if (i < 0) return;
+    if (i !== B.sel){ readStep(); B.sel = i; render(); }
+    const zone = g.vy > top + sh + gap / 2 ? 'inc' : 'spd', st = B.steps[i];
+    drag = { i, zone, y0: e.clientY, v0: zone === 'spd' ? st.speed : (st.incline || 0), k: g.k, moved: false };
+    tl.setPointerCapture(e.pointerId);
+  });
+  tl.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dy = (e.clientY - drag.y0) * drag.k; if (Math.abs(dy) > 3) drag.moved = true; if (!drag.moved) return;
+    const st = B.steps[drag.i];
+    if (drag.zone === 'spd') st.speed = Math.min(25, Math.max(1, Math.round((drag.v0 - dy / sh * B.maxS) * 10) / 10));
+    else st.incline = Math.min(15, Math.max(0, Math.round((drag.v0 - dy / ih * B.maxI) * 2) / 2));
+    renderTl();
+    const q = f => ed.querySelector(`[data-f="${f}"]`);
+    q('speed').value = toDispSpeed(st.speed).toFixed(1); q('incline').value = st.incline;
+  });
+  const endDrag = () => { if (!drag) return; drag = null; rescale(); renderTl(); };
+  tl.addEventListener('pointerup', endDrag); tl.addEventListener('pointercancel', endDrag);
+  d.querySelector('#sbFrom').onchange = e => {
+    const pre = PRESETS.find(x => x.id === e.target.value); if (!pre) return;
+    B.steps = fromDef(pre); B.sel = 0; rescale(); render();
+    const nm = d.querySelector('#sbName'); if (!nm.value.trim()) nm.value = `${pre.name} (my version)`;
+  };
+  d.querySelector('#sbAdd').onclick = () => { readStep(); const last = B.steps[B.sel]; B.steps.splice(B.sel + 1, 0, { type: 'work', by: 'time', value: 120, speed: last.speed, incline: last.incline || 0 }); B.sel++; rescale(); render(); };
+  const setBox = d.querySelector('#sbSet');
+  d.querySelector('#sbSetBtn').onclick = () => { setBox.hidden = !setBox.hidden; };
+  d.querySelector('#sbSetCancel').onclick = () => { setBox.hidden = true; };
+  d.querySelector('#sbSetAdd').onclick = () => {
+    readStep();
+    const n = Math.min(30, Math.max(1, parseInt(d.querySelector('#sbReps').value, 10) || 1));
+    const on = Math.round((parseFloat(d.querySelector('#sbOn').value) || 1) * 60), off = Math.round((parseFloat(d.querySelector('#sbOff').value) || 0) * 60);
+    const onSp = Math.min(25, Math.max(1, fromDispSpeed(parseFloat(d.querySelector('#sbOnSp').value) || 12))), offSp = Math.min(25, Math.max(1, fromDispSpeed(parseFloat(d.querySelector('#sbOffSp').value) || 6)));
+    const add = [];
+    for (let k = 0; k < n; k++){ add.push({ type: 'work', by: 'time', value: on, speed: Math.round(onSp * 10) / 10, incline: 1 }); if (off > 0) add.push({ type: 'rest', by: 'time', value: off, speed: Math.round(offSp * 10) / 10, incline: 1 }); }
+    B.steps.splice(B.sel + 1, 0, ...add); B.sel += 1; setBox.hidden = true; rescale(); render();
+  };
+  d.querySelector('#sbGoal').onclick = () => { d.close(); openBuilder(null); setTimeout(() => { const g = $('#b-kind button[data-k=goal]'); if (g) g.click(); }, 0); };
+  d.querySelector('#sbCancel').onclick = () => d.close();
+  d.querySelector('#sbSave').onclick = () => {
+    readStep();
+    const err = t => d.querySelector('#sbErr').textContent = t;
+    if (!B.steps.length) return err('Add at least one step.');
+    if (B.steps.some(x => !(x.value > 0))) return err('Every step needs a time or distance.');
+    const name = d.querySelector('#sbName').value.trim() || 'My workout';
+    const out = { id: B.id, name, kind: 'steps', steps: B.steps.map(x => ({ type: x.type, by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 })) };
+    const list = customWorkouts(), i = list.findIndex(x => x.id === out.id);
+    if (i >= 0) list[i] = out; else list.push(out);
+    store.set(WKEY, list);
+    selected = out.id; store.set(SELKEY, selected);
+    d.close(); renderWorkouts(); renderRunWorkout();
+    toast(`${name} saved and selected`);
+  };
+  render();
+  d.showModal();
+  d.scrollTop = 0;
 }
 
 function openBuilder(src){
@@ -2111,6 +2454,7 @@ function renderGlance(){
   const gw = getWorkout(selected) || (wo && wo.def);
   $('#glance').classList.toggle('has-tl', !!gw);
   $('#glTl').hidden = !gw;
+  $('#glFinish').hidden = !(run && wo && wo.done);
   if (gw){ const t = glanceTimeline(gw); $('#glTlSvg').innerHTML = t.svg; $('#glTlInfo').textContent = t.info; if (glTlMax) $('#glTlSvg svg').style.maxHeight = glTlMax + 'px'; }
   const mw = $('#glMain').clientWidth * .98;
   fitGlance();
@@ -2305,6 +2649,7 @@ function openProfiles(){
       const x = profiles.list.find(y => y.id === b.dataset.delp);
       if (!confirm(`Delete the profile “${x.name}” and all of its runs? This can’t be undone.`)) return;
       Object.keys(localStorage).filter(k => k.endsWith('@' + x.id)).forEach(k => localStorage.removeItem(k));
+      BIG_BASES.forEach(b => bigDel(`${b}@${x.id}`));
       profiles.list = profiles.list.filter(y => y.id !== x.id); saveProfiles(); openProfiles();
       return;
     }
@@ -2373,7 +2718,7 @@ function renderSetup(){
 
 /* ---------- leaderboard (all profiles on this phone) ---------- */
 let lbWeek = 0;
-const profileRuns = id => { try { return JSON.parse(localStorage.getItem(id === 'default' ? KEY : `${KEY}@${id}`)) || []; } catch(e){ return []; } };
+const profileRuns = id => rawGet(KEY, id, []);
 const avatar = p => `<span class="pav${p.photo ? ' has-photo' : ''}" aria-hidden="true">${avatarInner(p)}</span>`;
 function boardCard(label, entries, fmt){
   if (!entries.length) return `<div class="prcard"><div class="lab">${label}</div><div class="t">–</div><div class="wsum">No one yet</div></div>`;
@@ -2382,19 +2727,50 @@ function boardCard(label, entries, fmt){
     <div class="who">${avatar(h.p)}<span>${esc(h.p.name)}</span></div>${h.date ? `<div class="wsum">${fmtDate(h.date)}</div>` : ''}
     ${entries.length > 1 ? `<ol start="2">${entries.slice(1, 3).map(x => `<li>${esc(x.p.name)}, ${fmt(x.v)}</li>`).join('')}</ol>` : ''}</div>`;
 }
+let lbMode = 'week';
+// completed weeks only (medals are decided at midnight on Sunday), newest first
+function weeklyResults(){
+  const cur = weekStart(Date.now()).getTime(), map = new Map();
+  profiles.list.forEach(p => profileRuns(p.id).forEach(r => {
+    const k = weekStart(r.date).getTime(); if (k >= cur) return;
+    let w = map.get(k); if (!w){ w = new Map(); map.set(k, w); }
+    w.set(p.id, (w.get(p.id) || 0) + r.dist);
+  }));
+  return [...map.entries()].sort((a, b) => b[0] - a[0]).map(([k, w]) => ({ ws: k,
+    ranked: [...w.entries()].filter(([, d]) => d > 0).map(([id, d]) => ({ p: profiles.list.find(x => x.id === id), dist: d }))
+      .filter(x => x.p).sort((a, b) => b.dist - a.dist || a.p.name.localeCompare(b.p.name)).slice(0, 3) }));
+}
+const myMedals = pid => weeklyResults().map(w => ({ ws: w.ws, place: w.ranked.findIndex(x => x.p.id === pid), dist: (w.ranked.find(x => x.p.id === pid) || {}).dist })).filter(m => m.place >= 0);
+function earliestWeekOffset(){
+  let min = Date.now();
+  profiles.list.forEach(p => profileRuns(p.id).forEach(r => { if (r.date < min) min = r.date; }));
+  return Math.max(0, Math.round((weekStart(Date.now()) - weekStart(min)) / (7 * DAY)));
+}
+function untilMedals(){
+  const end = weekStart(Date.now()); end.setDate(end.getDate() + 7);
+  const ms = end - Date.now(), d = Math.floor(ms / DAY), h = Math.floor(ms % DAY / 36e5), m = Math.floor(ms % 36e5 / 6e4);
+  return d ? `${d} day${d === 1 ? '' : 's'} ${h} hour${h === 1 ? '' : 's'}` : h ? `${h} hour${h === 1 ? '' : 's'} ${m} min` : `${m} min`;
+}
 function renderLeaders(){
+  const maxOff = earliestWeekOffset(); lbWeek = Math.min(lbWeek, maxOff);
   const ws = weekStart(Date.now()); ws.setDate(ws.getDate() - 7 * lbWeek);
   const we = new Date(ws); we.setDate(we.getDate() + 7);
+  const inRange = r => lbMode === 'all' || (r.date >= ws.getTime() && r.date < we.getTime());
   const people = profiles.list.map(p => {
-    const runs = profileRuns(p.id), wk = runs.filter(r => r.date >= ws.getTime() && r.date < we.getTime());
+    const runs = profileRuns(p.id), wk = runs.filter(inRange);
     return { p, runs, wkDist: wk.reduce((a, r) => a + r.dist, 0), wkRuns: wk.length, wkTime: wk.reduce((a, r) => a + r.moving, 0) };
   });
   $('#lbNote').innerHTML = profiles.list.length < 2
     ? '<div class="lbnote"><p>Add a profile for each person who uses the treadmill, and they’ll appear here to compete.</p><button class="sm" id="lbProfiles">Manage profiles</button></div>' : '';
-  $$('#lbSeg button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.w === lbWeek));
+  $$('#lbMode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.m === lbMode));
+  $('#lbStep').hidden = lbMode === 'all';
+  $('#lbPrev').disabled = lbWeek >= maxOff; $('#lbNext').disabled = lbWeek <= 0;
+  const lastDay = new Date(we); lastDay.setDate(lastDay.getDate() - 1);
+  const md = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : '');
+  $('#lbLabel').textContent = lbWeek === 0 ? 'This week' : lbWeek === 1 ? 'Last week' : `${md(ws)} to ${md(lastDay)}`;
   const ranked = people.slice().sort((a, b) => b.wkDist - a.wkDist || a.p.name.localeCompare(b.p.name));
   const top = ranked[0].wkDist || 1;
-  // podium: 2nd on the left, 1st in the middle, 3rd on the right
+  // podium: 2nd on the left, 1st in the middle, 3rd on the right; tap a photo to celebrate
   const places = [2, 1, 3], suffix = { 1: 'st', 2: 'nd', 3: 'rd' };
   $('#podium').innerHTML = places.map(place => {
     const x = ranked[place - 1], has = !!(x && x.wkDist > 0);
@@ -2406,12 +2782,16 @@ function renderLeaders(){
       <div class="pod-block" aria-hidden="true">${place}</div></div>`;
   }).join('');
   const anyRuns = ranked.some(x => x.wkDist > 0);
-  $('#podNote').textContent = anyRuns ? '' : `No runs logged ${lbWeek ? 'last week' : 'this week'} yet. The first to run takes the top spot.`;
+  $('#podNote').textContent = !anyRuns ? (lbMode === 'all' ? 'No runs yet.' : lbWeek === 0 ? 'No runs this week yet. The first to run takes the top spot.' : 'No runs that week.')
+    : lbMode === 'all' ? 'All-time distance. Tap a photo on the podium.'
+    : lbWeek === 0 ? `Medals are awarded at midnight on Sunday, in ${untilMedals()}. Tap a photo on the podium.`
+    : 'Final standings: medals awarded. Tap a photo on the podium.';
   $('#lbWeek').innerHTML = ranked.map((x, i) => `<li class="lbrow${x.p.id === profiles.current ? ' me' : ''}${i === 0 && x.wkDist > 0 ? ' first' : ''}">
     <span class="lbrank">${x.wkDist > 0 ? i + 1 : '–'}</span>${avatar(x.p)}
     <span class="lbname">${esc(x.p.name)}<span class="wsum">${x.wkRuns} run${x.wkRuns === 1 ? '' : 's'}${x.wkRuns ? `, ${fmtTime(x.wkTime)}` : ''}</span></span>
     <span class="lbval">${fD(x.wkDist, 1)} ${dU()}</span>
     <span class="lbbar"><i style="width:${(x.wkDist / top * 100).toFixed(1)}%"></i></span></li>`).join('');
+  renderMedals();
   $('#lbPrs').innerHTML = BESTS.map(([k, , label]) => {
     const e = people.map(x => {
       let best = null;
@@ -2424,8 +2804,172 @@ function renderLeaders(){
     .filter(Boolean).sort((a, b) => b.v - a.v);
   const total = people.map(x => ({ p: x.p, v: x.runs.reduce((a, r) => a + r.dist, 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
   $('#lbAll').innerHTML = boardCard('Longest run', longest, v => `${fD(v)} ${dU()}`) + boardCard('Total distance', total, v => `${fD(v, 1)} ${dU()}`);
+  renderBadges();
 }
-$('#lbSeg').addEventListener('click', e => { const b = e.target.closest('button[data-w]'); if (b){ lbWeek = +b.dataset.w; renderLeaders(); } });
+function renderMedals(){
+  const res = weeklyResults(), counts = new Map(profiles.list.map(x => [x.id, [0, 0, 0]]));
+  res.forEach(w => w.ranked.forEach((x, i) => counts.get(x.p.id)[i]++));
+  const rows = profiles.list.map(x => ({ p: x, c: counts.get(x.id) }))
+    .sort((a, b) => b.c[0] - a.c[0] || b.c[1] - a.c[1] || b.c[2] - a.c[2] || a.p.name.localeCompare(b.p.name));
+  const md = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: new Date(t).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined });
+  const week = w => `<div class="wres"><span class="wlab">Week of ${md(w.ws)}</span>${w.ranked.map((x, i) => `<span class="wmed"><span class="mdot ${'gsb'[i]}" aria-label="${['Gold', 'Silver', 'Bronze'][i]}"></span>${avatar(x.p)}${esc(x.p.name)}, ${fD(x.dist, 1)} ${dU()}</span>`).join('')}</div>`;
+  $('#lbMedals').innerHTML = !res.length ? '<p class="muted">The first medals are awarded at midnight on Sunday.</p>'
+    : `<div class="mrow head"><span></span><span>Runner</span><span class="mdot g" aria-label="Gold"></span><span class="mdot s" aria-label="Silver"></span><span class="mdot b" aria-label="Bronze"></span></div>`
+      + rows.map(x => `<div class="mrow${x.p.id === profiles.current ? ' me' : ''}">${avatar(x.p)}<span class="mname">${esc(x.p.name)}</span><span class="mc">${x.c[0]}</span><span class="mc">${x.c[1]}</span><span class="mc">${x.c[2]}</span></div>`).join('')
+      + `<h4>Recent weeks</h4>${res.slice(0, 4).map(week).join('')}`
+      + (res.length > 4 ? `<details class="sect" data-sect="allweeks"${sectOpen('allweeks', false) ? ' open' : ''}><summary>Every week<span class="count">${res.length}</span></summary><div class="sbody">${res.slice(4).map(week).join('')}</div></details>` : '');
+}
+
+/* ---------- badges ---------- */
+const BADGES = [
+  ['first', 'First steps', 'Finish your first run', 'bronze', '👟'],
+  ['d5', '5K finisher', 'Run 5 km in one go', 'bronze', '🏃'],
+  ['d10', '10K club', 'Run 10 km in one go', 'silver', '🎽'],
+  ['d21', 'Half marathon', 'Run 21.1 km in one go', 'gold', '🏅'],
+  ['d42', 'Marathon', 'Run 42.2 km in one go', 'special', '🏆'],
+  ['k5_30', '5K under 30', 'Run 5 km in under 30 minutes', 'bronze', '⚡'],
+  ['k5_25', '5K under 25', 'Run 5 km in under 25 minutes', 'silver', '⚡'],
+  ['k5_20', '5K under 20', 'Run 5 km in under 20 minutes', 'gold', '🌩️'],
+  ['k10_60', 'Sub-hour 10K', 'Run 10 km in under an hour', 'silver', '🔥'],
+  ['k10_50', '10K under 50', 'Run 10 km in under 50 minutes', 'gold', '☄️'],
+  ['mi8', 'Mile under 8', 'Run a mile in under 8 minutes', 'bronze', '🐇'],
+  ['mi7', 'Mile under 7', 'Run a mile in under 7 minutes', 'silver', '🐆'],
+  ['k1_4', 'Speed demon', 'Run 1 km in under 4 minutes', 'gold', '🏎️'],
+  ['t50', '50 km total', 'Run 50 km in total', 'bronze', '🛣️'],
+  ['t100', 'Century', 'Run 100 km in total', 'silver', '💯'],
+  ['t250', '250 km total', 'Run 250 km in total', 'silver', '🧭'],
+  ['t500', '500 km total', 'Run 500 km in total', 'gold', '🚀'],
+  ['t1000', '1,000 km club', 'Run 1,000 km in total', 'special', '🌍'],
+  ['c10', '10 runs', 'Log 10 runs', 'bronze', '🔁'],
+  ['c25', '25 runs', 'Log 25 runs', 'silver', '🗓️'],
+  ['c50', '50 runs', 'Log 50 runs', 'gold', '🎉'],
+  ['c100', '100 runs', 'Log 100 runs', 'special', '💎'],
+  ['h1', 'Hour of power', 'Run for an hour in one go', 'silver', '⏱️'],
+  ['th10', '10 hours', 'Spend 10 hours running in total', 'bronze', '⌛'],
+  ['th50', '50 hours', 'Spend 50 hours running in total', 'gold', '🕰️'],
+  ['climb100', 'Hill climber', 'Climb 100 m in one run', 'bronze', '⛰️'],
+  ['everest', 'Everest', 'Climb 8,849 m in total, the height of Everest', 'gold', '🏔️'],
+  ['steps10k', '10,000 steps', 'Take 10,000 steps in one run', 'silver', '🦶'],
+  ['week3', 'Three a week', 'Run three times in one week', 'bronze', '📅'],
+  ['streak4', 'Four-week streak', 'Run every week for 4 weeks in a row', 'silver', '🔗'],
+  ['streak12', '12-week streak', 'Run every week for 12 weeks in a row', 'gold', '🛡️'],
+  ['goal4', 'Goal getter', 'Hit your weekly goal 4 weeks in a row', 'silver', '🎯'],
+  ['early', 'Early bird', 'Start a run before 7am', 'bronze', '🌅'],
+  ['night', 'Night owl', 'Start a run after 9pm', 'bronze', '🦉'],
+  ['wo10', 'Workout warrior', 'Finish 10 runs with a workout', 'bronze', '💪'],
+  ['plan', 'Plan complete', 'Finish a whole training plan', 'gold', '📋'],
+  ['gold1', 'Champion', 'Win a weekly gold medal', 'gold', '🥇'],
+  ['pod5', 'Podium regular', 'Finish in the top three in 5 weeks', 'silver', '🎖️'],
+  ['gold5', 'Dynasty', 'Win 5 weekly gold medals', 'special', '👑']
+].map(([id, name, desc, tier, icon]) => ({ id, name, desc, tier, icon }));
+function computeBadges(pid){
+  const runs = profileRuns(pid).slice().sort((a, b) => a.date - b.date);
+  const ps = pid === profiles.current ? settings : rawGet(SKEY, pid, {});
+  const goal = ps.weeklyGoal || 0, got = {}, prog = {};
+  const earn = (id, d) => { if (!got[id]) got[id] = d; };
+  let tDist = 0, tTime = 0, tClimb = 0, nRuns = 0, nWo = 0, maxDist = 0, maxTime = 0, maxClimb = 0, maxSteps = 0;
+  const weeks = new Map(), best = { '1k': Infinity, '1mi': Infinity, '5k': Infinity, '10k': Infinity };
+  const streakTo = (key, test) => { let n = 0; const k = new Date(key); for (;;){ const w = weeks.get(k.getTime()); if (!w || !test(w)) break; n++; k.setDate(k.getDate() - 7); } return n; };
+  runs.forEach(r => {
+    const d = r.date, hr = new Date(d).getHours();
+    nRuns++; tDist += r.dist; tTime += r.moving; tClimb += r.climb || 0; if (r.workout) nWo++;
+    maxDist = Math.max(maxDist, r.dist); maxTime = Math.max(maxTime, r.moving); maxClimb = Math.max(maxClimb, r.climb || 0); maxSteps = Math.max(maxSteps, r.steps || 0);
+    const wk = weekStart(d).getTime(), w = weeks.get(wk) || { n: 0, dist: 0 }; w.n++; w.dist += r.dist; weeks.set(wk, w);
+    for (const k in best) if (r.best && r.best[k]) best[k] = Math.min(best[k], r.best[k]);
+    earn('first', d);
+    if (r.dist >= 5000) earn('d5', d); if (r.dist >= 10000) earn('d10', d); if (r.dist >= 21097) earn('d21', d); if (r.dist >= 42195) earn('d42', d);
+    if (best['5k'] < 1800) earn('k5_30', d); if (best['5k'] < 1500) earn('k5_25', d); if (best['5k'] < 1200) earn('k5_20', d);
+    if (best['10k'] < 3600) earn('k10_60', d); if (best['10k'] < 3000) earn('k10_50', d);
+    if (best['1mi'] < 480) earn('mi8', d); if (best['1mi'] < 420) earn('mi7', d); if (best['1k'] < 240) earn('k1_4', d);
+    [[50, 't50'], [100, 't100'], [250, 't250'], [500, 't500'], [1000, 't1000']].forEach(([km, id]) => { if (tDist >= km * 1000) earn(id, d); });
+    [[10, 'c10'], [25, 'c25'], [50, 'c50'], [100, 'c100']].forEach(([n, id]) => { if (nRuns >= n) earn(id, d); });
+    if (r.moving >= 3600) earn('h1', d); if (tTime >= 36000) earn('th10', d); if (tTime >= 180000) earn('th50', d);
+    if ((r.climb || 0) >= 100) earn('climb100', d); if (tClimb >= 8849) earn('everest', d);
+    if ((r.steps || 0) >= 10000) earn('steps10k', d);
+    if (w.n >= 3) earn('week3', d);
+    const st = streakTo(wk, x => x.n > 0); if (st >= 4) earn('streak4', d); if (st >= 12) earn('streak12', d);
+    if (goal > 0 && streakTo(wk, x => x.dist >= goal) >= 4) earn('goal4', d);
+    if (hr < 7) earn('early', d); if (hr >= 21) earn('night', d);
+    if (nWo >= 10) earn('wo10', d);
+  });
+  let golds = 0, pods = 0;
+  weeklyResults().slice().reverse().forEach(w => {
+    const i = w.ranked.findIndex(x => x.p.id === pid); if (i < 0) return;
+    const when = w.ws + 7 * DAY; pods++;
+    if (i === 0){ golds++; earn('gold1', when); if (golds >= 5) earn('gold5', when); }
+    if (pods >= 5) earn('pod5', when);
+  });
+  const plan = pid === profiles.current ? activePlan() : rawGet(PKEY, pid, null);
+  if (plan){
+    const total = buildPlanSessions(plan.id, plan.paces).length, doneIds = Object.values(plan.done);
+    if (doneIds.length >= total){ const ds = runs.filter(r => doneIds.includes(r.id)).map(r => r.date); earn('plan', ds.length ? Math.max(...ds) : Date.now()); }
+  }
+  const bestTxt = (k, lab) => isFinite(best[k]) ? `Best ${lab}: ${fmtTime(best[k])}` : '';
+  Object.assign(prog, {
+    d5: [maxDist / 5000, `Longest: ${fD(maxDist, 1)} ${dU()}`], d10: [maxDist / 10000, `Longest: ${fD(maxDist, 1)} ${dU()}`], d21: [maxDist / 21097, `Longest: ${fD(maxDist, 1)} ${dU()}`], d42: [maxDist / 42195, `Longest: ${fD(maxDist, 1)} ${dU()}`],
+    t50: [tDist / 50000], t100: [tDist / 1e5], t250: [tDist / 2.5e5], t500: [tDist / 5e5], t1000: [tDist / 1e6],
+    c10: [nRuns / 10, `${nRuns} of 10`], c25: [nRuns / 25, `${nRuns} of 25`], c50: [nRuns / 50, `${nRuns} of 50`], c100: [nRuns / 100, `${nRuns} of 100`],
+    h1: [maxTime / 3600], th10: [tTime / 36000], th50: [tTime / 180000], climb100: [maxClimb / 100], everest: [tClimb / 8849, `${Math.round(tClimb)} of 8,849 m`],
+    steps10k: [maxSteps / 10000], wo10: [nWo / 10, `${nWo} of 10`], pod5: [pods / 5, `${pods} of 5`], gold5: [golds / 5, `${golds} of 5`],
+    k5_30: [0, bestTxt('5k', '5 km')], k5_25: [0, bestTxt('5k', '5 km')], k5_20: [0, bestTxt('5k', '5 km')], k10_60: [0, bestTxt('10k', '10 km')], k10_50: [0, bestTxt('10k', '10 km')],
+    mi8: [0, bestTxt('1mi', 'mile')], mi7: [0, bestTxt('1mi', 'mile')], k1_4: [0, bestTxt('1k', '1 km')]
+  });
+  ['t50', 't100', 't250', 't500', 't1000'].forEach(id => prog[id][1] = `${fD(tDist, 0)} of ${fD({ t50: 5e4, t100: 1e5, t250: 2.5e5, t500: 5e5, t1000: 1e6 }[id], 0)} ${dU()}`);
+  return { got, prog };
+}
+function renderBadges(){
+  const { got, prog } = computeBadges(profiles.current), n = BADGES.filter(b => got[b.id]).length;
+  $('#badgeCount').textContent = `${curProfile().name} has ${n} of ${BADGES.length} badges. Tap a badge to see what it takes.`;
+  const sorted = BADGES.slice().sort((a, b) => (got[b.id] ? 1 : 0) - (got[a.id] ? 1 : 0) || (got[b.id] || 0) - (got[a.id] || 0));
+  $('#badges').innerHTML = sorted.map(b => {
+    const g = got[b.id], pr = prog[b.id];
+    return `<button class="badge${g ? '' : ' locked'}" data-badge="${b.id}" aria-label="${esc(b.name)}: ${g ? 'earned' : 'locked'}">
+      <span class="bdisc ${b.tier}"><span>${b.icon}</span></span><span class="bname">${esc(b.name)}</span>
+      ${g ? `<span class="bwhen">${fmtDate(g)}</span>` : pr && pr[0] > 0 ? `<span class="bprog"><i style="width:${Math.min(100, pr[0] * 100).toFixed(0)}%"></i></span>` : '<span class="bwhen">Locked</span>'}</button>`;
+  }).join('');
+}
+const BSEEN = 'tm-badges-seen-v1', MSEEN = 'tm-medals-seen-v1';
+function initBadgeSeen(){
+  if (store.get(BSEEN, null) === null){ const { got } = computeBadges(profiles.current); store.set(BSEEN, BADGES.filter(b => got[b.id]).map(b => b.id)); }
+  if (store.get(MSEEN, null) === null){ // first time: only last week's medals get announced
+    const last = weekStart(Date.now()); last.setDate(last.getDate() - 7);
+    store.set(MSEEN, myMedals(profiles.current).filter(m => m.ws < last.getTime()).map(m => m.ws));
+  }
+}
+function checkNewBadges(){
+  if (isDemo) return;
+  const { got } = computeBadges(profiles.current), seen = new Set(store.get(BSEEN, []));
+  const fresh = BADGES.filter(b => got[b.id] && !seen.has(b.id));
+  const medals = myMedals(profiles.current), mseen = new Set(store.get(MSEEN, []));
+  const newMedals = medals.filter(m => !mseen.has(m.ws));
+  if (!fresh.length && !newMedals.length) return;
+  store.set(BSEEN, BADGES.filter(b => got[b.id]).map(b => b.id));
+  store.set(MSEEN, medals.map(m => m.ws));
+  const md = t => new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const d = $('#badgeDlg');
+  const title = newMedals.length && !fresh.length ? `You won ${newMedals.length === 1 ? 'a medal' : 'medals'}` : (fresh.length + newMedals.length) === 1 ? 'New badge' : `${fresh.length + newMedals.length} new badges`;
+  d.innerHTML = `<h3>${title}</h3>
+    ${newMedals.map(m => `<div class="bcard"><span class="bdisc ${['gold', 'silver', 'bronze'][m.place]}"><span>${['🥇', '🥈', '🥉'][m.place]}</span></span><div><strong>${['Gold', 'Silver', 'Bronze'][m.place]} medal</strong><span class="wsum">${['1st', '2nd', '3rd'][m.place]} place in the week of ${md(m.ws)}, with ${fD(m.dist, 1)} ${dU()}</span></div></div>`).join('')}
+    ${fresh.map(b => `<div class="bcard"><span class="bdisc ${b.tier}"><span>${b.icon}</span></span><div><strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span></div></div>`).join('')}
+    <div class="drow"><button class="sm" id="bdAll">See all badges</button><button class="sm primary" id="bdOk">Brilliant</button></div>`;
+  d.querySelector('#bdOk').onclick = () => d.close();
+  d.querySelector('#bdAll').onclick = () => { d.close(); showTab('leaders'); setTimeout(() => $('#badges').scrollIntoView({ block: 'start', behavior: 'smooth' }), 80); };
+  d.addEventListener('close', () => { audio(); if (settings.confetti) burstAt(innerWidth / 2, innerHeight * .4, 'theme'); }, { once: true });
+  d.showModal();
+}
+$('#badges').addEventListener('click', e => {
+  const el = e.target.closest('[data-badge]'); if (!el) return;
+  const b = BADGES.find(x => x.id === el.dataset.badge), { got, prog } = computeBadges(profiles.current), pr = prog[b.id];
+  toast(got[b.id] ? `${b.name}: ${b.desc}. Earned ${fmtDate(got[b.id])}.` : `${b.name}: ${b.desc}.${pr && pr[1] ? ` ${pr[1]}.` : ''}`);
+});
+$('#podium').addEventListener('click', e => {
+  const av = e.target.closest('.pod:not(.empty) .pav'); if (!av) return;
+  const r = av.getBoundingClientRect(); audio();
+  burstAt(r.left + r.width / 2, r.top + r.height / 2, av.closest('.pod').classList.contains('p1') ? 'theme' : 'poo');
+});
+$('#lbMode').addEventListener('click', e => { const b = e.target.closest('button[data-m]'); if (b){ lbMode = b.dataset.m; renderLeaders(); } });
+$('#lbPrev').onclick = () => { lbWeek++; renderLeaders(); };
+$('#lbNext').onclick = () => { lbWeek = Math.max(0, lbWeek - 1); renderLeaders(); };
 $('#lbNote').addEventListener('click', e => { if (e.target.closest('#lbProfiles')) openProfiles(); });
 
 /* ---------- rendering: history tab ---------- */
@@ -2467,6 +3011,7 @@ function paceChart(runs){
 }
 
 function renderHistory(){
+  $('#bkNagH').innerHTML = backupDue() ? backupNag() : '';
   const runs = allRuns();
   const goal = settings.weeklyGoal || 0;
   const wk = weekStart(Date.now());
@@ -2713,17 +3258,64 @@ function exportCsv(){
   ].map(q).join(',')));
   download('treadmill-runs.csv', lines.join('\n'), 'text/csv');
 }
+const LASTBK = 'tm-lastbackup-v1', BKSNOOZE = 'tm-bksnooze-v1', DAY = 864e5;
 function backup(){
-  const data = { app: 'treadmill-log', version: 2, exported: new Date().toISOString(), runs: allRuns(), workouts: customWorkouts(), settings, plan: activePlan() };
+  const data = { app: 'treadmill-log', version: 3, exported: new Date().toISOString(), profiles: profiles.list, people: {},
+    runs: allRuns(), workouts: customWorkouts(), settings, plan: activePlan() }; // single-profile fields kept for older versions
+  profiles.list.forEach(x => { data.people[x.id] = { runs: rawGet(KEY, x.id, []), workouts: rawGet(WKEY, x.id, []), settings: rawGet(SKEY, x.id, {}), plan: rawGet(PKEY, x.id, null) }; });
   download(`treadmill-log-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(data), 'application/json');
-  toast('Backup downloaded');
+  try { localStorage.setItem(LASTBK, String(Date.now())); localStorage.removeItem(BKSNOOZE); } catch(e){}
+  toast(`Backup downloaded, covering ${profiles.list.length} profile${profiles.list.length === 1 ? '' : 's'}`);
+  renderHistory(); renderBackupStatus();
+}
+function totalRunsAllProfiles(){ return profiles.list.reduce((a, x) => a + rawGet(KEY, x.id, []).length, 0); }
+function backupDue(){
+  const last = +localStorage.getItem(LASTBK) || 0, snooze = +localStorage.getItem(BKSNOOZE) || 0;
+  return totalRunsAllProfiles() >= 3 && Date.now() - last > 21 * DAY && Date.now() > snooze;
+}
+function backupNag(){
+  const last = +localStorage.getItem(LASTBK) || 0;
+  return `<div class="lbnote bknag"><strong>Time to back up</strong>
+    <p>${last ? `It’s been ${Math.floor((Date.now() - last) / DAY)} days since your last backup.` : 'You haven’t backed up yet.'} Your runs only live on this phone, so a backup file keeps them safe if it’s lost or reset.</p>
+    <div class="row"><button class="sm primary" data-bk="now">Back up now</button><button class="sm" data-bk="later">Remind me in a week</button></div></div>`;
+}
+async function renderBackupStatus(){
+  const el = $('#bkStatus'); if (!el) return;
+  const last = +localStorage.getItem(LASTBK) || 0;
+  let txt = last ? `Last backup: ${fmtDate(last)}.` : 'No backup yet.';
+  try { const est = await navigator.storage.estimate(); if (est && est.quota) txt += ` Using ${(est.usage / 1048576).toFixed(1)} MB of ${est.quota > 1073741824 ? (est.quota / 1073741824).toFixed(1) + ' GB' : Math.round(est.quota / 1048576) + ' MB'} available.`; } catch(e){}
+  el.textContent = txt;
 }
 function restore(file){
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     let data;
     try { data = JSON.parse(reader.result); } catch(e){ toast('That file isn’t a valid backup'); return; }
     if (!data || data.app !== 'treadmill-log' || !Array.isArray(data.runs)){ toast('That file isn’t a Treadmill log backup'); return; }
+    if (data.people && Array.isArray(data.profiles)){ // full backup covering every profile
+      const plan = []; let n = 0;
+      data.profiles.forEach(bp => {
+        const d = data.people[bp.id]; if (!d) return;
+        const runs = rawGet(KEY, bp.id, []), ids = new Set(runs.map(r => r.id));
+        const add = (d.runs || []).filter(r => r && r.id && !ids.has(r.id)); n += add.length;
+        plan.push({ bp, d, runs, add });
+      });
+      if (!confirm(`Restore ${n} run${n === 1 ? '' : 's'} across ${plan.length} profile${plan.length === 1 ? '' : 's'}? Runs already on this phone are kept.`)) return;
+      plan.forEach(({ bp, d, runs, add }) => {
+        const ex = profiles.list.find(x => x.id === bp.id);
+        if (!ex) profiles.list.push({ id: bp.id, name: bp.name, ...(bp.photo ? { photo: bp.photo } : {}) });
+        else if (!runs.length){ ex.name = bp.name; if (bp.photo) ex.photo = bp.photo; } // empty profile here: take the backup's name and photo
+        else if (!ex.photo && bp.photo) ex.photo = bp.photo;
+        rawSet(KEY, bp.id, runs.concat(add).sort((a, b) => b.date - a.date));
+        const ws = rawGet(WKEY, bp.id, []), wids = new Set(ws.map(w => w.id));
+        rawSet(WKEY, bp.id, ws.concat((d.workouts || []).filter(w => w && w.id && !wids.has(w.id))));
+        if (d.settings && !localStorage.getItem(keyFor(SKEY, bp.id))) rawSet(SKEY, bp.id, d.settings);
+        if (d.plan && !rawGet(PKEY, bp.id, null)) rawSet(PKEY, bp.id, d.plan);
+      });
+      saveProfiles(); await idbPending;
+      toast('Backup restored'); setTimeout(() => location.reload(), 800);
+      return;
+    }
     const runs = allRuns(), ids = new Set(runs.map(r => r.id));
     const newRuns = data.runs.filter(r => r && r.id && !ids.has(r.id));
     const ws = customWorkouts(), wids = new Set(ws.map(w => w.id));
@@ -2820,9 +3412,9 @@ $('#inDown').onclick = () => nudgeIncline(-1);
 $('#stopBelt').onclick = stopBelt;
 
 $('#wlist').addEventListener('click', e => {
-  if (e.target.closest('#newWo')){ openBuilder(null); return; }
+  if (e.target.closest('#newWo')){ openStepBuilder(null); return; }
   const p = e.target.closest('[data-pick]'), ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
-  if (ed){ openBuilder(getWorkout(ed.dataset.edit)); return; }
+  if (ed){ const w = getWorkout(ed.dataset.edit); w.kind === 'goal' ? openBuilder(w) : openStepBuilder(w); return; }
   if (del){
     const w = getWorkout(del.dataset.del);
     if (!w || !confirm(`Delete “${w.name}”?`)) return;
@@ -2901,6 +3493,7 @@ window.addEventListener('popstate', () => closeGlance(true));
 $('#live').addEventListener('click', openGlance);
 $('#live').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGlance(); } });
 $('#glMain').addEventListener('click', () => closeGlance(false));
+$('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun(); });
 $('#glTl').addEventListener('click', e => {
   e.stopPropagation(); // tapping the timeline shows step details instead of closing
   const h = e.target.closest('[data-step]');
@@ -3004,6 +3597,15 @@ applyTheme();
 renderAll();
 restoreDevices();
 maybeWeeklySummary();
+renderBackupStatus();
+initBadgeSeen();
+setTimeout(() => { if ($('#sumDlg').open) $('#sumDlg').addEventListener('close', () => setTimeout(checkNewBadges, 400), { once: true }); else checkNewBadges(); }, 1500);
+if (backupDue()) setTimeout(() => toast('Backup reminder: it’s been a while. Open History to back up your runs.'), 2600);
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-bk]'); if (!b) return;
+  if (b.dataset.bk === 'now') backup();
+  else { try { localStorage.setItem(BKSNOOZE, String(Date.now() + 7 * DAY)); } catch(err){} renderHistory(); toast('I’ll remind you in a week'); }
+});
 })();
 </script>
 </body>
