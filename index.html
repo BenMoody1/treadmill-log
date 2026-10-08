@@ -199,12 +199,14 @@ td.best{color:var(--infield);font-weight:600}
 
 /* glance view */
 .glance{position:fixed;inset:0;z-index:25;background:var(--track);color:var(--track-ink);display:flex;flex-direction:column;gap:1vh;-webkit-user-select:none;user-select:none;overflow:hidden;
-  padding:calc(.6rem + env(safe-area-inset-top,0px)) calc(1rem + env(safe-area-inset-right,0px)) calc(.6rem + env(safe-area-inset-bottom,0px)) calc(1rem + env(safe-area-inset-left,0px))}
+  padding:calc(1rem + env(safe-area-inset-top,0px)) calc(1rem + env(safe-area-inset-right,0px)) calc(.6rem + env(safe-area-inset-bottom,0px)) calc(1rem + env(safe-area-inset-left,0px))}
 .gl-top{display:flex;justify-content:space-between;align-items:center;gap:1rem}
 .gl-state{font-size:1rem;font-weight:600;opacity:.85}
 .gl-close{min-height:40px;padding:0 1rem;font-size:.95rem;border-color:var(--track-ink);color:var(--track-ink);border-radius:10px}
 .gl-body{flex:1;display:flex;flex-direction:column;gap:1.2vh;min-height:0}
-.gl-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh;cursor:pointer;min-height:0;min-width:0;text-align:center}
+.gl-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:safe center;cursor:pointer;min-height:0;min-width:0;text-align:center;overflow:hidden;padding-top:.6rem}
+.gl-inner{display:flex;flex-direction:column;align-items:center;gap:1vh;width:100%}
+.gl-nums{display:flex;flex-direction:column;align-items:center;gap:1vh;width:100%}
 .gl-block{display:flex;flex-direction:column;align-items:center}
 .gl-n{font-family:var(--num);font-weight:600;line-height:.85;font-variant-numeric:tabular-nums;white-space:nowrap}
 #glDist{font-size:clamp(4.5rem,min(36vw,19vh),16rem)}
@@ -218,16 +220,16 @@ td.best{color:var(--infield);font-weight:600}
 .gl-stats > div{padding:.45rem .5rem .3rem;min-width:0}
 .gl-stats > div:not(:nth-child(3n+1)){border-left:2px solid rgba(251,246,238,.38)}
 .gl-stats > div:nth-child(n+4){border-top:1px solid rgba(251,246,238,.3)}
-.gl-stats .v{font-family:var(--num);font-weight:600;font-size:clamp(1.6rem,7vw,2.6rem);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.gl-stats .v{font-family:var(--num);font-weight:600;font-size:clamp(1.3rem,min(7vw,4.6vh),2.6rem);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
 .gl-stats .l{font-size:.8rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gl-ctrl{display:grid;gap:.5rem;margin-top:.6rem}
 .gl-cg{display:grid;grid-template-columns:1fr 1.1fr 1fr;align-items:center;gap:.5rem}
 .gl-cread{display:flex;flex-direction:column;align-items:center;line-height:1.05;min-width:0}
-.gl-cread .v{font-family:var(--num);font-weight:600;font-size:2rem;font-variant-numeric:tabular-nums}
+.gl-cread .v{font-family:var(--num);font-weight:600;font-size:clamp(1.4rem,4.2vh,2rem);font-variant-numeric:tabular-nums}
 .gl-cread .l{font-size:.78rem;opacity:.85;white-space:nowrap}
-.gl-cbtn{min-height:62px;padding:0;font-size:2.2rem;font-weight:500;line-height:1;border-radius:14px;background:var(--track-ink);color:#8F2A20;border-color:var(--track-ink);touch-action:manipulation;transition:transform .08s}
+.gl-cbtn{min-height:clamp(44px,7.5vh,62px);padding:0;font-size:2.2rem;font-weight:500;line-height:1;border-radius:14px;background:var(--track-ink);color:#8F2A20;border-color:var(--track-ink);touch-action:manipulation;transition:transform .08s}
 .gl-cbtn:active{transform:scale(.94)}
-.gl-stop{min-height:54px;font-size:1.05rem;background:#161B18;color:#FBF6EE;border-color:#161B18;touch-action:manipulation}
+.gl-stop{min-height:clamp(42px,6.5vh,54px);font-size:1.05rem;background:#161B18;color:#FBF6EE;border-color:#161B18;touch-action:manipulation}
 .gl-hint{font-size:.8rem;opacity:.7;margin:0;text-align:center}
 @media (orientation:landscape){
   .gl-body{flex-direction:row;gap:1.2rem}
@@ -289,7 +291,9 @@ header.bar{display:flex;justify-content:space-between;align-items:center;gap:.5r
 .chipbtn[data-state="busy"] .dot{background:var(--warn)}
 #profBtn{padding-left:.3rem;max-width:45%}
 #profName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pav{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--ink);color:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex:none}
+.pav{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--ink);color:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex:none;overflow:hidden}
+.pav img{width:100%;height:100%;object-fit:cover;display:block}
+.pav.has-photo{background:var(--rule)}
 
 /* run tab actions */
 .actions{display:grid;gap:.3rem;margin:.9rem 0 .2rem}
@@ -349,7 +353,9 @@ ul.runs button.runrow{grid-template-columns:minmax(0,1fr) 76px auto;gap:.7rem}
 
 /* profiles */
 .plist{list-style:none;padding:0;margin:.4rem 0 1rem}
-.prow{display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--rule)}
+.prow{display:flex;flex-wrap:wrap;align-items:center;column-gap:.8rem;border-bottom:1px solid var(--rule);padding-top:.3rem}
+.prow > .pav{width:2.6rem;height:2.6rem;font-size:1.1rem}
+.pacts{display:flex;flex-wrap:wrap;column-gap:1rem;width:100%;padding:0 0 .3rem 3.4rem}
 .pswitch{flex:1;text-align:left;border:none;border-radius:0;padding:.5rem 0;display:flex;flex-direction:column;align-items:flex-start;min-height:58px;font-weight:400}
 .pname{font-weight:600}
 .prow.cur .pname{color:var(--infield)}
@@ -382,8 +388,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:.5rem;margin:1.2rem 0 0;padding:0 .2rem}
 .pod{display:flex;flex-direction:column;align-items:center;min-width:0}
 .pod-who{display:flex;flex-direction:column;align-items:center;gap:.15rem;margin-bottom:.5rem;min-width:0;max-width:100%}
-.pod .pav{width:2.8rem;height:2.8rem;font-size:1.2rem}
-.pod.p1 .pav{width:3.5rem;height:3.5rem;font-size:1.5rem;box-shadow:0 0 0 3px var(--paper),0 0 0 6px #D4A72C}
+.pod .pav{width:3.4rem;height:3.4rem;font-size:1.35rem}
+.pod.p1 .pav{width:4.3rem;height:4.3rem;font-size:1.7rem;box-shadow:0 0 0 3px var(--paper),0 0 0 6px #D4A72C}
 .pod-name{font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:.2rem}
 .pod.me .pod-name{color:var(--infield)}
 .pod-dist{font-family:var(--num);font-weight:600;font-size:1.25rem;line-height:1;white-space:nowrap}
@@ -401,7 +407,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 @media (prefers-reduced-motion:reduce){.pod-block{animation:none}}
 /* glance view: live workout timeline */
 .gl-tl{align-self:stretch;margin-top:1.2vh;cursor:default;-webkit-tap-highlight-color:transparent}
-.gl-tl svg{display:block;width:100%;height:auto;max-height:15vh}
+.gl-tl svg{display:block;width:100%;height:auto;max-height:20vh}
 .gl-tlinfo{font-size:.95rem;font-weight:600;line-height:1.3;margin-top:.35rem;min-height:2.6em;text-align:center}
 .gtw{fill:var(--track-ink)}
 .gtr{fill:var(--track-ink);fill-opacity:.55}
@@ -422,6 +428,12 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   .gl-tl svg{max-height:22vh}
 }
 .splitbadge.long{font-size:clamp(1.5rem,7.5vw,2.4rem)}
+.gl-topbtns{display:flex;gap:.5rem;align-items:center}
+.gl-mute{width:48px;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.gl-mute[aria-pressed="true"]{background:var(--track-ink);color:var(--track)}
+.gl-mute[aria-pressed="true"] .snd-on,.gl-mute:not([aria-pressed="true"]) .snd-off{display:none}
+.geta{fill:var(--track-ink);font-family:var(--num);font-weight:600;font-size:11px}
+.wdur{font-size:.85rem;font-weight:600;color:var(--infield)}
 </style>
 </head>
 <body>
@@ -450,7 +462,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
     <div class="grid small">
       <div class="cell"><div class="v" id="avgpace">–:––</div><div class="l" id="avgpaceL">Avg /km</div></div>
       <div class="cell"><div class="v" id="hr">–</div><div class="l" id="hrL">bpm</div></div>
-      <div class="cell"><div class="v" id="climb">0</div><div class="l">Climb m</div></div>
+      <div class="cell"><div class="v" id="steps">–</div><div class="l" id="stepsL">Steps</div></div>
       <div class="cell"><div class="v" id="kcal">–</div><div class="l" id="kcalL">kcal</div></div>
     </div>
   </section>
@@ -485,7 +497,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <div class="msg" id="msg" hidden></div>
   <div class="wocard">
     <div class="wobar">
-      <div class="wotext" id="woText"><span class="muted wolab">Workout</span><strong id="woName">Free run</strong><span class="muted wosum" id="woSum"></span></div>
+      <div class="wotext" id="woText"><span class="muted wolab" id="woLab">Workout</span><strong id="woName">Free run</strong><span class="muted wosum" id="woSum"></span></div>
       <button class="sm" id="woChange">Change</button>
     </div>
     <div class="tl" id="woTimeline"></div>
@@ -554,6 +566,9 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <label class="field"><span class="flabel">Your weight (kg)</span>
     <input type="number" inputmode="decimal" id="setWeight" min="30" max="250" step="0.1" placeholder="e.g. 75">
     <span class="fhint">Used to estimate calories from your speed and incline. Leave blank to use the treadmill’s own figure.</span></label>
+  <label class="field"><span class="flabel">Your height</span>
+    <input type="text" inputmode="decimal" id="setHeight" placeholder="e.g. 178 cm or 5'10&quot;">
+    <span class="fhint">Used to estimate your steps from stride length. Enter centimetres, or feet and inches like 5'10".</span></label>
   <label class="field"><span class="flabel">Maximum heart rate (bpm)</span>
     <input type="number" inputmode="numeric" id="setMaxHr" min="120" max="230" placeholder="e.g. 185">
     <span class="fhint">Used for heart rate zones. If you don’t know yours, 220 minus your age is a rough guide.</span></label>
@@ -564,11 +579,21 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <h3>Audio</h3>
   <label class="check"><input type="checkbox" id="setAnnounce"><span id="announceLabel">Announce each kilometre split</span></label>
   <label class="check"><input type="checkbox" id="setCues"><span>Speak workout steps and count down the last 3 seconds</span></label>
+  <label class="field"><span class="flabel">Voice</span>
+    <select id="setVoice"></select>
+    <span class="fhint" id="voiceHint"></span></label>
   <button class="sm" id="testAudio">Test audio</button>
 
   <h3>Celebrations</h3>
   <label class="check"><input type="checkbox" id="setConfetti"><span id="confettiLabel">Confetti explosion on each kilometre</span></label>
-  <button class="sm" id="testConfetti">Test confetti</button>
+  <label class="field"><span class="flabel">Confetti style</span>
+    <select id="setConfettiTheme">
+      <option value="classic">Classic</option><option value="sausages">Sausages</option><option value="fruit">Fruit salad</option>
+      <option value="maltipoo">Maltipoo</option><option value="guinea">Guinea pigs</option><option value="surprise">Surprise me</option>
+    </select>
+    <span class="fhint">Each style has its own soundtrack. Surprise me picks a different one each time.</span></label>
+  <div class="row"><button class="sm" id="testConfetti">Test confetti</button><button class="sm" id="testSuper">Test finish celebration</button></div>
+  <label class="check"><input type="checkbox" id="setConfettiSound"><span>Play a sound with confetti</span></label>
   <label class="check"><input type="checkbox" id="setSummary"><span>Show a summary of last week when a new week starts</span></label>
 
   <h3>Treadmill control</h3>
@@ -586,6 +611,14 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <p class="fhint" id="appStatus">Install this page as an app for a home-screen icon and a full-screen view.</p>
   <button class="sm" id="installBtn" hidden>Install app</button>
 
+  <h3>Export to Garmin Connect</h3>
+  <div class="field"><span class="flabel">After each run</span>
+    <div class="seg" id="exportSeg"><button data-x="off">Off</button><button data-x="file">Save file</button><button data-x="share">Share</button></div>
+    <span class="fhint">Save file puts the run in your Downloads as a TCX file automatically. Share opens Android’s share menu so you can send it to another app; if Android won’t share that file type, it’s saved instead.</span>
+  </div>
+  <p class="fhint">To add the run to Garmin Connect, upload the file on Garmin Connect’s Import Data page. If Garmin Connect is linked to Health Connect on your phone, Garmin can pass your data on from there.</p>
+  <div class="row"><button class="sm" id="garminImport">Open Garmin Connect import</button></div>
+
   <h3>Devices and data</h3>
   <div class="row"><button class="sm" id="showSetup">Show setup checklist</button><button class="sm" id="forget">Forget saved devices</button><button class="sm danger" id="wipe">Delete all runs</button></div>
 </section>
@@ -600,21 +633,25 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 </nav>
 
 <div class="glance" id="glance" hidden>
-  <div class="gl-top"><span class="gl-state" id="glState"></span><button class="gl-close" id="glClose">Close</button></div>
+  <div class="gl-top"><span class="gl-state" id="glState"></span>
+    <div class="gl-topbtns">
+      <button class="gl-close gl-mute" id="glMute" aria-label="Mute audio" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="snd-on" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="snd-off" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      <button class="gl-close" id="glClose">Close</button>
+    </div></div>
   <div class="gl-body">
-    <div class="gl-main" id="glMain">
+    <div class="gl-main" id="glMain"><div class="gl-inner" id="glInner"><div class="gl-nums" id="glNums">
       <div class="gl-block"><span class="gl-n" id="glDist">0.00</span><span class="gl-l" id="glDistU">km</span></div>
       <div class="gl-block"><span class="gl-n" id="glPace">–:––</span><span class="gl-l" id="glPaceU">pace /km</span></div>
-      <div class="gl-step" id="glStep"></div>
+      <div class="gl-step" id="glStep"></div></div>
       <div class="gl-tl" id="glTl" hidden><div id="glTlSvg"></div><div class="gl-tlinfo" id="glTlInfo"></div></div>
-    </div>
+    </div></div>
     <div class="gl-side">
       <div class="gl-stats">
         <div><div class="v" id="glSpeed">0.0</div><div class="l" id="glSpeedL">km/h</div></div>
         <div><div class="v" id="glTime">0:00</div><div class="l">Time</div></div>
         <div><div class="v" id="glIncline">0.0</div><div class="l">Incline %</div></div>
         <div><div class="v" id="glHr">–</div><div class="l" id="glHrL">bpm</div></div>
-        <div><div class="v" id="glClimb">0</div><div class="l">Climb m</div></div>
+        <div><div class="v" id="glSteps">–</div><div class="l" id="glStepsL">Steps</div></div>
         <div><div class="v" id="glKcal">–</div><div class="l">kcal</div></div>
       </div>
       <div class="gl-ctrl" id="glCtrl" hidden>
@@ -662,6 +699,8 @@ const PRESETS = [
   { id: 'p-400', name: '6 × 400 m', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 6, work: { by: 'dist', value: 400, speed: 13, incline: 1 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 } },
   { id: 'p-1k', name: '5 × 1 km threshold', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 5, work: { by: 'dist', value: 1000, speed: 12, incline: 1 }, rest: { by: 'time', value: 120, speed: 7, incline: 1 }, cool: { min: 5, speed: 6.5, incline: 1 } },
   { id: 'p-hill', name: '8 × 1 min hills', kind: 'int', warm: { min: 8, speed: 8, incline: 1 }, reps: 8, work: { by: 'time', value: 60, speed: 10, incline: 6 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 } },
+  { id: 'p-10min', name: '10-minute express', kind: 'int', warm: { min: 2, speed: 8, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 12, incline: 1 }, rest: { by: 'time', value: 30, speed: 7, incline: 1 }, cool: { min: 1, speed: 6, incline: 1 } },
+  { id: 'p-20min', name: '20-minute progression run', kind: 'int', warm: { min: 4, speed: 8, incline: 1 }, reps: 4, work: { by: 'time', value: 180, speed: 10, incline: 1 }, rest: { by: 'time', value: 0, speed: 6, incline: 1 }, cool: { min: 4, speed: 6.5, incline: 1 }, workLabel: 'Block', ladder: { speed: [10, 10.5, 11, 11.5] } },
   { id: 'p-hillpyr', name: 'Hill pyramid', kind: 'int', warm: { min: 8, speed: 8, incline: 1 }, reps: 9, work: { by: 'time', value: 120, speed: 8, incline: 2 }, rest: { by: 'time', value: 60, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 }, workLabel: 'Climb', ladder: { incline: [2, 4, 6, 8, 10, 8, 6, 4, 2] } },
   { id: 'p-pyr', name: 'Pyramid intervals 1-2-3-2-1', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 12, incline: 1 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 }, ladder: { value: [60, 120, 180, 120, 60] } },
   { id: 'p-12330', name: '12-3-30 incline walk', kind: 'int', warm: { min: 0, speed: 4.8, incline: 1 }, reps: 1, work: { by: 'time', value: 1800, speed: 4.8, incline: 12 }, rest: { by: 'time', value: 0, speed: 4.8, incline: 1 }, cool: { min: 0, speed: 4.8, incline: 1 }, workLabel: 'Incline walk' },
@@ -674,14 +713,17 @@ const PRESETS = [
 const profiles = (() => { try { return JSON.parse(localStorage.getItem(PROFKEY)); } catch(e){ return null; } })() || { list: [{ id: 'default', name: 'Me' }], current: 'default' };
 if (!profiles.list.some(x => x.id === profiles.current)) profiles.current = profiles.list[0].id;
 const scoped = k => (profiles.current === 'default' || k === DEVKEY || k === PROFKEY) ? k : `${k}@${profiles.current}`;
-function saveProfiles(){ try { localStorage.setItem(PROFKEY, JSON.stringify(profiles)); } catch(e){} }
+function saveProfiles(){ try { localStorage.setItem(PROFKEY, JSON.stringify(profiles)); return true; } catch(e){ return false; } }
+const avatarInner = p => p.photo ? `<img src="${p.photo}" alt="">` : esc((p.name.trim()[0] || '?').toUpperCase());
 const curProfile = () => profiles.list.find(x => x.id === profiles.current) || profiles.list[0];
 const store = {
   get(k, d){ try { const v = localStorage.getItem(scoped(k)); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem(scoped(k), JSON.stringify(v)); return true; } catch(e){ return false; } },
   del(k){ try { localStorage.removeItem(scoped(k)); } catch(e){} }
 };
-const settings = Object.assign({ units: 'km', weight: null, maxHr: null, weeklyGoal: 20000, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
+const settings = Object.assign({ confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
+// older versions defaulted the goal to 20 km without it ever being set; treat that as not set
+if (!settings.goalSet && settings.weeklyGoal === 20000) settings.weeklyGoal = 0;
 const saveSettings = () => store.set(SKEY, settings);
 let selected = store.get(SELKEY, null);
 const devices = store.get(DEVKEY, {});
@@ -771,24 +813,107 @@ function audio(){
 }
 document.addEventListener('pointerdown', () => audio(), { passive: true });
 function beep(freq = 880, dur = .15){
+  if (settings.muted) return;
   const a = actx; if (!a) return;
   const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
   o.type = 'sine'; o.frequency.value = freq;
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
 }
+const MALE_HINT = /\bmale\b|\bman\b|gbb|gbd|rjs|iol|iom|tpd|daniel|arthur|george|guy|ryan|oliver|thomas|fred|aaron|rishi|brian|james/i;
+const FEMALE_HINT = /female|woman|gba|gbc|gbg|iob|iog|tpf|tpc|sonia|libby|hazel|susan|kate|serena|samantha|karen|moira|tessa|fiona|martha|catherine|emma|amy/i;
+const englishVoices = () => ('speechSynthesis' in window ? speechSynthesis.getVoices() : []).filter(v => /^en/i.test(v.lang));
+function pickVoice(){
+  const vs = englishVoices(), pref = settings.voice || 'auto';
+  const gb = list => list.find(v => v.lang === 'en-GB' || v.lang === 'en_GB') || list[0] || null;
+  if (!['auto', 'male', 'female'].includes(pref)){ const v = vs.find(x => x.voiceURI === pref); if (v) return { v, pitch: 1, found: true }; }
+  if (pref === 'male'){
+    const m = vs.filter(v => MALE_HINT.test(`${v.name} ${v.voiceURI}`) && !/female/i.test(v.name));
+    return m.length ? { v: gb(m), pitch: 1, found: true } : { v: gb(vs), pitch: .72, found: false }; // no male voice installed: lower the pitch
+  }
+  if (pref === 'female'){
+    const f = vs.filter(v => FEMALE_HINT.test(`${v.name} ${v.voiceURI}`));
+    return f.length ? { v: gb(f), pitch: 1, found: true } : { v: gb(vs), pitch: 1.08, found: false };
+  }
+  return { v: gb(vs), pitch: 1, found: true };
+}
 function say(text){
-  if (!('speechSynthesis' in window)) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-GB';
-  const v = speechSynthesis.getVoices().find(v => v.lang === 'en-GB');
-  if (v) u.voice = v;
+  if (settings.muted || !('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text), pv = pickVoice();
+  u.lang = pv.v ? pv.v.lang : 'en-GB';
+  if (pv.v) u.voice = pv.v;
+  u.pitch = pv.pitch;
   speechSynthesis.speak(u);
 }
+function populateVoices(){
+  const sel = $('#setVoice'); if (!sel) return;
+  const vs = englishVoices();
+  sel.innerHTML = '<option value="auto">Default</option><option value="female">Female</option><option value="male">Male</option>'
+    + (vs.length ? `<optgroup label="Voices on this phone">${vs.map(v => `<option value="${esc(v.voiceURI)}">${esc(v.name)} (${esc(v.lang)})</option>`).join('')}</optgroup>` : '');
+  sel.value = [...sel.options].some(o => o.value === settings.voice) ? settings.voice : 'auto';
+  const pv = pickVoice();
+  $('#voiceHint').textContent = (settings.voice === 'male' || settings.voice === 'female') && !pv.found
+    ? `No ${settings.voice} voice was found on this phone, so the default voice is ${settings.voice === 'male' ? 'lowered' : 'raised'} in pitch. You can add voices in Android’s text-to-speech settings.`
+    : 'Pick Female or Male, or choose a specific voice installed on your phone.';
+}
+if ('speechSynthesis' in window) speechSynthesis.addEventListener('voiceschanged', populateVoices);
 
 /* ---------- confetti ---------- */
 const CONFETTI_COLOURS = ['#B5372A', '#2D6A45', '#62B07F', '#E0B060', '#F28C38', '#FBF6EE', '#3A6EA5'];
 let confettiParts = [], confettiRaf = null;
+const SPR = 128;
+function sprite(draw){ const c = document.createElement('canvas'); c.width = c.height = SPR; const x = c.getContext('2d'); x.translate(SPR / 2, SPR / 2); x.scale(SPR / 64, SPR / 64); draw(x); return c; }
+function capsule(x, X, Y, w, h){ const r = h / 2; x.beginPath(); x.moveTo(X + r, Y); x.lineTo(X + w - r, Y); x.arc(X + w - r, Y + r, r, -Math.PI / 2, Math.PI / 2); x.lineTo(X + r, Y + h); x.arc(X + r, Y + r, r, Math.PI / 2, Math.PI * 1.5); x.closePath(); }
+function drawSausage(x, col, dark){
+  x.rotate(-.35);
+  x.fillStyle = dark; x.beginPath(); x.arc(-28, 0, 3.2, 0, 7); x.fill(); x.beginPath(); x.arc(28, 0, 3.2, 0, 7); x.fill();
+  capsule(x, -26, -9, 52, 18); x.fillStyle = col; x.fill(); x.strokeStyle = dark; x.lineWidth = 2; x.stroke();
+  x.lineCap = 'round'; x.strokeStyle = 'rgba(255,255,255,.45)'; x.lineWidth = 3; x.beginPath(); x.moveTo(-16, -4); x.quadraticCurveTo(0, -7.5, 16, -4); x.stroke();
+  x.strokeStyle = dark; x.lineWidth = 2.2; for (const gx of [-11, 0, 11]){ x.beginPath(); x.moveTo(gx - 3, -6); x.lineTo(gx + 3, 6); x.stroke(); }
+}
+function drawMaltipoo(x, fur, ear){
+  x.fillStyle = fur;
+  for (let i = 0; i < 14; i++){ const a = i / 14 * Math.PI * 2; x.beginPath(); x.arc(Math.cos(a) * 17, Math.sin(a) * 15 - 2, 8, 0, 7); x.fill(); }
+  x.beginPath(); x.ellipse(0, -1, 19, 17, 0, 0, 7); x.fill();
+  x.fillStyle = ear;
+  for (const sd of [-1, 1]) for (let k = 0; k < 4; k++){ x.beginPath(); x.arc(sd * (22 + (k % 2) * 2), -5 + k * 6, 6.5, 0, 7); x.fill(); }
+  x.fillStyle = '#FFF6EA'; x.beginPath(); x.ellipse(0, 9, 10, 8, 0, 0, 7); x.fill();
+  x.fillStyle = '#1E1A17'; for (const sd of [-1, 1]){ x.beginPath(); x.arc(sd * 8, -3, 3.4, 0, 7); x.fill(); }
+  x.fillStyle = '#fff'; for (const sd of [-1, 1]){ x.beginPath(); x.arc(sd * 8 + 1.1, -4.2, 1.1, 0, 7); x.fill(); }
+  x.fillStyle = '#F07C8A'; x.beginPath(); x.ellipse(0, 13.5, 3, 3.6, 0, 0, 7); x.fill();
+  x.fillStyle = '#1E1A17'; x.beginPath(); x.ellipse(0, 5, 3.6, 2.8, 0, 0, 7); x.fill();
+  x.strokeStyle = '#1E1A17'; x.lineWidth = 1.4; x.lineCap = 'round';
+  x.beginPath(); x.moveTo(0, 7.5); x.quadraticCurveTo(-3, 11.5, -6, 10); x.moveTo(0, 7.5); x.quadraticCurveTo(3, 11.5, 6, 10); x.stroke();
+}
+function drawGuinea(x, base, patch, patch2){
+  x.fillStyle = base; x.beginPath(); x.ellipse(-2, 4, 25, 17, 0, 0, 7); x.fill();
+  x.save(); x.beginPath(); x.ellipse(-2, 4, 25, 17, 0, 0, 7); x.clip();
+  x.fillStyle = patch; x.beginPath(); x.ellipse(-17, 1, 14, 20, .2, 0, 7); x.fill();
+  if (patch2){ x.fillStyle = patch2; x.beginPath(); x.ellipse(11, -2, 8, 12, -.2, 0, 7); x.fill(); }
+  x.restore();
+  x.fillStyle = '#D9A38A'; x.beginPath(); x.ellipse(10, -11, 4.5, 3.5, -.5, 0, 7); x.fill();
+  x.fillStyle = '#E8B6A5'; for (const fx of [-14, -2, 10]){ x.beginPath(); x.ellipse(fx, 20.5, 3.6, 2.2, 0, 0, 7); x.fill(); }
+  x.fillStyle = '#1E1A17'; x.beginPath(); x.arc(15, -3, 2.7, 0, 7); x.fill();
+  x.fillStyle = '#fff'; x.beginPath(); x.arc(15.8, -3.9, .9, 0, 7); x.fill();
+  x.fillStyle = '#E58A97'; x.beginPath(); x.arc(22.5, 3, 2.1, 0, 7); x.fill();
+  x.strokeStyle = 'rgba(30,26,23,.55)'; x.lineWidth = .8;
+  x.beginPath(); x.moveTo(22, 4); x.lineTo(31, 1); x.moveTo(22, 5); x.lineTo(31, 7); x.stroke();
+}
+const CONFETTI_THEMES = {
+  classic: null,
+  sausages: () => [['#C8794E', '#8A4426'], ['#E3B07A', '#A8703F'], ['#B33A26', '#7A2116']].map(([c, d]) => sprite(x => drawSausage(x, c, d))),
+  fruit: () => ['🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', '🍍', '🥝'].map(e => sprite(x => { x.font = '50px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(e, 0, 3); })),
+  maltipoo: () => [['#F4E6CF', '#E3C79E'], ['#E9B98A', '#CF955E'], ['#FBF8F2', '#EADFCD']].map(([f, e]) => sprite(x => drawMaltipoo(x, f, e))),
+  guinea: () => [['#FBF6EE', '#D98B3A', '#2B2420'], ['#A86A3C', '#FBF6EE', null], ['#EFD9B4', '#C68A4F', null]].map(([b, q, r]) => sprite(x => drawGuinea(x, b, q, r)))
+};
+const spriteCache = {};
+const themeSprites = k => spriteCache[k] || (spriteCache[k] = CONFETTI_THEMES[k]());
+function pickTheme(){
+  const t = settings.confettiTheme || 'classic';
+  if (t === 'surprise'){ const ks = Object.keys(CONFETTI_THEMES); return ks[(Math.random() * ks.length) | 0]; }
+  return t in CONFETTI_THEMES ? t : 'classic';
+}
+
 function confetti(n){
   const c = $('#confetti'), dpr = window.devicePixelRatio || 1;
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
@@ -796,11 +921,18 @@ function confetti(n){
   let ox = innerWidth / 2, oy = innerHeight * 0.4;
   const hero = (glanceOpen() ? $('#glDist') : $('#dist')).getBoundingClientRect();
   if ((glanceOpen() || !$('#tab-run').hidden) && hero.width && hero.bottom > 0 && hero.top < innerHeight){ ox = hero.left + hero.width / 2; oy = hero.top + hero.height / 2; }
-  for (let i = 0; i < 170; i++){
-    const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 10;
-    confettiParts.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 7,
-      w: 5 + Math.random() * 6, h: 8 + Math.random() * 9, r: Math.random() * 6.28, vr: (Math.random() - .5) * .35,
-      wob: Math.random() * 6.28, c: CONFETTI_COLOURS[i % CONFETTI_COLOURS.length], life: 0, max: 120 + Math.random() * 70 });
+  const theme = pickTheme();
+  if (theme === 'classic'){
+    for (let i = 0; i < 170; i++){
+      const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 10;
+      confettiParts.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 7,
+        w: 5 + Math.random() * 6, h: 8 + Math.random() * 9, r: Math.random() * 6.28, vr: (Math.random() - .5) * .35,
+        wob: Math.random() * 6.28, c: CONFETTI_COLOURS[i % CONFETTI_COLOURS.length], life: 0, max: 120 + Math.random() * 70 });
+    }
+    popSound(.55, 1300); crackle(.9, .07, .1);
+  } else {
+    launch(ox, oy, 46, 0, Math.PI * 2, 3, 12, .9, themeSprites(theme), 6);
+    themeSound(theme, false);
   }
   if (n){
     const b = $('#splitBadge');
@@ -824,8 +956,9 @@ function confettiFrame(){
     p.vx *= 0.985; p.vy = p.vy * 0.985 + 0.3;
     p.x += p.vx + Math.sin(p.wob) * 0.7; p.y += p.vy; p.r += p.vr;
     x.globalAlpha = Math.min(1, (p.max - p.life) / 30);
-    x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.scale(1, Math.cos(p.wob));
-    x.fillStyle = p.c; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    x.save(); x.translate(p.x, p.y);
+    if (p.img){ x.rotate(Math.sin(p.r) * .6); const sc = .9 + .1 * Math.cos(p.wob); x.drawImage(p.img, -p.s / 2, -p.s / 2 * sc, p.s, p.s * sc); }
+    else { x.rotate(p.r); x.scale(1, Math.cos(p.wob)); x.fillStyle = p.c; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
     x.restore();
   }
   x.globalAlpha = 1;
@@ -833,26 +966,64 @@ function confettiFrame(){
   else { confettiRaf = null; x.clearRect(0, 0, innerWidth, innerHeight); }
 }
 
-function launch(ox, oy, count, aMin, aMax, sMin, sMax, life = 1){
+function launch(ox, oy, count, aMin, aMax, sMin, sMax, life = 1, spr = null, lift = 0){
   for (let i = 0; i < count; i++){
     const a = aMin + Math.random() * (aMax - aMin), sp = sMin + Math.random() * (sMax - sMin);
-    confettiParts.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, w: 5 + Math.random() * 7, h: 8 + Math.random() * 10,
+    confettiParts.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - lift, w: 5 + Math.random() * 7, h: 8 + Math.random() * 10,
+      img: spr ? spr[(Math.random() * spr.length) | 0] : null, s: 28 + Math.random() * 18,
       r: Math.random() * 6.28, vr: (Math.random() - .5) * .4, wob: Math.random() * 6.28,
       c: CONFETTI_COLOURS[(Math.random() * CONFETTI_COLOURS.length) | 0], life: 0, max: (150 + Math.random() * 90) * life });
   }
   if (!confettiRaf) confettiRaf = requestAnimationFrame(confettiFrame);
 }
+// confetti sound effects, made with Web Audio (no sound files needed)
+let noiseBuf = null;
+const sfxOK = () => !settings.muted && settings.confettiSound && audio();
+function noiseBuffer(a){
+  if (!noiseBuf){ noiseBuf = a.createBuffer(1, Math.floor(a.sampleRate * .5), a.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  return noiseBuf;
+}
+function popSound(gain = .6, freq = 1200, delay = 0, pan = 0){ // a party-popper "pop" with a little rising whistle
+  if (!sfxOK()) return;
+  const a = actx, t = a.currentTime + delay, out = a.createStereoPanner ? a.createStereoPanner() : a.createGain();
+  if (out.pan) out.pan.value = pan;
+  out.connect(a.destination);
+  const src = a.createBufferSource(); src.buffer = noiseBuffer(a);
+  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = .9;
+  const g = a.createGain(); g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(.001, t + .14);
+  src.connect(bp).connect(g).connect(out); src.start(t); src.stop(t + .16);
+  const o = a.createOscillator(), og = a.createGain(); o.type = 'triangle';
+  o.frequency.setValueAtTime(520, t + .02); o.frequency.exponentialRampToValueAtTime(1700, t + .26);
+  og.gain.setValueAtTime(.0001, t); og.gain.exponentialRampToValueAtTime(gain * .22, t + .05); og.gain.exponentialRampToValueAtTime(.0001, t + .3);
+  o.connect(og).connect(out); o.start(t); o.stop(t + .32);
+}
+function crackle(dur = 1, gain = .1, delay = 0){ // confetti pattering down
+  if (!sfxOK()) return;
+  const a = actx, buf = noiseBuffer(a), n = Math.round(dur * 34);
+  for (let i = 0; i < n; i++){
+    const t = a.currentTime + delay + Math.random() * dur;
+    const src = a.createBufferSource(); src.buffer = buf;
+    const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2500 + Math.random() * 3000;
+    const g = a.createGain(); g.gain.setValueAtTime(gain * (.4 + Math.random() * .6), t); g.gain.exponentialRampToValueAtTime(.001, t + .02);
+    src.connect(hp).connect(g).connect(a.destination); src.start(t, Math.random() * .4); src.stop(t + .03);
+  }
+}
+
 // end-of-workout celebration: a big central burst, three volleys from cannons in the bottom corners, then a shower from the top
 function superConfetti(){
   const c = $('#confetti'), dpr = window.devicePixelRatio || 1;
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
   const W = innerWidth, H = innerHeight, up = -Math.PI / 2;
-  launch(W / 2, H * .42, 260, 0, Math.PI * 2, 4, 15);
+  const theme = pickTheme(), spr = theme === 'classic' ? null : themeSprites(theme), k = spr ? .3 : 1;
+  launch(W / 2, H * .42, Math.round(260 * k), 0, Math.PI * 2, 4, 15, 1, spr);
+  if (spr) themeSound(theme, true); else { popSound(.8, 900); crackle(1.2, .1, .15); }
   [250, 700, 1150].forEach(t => setTimeout(() => {
-    launch(0, H, 120, up + .25, up + .75, 14, 24, 1.3);
-    launch(W, H, 120, up - .75, up - .25, 14, 24, 1.3);
+    if (!spr){ popSound(.7, 750, 0, -.8); popSound(.7, 800, .03, .8); }
+    launch(0, H, Math.round(120 * k), up + .25, up + .75, 14, 24, 1.3, spr);
+    launch(W, H, Math.round(120 * k), up - .75, up - .25, 14, 24, 1.3, spr);
   }, t));
-  setTimeout(() => { for (let i = 0; i < 160; i++) launch(Math.random() * W, -10, 1, Math.PI * .4, Math.PI * .6, 1, 4, 1.6); }, 1500);
+  if (!spr) setTimeout(() => crackle(2, .09), 1450);
+  setTimeout(() => { for (let i = 0; i < Math.round(160 * k); i++) launch(Math.random() * W, -10, 1, Math.PI * .4, Math.PI * .6, 1, 4, 1.6, spr); }, 1500);
   const b = $('#splitBadge');
   b.hidden = true; void b.offsetWidth;
   b.textContent = 'Workout complete';
@@ -861,10 +1032,92 @@ function superConfetti(){
   b.hidden = false;
   clearTimeout(confetti.t); confetti.t = setTimeout(() => b.hidden = true, 1950);
   if (navigator.vibrate) navigator.vibrate([60, 60, 60, 60, 160]);
-  if (settings.cues) [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, i === 3 ? .5 : .16), i * 140));
+  if (settings.cues && !spr) [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, i === 3 ? .5 : .16), i * 140));
+}
+
+/* ---------- themed soundtracks, synthesised with Web Audio ---------- */
+const midiHz = n => 440 * Math.pow(2, (n - 69) / 12);
+function note(freq, t, dur, type = 'sine', gain = .15, filt = 0){
+  const a = actx, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  let node = o;
+  if (filt){ const f = a.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = filt; o.connect(f); node = f; }
+  node.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .03);
+}
+const mallet = (n, t, gain = .16) => { note(midiHz(n), t, .45, 'sine', gain); note(midiHz(n) * 4, t, .1, 'sine', gain * .3); };
+const glock = (n, t, gain = .1) => { note(midiHz(n), t, .7, 'sine', gain); note(midiHz(n) * 2.76, t, .25, 'sine', gain * .35); };
+const pizz = (n, t, gain = .14) => note(midiHz(n), t, .22, 'triangle', gain);
+const tune = (seq, t0, step, fn) => seq.forEach((n, i) => { if (n) fn(n, t0 + i * step); });
+function sizzle(t, dur, gain = .1){ // frying pan
+  const a = actx, src = a.createBufferSource(); src.buffer = noiseBuffer(a); src.loop = true;
+  const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2200;
+  const pk = a.createBiquadFilter(); pk.type = 'peaking'; pk.frequency.value = 5000; pk.gain.value = 6;
+  const g = a.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .08); g.gain.setValueAtTime(gain, t + dur - .25); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  src.connect(hp).connect(pk).connect(g).connect(a.destination); src.start(t); src.stop(t + dur + .05);
+  crackle(dur, gain * 1.2, t - a.currentTime);
+}
+function bark(t, pt = 1, gain = .3){ // little "yap"
+  const a = actx, o = a.createOscillator(), f = a.createBiquadFilter(), g = a.createGain();
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(620 * pt, t); o.frequency.exponentialRampToValueAtTime(380 * pt, t + .1);
+  f.type = 'bandpass'; f.frequency.value = 1400 * pt; f.Q.value = 1.6;
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + .13);
+  o.connect(f).connect(g).connect(a.destination); o.start(t); o.stop(t + .15);
+  const n = a.createBufferSource(); n.buffer = noiseBuffer(a);
+  const nf = a.createBiquadFilter(); nf.type = 'bandpass'; nf.frequency.value = 2200 * pt;
+  const ng = a.createGain(); ng.gain.setValueAtTime(gain * .5, t); ng.gain.exponentialRampToValueAtTime(.0001, t + .05);
+  n.connect(nf).connect(ng).connect(a.destination); n.start(t); n.stop(t + .06);
+}
+function squeak(t, gain = .12){ // squeaky toy
+  const a = actx, o = a.createOscillator(), g = a.createGain(); o.type = 'sine';
+  o.frequency.setValueAtTime(1700, t); o.frequency.exponentialRampToValueAtTime(2900, t + .09); o.frequency.exponentialRampToValueAtTime(2100, t + .18);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .2);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + .22);
+}
+function wheek(t, pt = 1, gain = .11){ // guinea pig "wheek"
+  const a = actx, o = a.createOscillator(), g = a.createGain(), l = a.createOscillator(), lg = a.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(1300 * pt, t); o.frequency.exponentialRampToValueAtTime(2700 * pt, t + .22); o.frequency.exponentialRampToValueAtTime(2400 * pt, t + .3);
+  l.frequency.value = 28; lg.gain.value = 70 * pt; l.connect(lg).connect(o.frequency);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .04); g.gain.setValueAtTime(gain, t + .22); g.gain.exponentialRampToValueAtTime(.0001, t + .32);
+  o.connect(g).connect(a.destination); o.start(t); l.start(t); o.stop(t + .34); l.stop(t + .34);
+}
+function themeSound(theme, big){
+  if (!sfxOK()) return;
+  const t = actx.currentTime + .03;
+  if (theme === 'sausages'){ // sizzle plus an oom-pah polka
+    sizzle(t, big ? 3 : 1.1, big ? .1 : .08);
+    tune(big ? [48, 0, 55, 0, 48, 0, 55, 0, 53, 0, 55, 0, 48] : [48, 0, 55, 0, 48], t, .16, (n, tt) => note(midiHz(n), tt, .14, 'sawtooth', .09, 600));
+    tune(big ? [72, 76, 79, 76, 74, 77, 81, 77, 79, 76, 72, 0, 84] : [72, 76, 79, 0, 84], t, .16, (n, tt) => note(midiHz(n), tt, .15, 'square', .045, 2400));
+  } else if (theme === 'fruit'){ // tropical marimba
+    tune(big ? [72, 76, 79, 84, 79, 76, 77, 81, 84, 88, 84, 81, 79, 0, 84] : [72, 76, 79, 84, 88], t, big ? .13 : .1, (n, tt) => mallet(n, tt));
+    tune(big ? [48, 0, 0, 55, 0, 0, 53, 0, 0, 55, 0, 0, 48] : [48, 0, 0, 55], t, .13, (n, tt) => mallet(n, tt, .12));
+  } else if (theme === 'maltipoo'){ // yaps, squeaky toy, glockenspiel
+    bark(t); bark(t + .2, 1.12);
+    if (big){ bark(t + .55, 1.05); bark(t + .72, 1.2); squeak(t + 1.0); squeak(t + 1.25); tune([79, 83, 86, 91, 0, 86, 91, 95], t + 1.4, .14, (n, tt) => glock(n, tt)); }
+    else squeak(t + .45);
+  } else if (theme === 'guinea'){ // wheeks and a pizzicato tune
+    wheek(t); wheek(t + .36, 1.08);
+    if (big){ wheek(t + .72, 1.15); wheek(t + .95, 1.22); wheek(t + 1.18, 1.3); tune([76, 79, 83, 88, 0, 83, 88, 91], t + 1.5, .13, (n, tt) => pizz(n, tt)); }
+  }
 }
 
 /* ---------- maths ---------- */
+// height in cm from "178", "178 cm", "1.78", "5'10", "5' 10\"" or "5ft 10in"
+function parseHeight(str){
+  const t = String(str || '').trim().toLowerCase();
+  if (!t) return null;
+  const fi = t.match(/^(\d)\s*(?:'|’|ft|feet)\s*(\d{1,2}(?:\.\d+)?)?\s*(?:"|”|in|inches)?$/);
+  let cm = fi ? (+fi[1] * 12 + (+fi[2] || 0)) * 2.54 : parseFloat(t);
+  if (!fi && cm > 0 && cm < 3) cm *= 100; // metres
+  return cm >= 100 && cm <= 230 ? Math.round(cm) : null;
+}
+// step length grows with speed: about 41.5% of height when walking, lengthening as you run faster
+function stepLength(kmh){
+  const k = kmh < 6.5 ? .415 : Math.min(1, .415 + .05 * (kmh - 6.5));
+  return settings.height / 100 * k;
+}
+const cadenceAt = kmh => settings.height && kmh > MOVING ? Math.round(kmh / 3.6 / stepLength(kmh) * 60) : 0;
+
 function zoneOf(hr){
   if (!settings.maxHr || !hr) return 0;
   const p = hr / settings.maxHr;
@@ -914,7 +1167,7 @@ function parseTreadmill(dv){
 
 /* ---------- run recording ---------- */
 function startRun(){
-  run = { start: Date.now(), moving: 0, dist: 0, climb: 0, maxSpeed: 0, incSum: 0, kcal: 0, hasKcal: false, kcalEst: 0,
+  run = { start: Date.now(), moving: 0, dist: 0, climb: 0, maxSpeed: 0, incSum: 0, kcal: 0, hasKcal: false, kcalEst: 0, steps: 0,
           hrSum: 0, hrT: 0, hrMax: 0, zones: [0, 0, 0, 0, 0], splitsKm: [], splitsMi: [], samples: [], track: [[0, 0]],
           lastSample: -5, demo: isDemo, workoutName: null, workoutKind: null };
   lastDist = null; lastKcal = null; tmDist = false;
@@ -950,6 +1203,7 @@ function onData(r, now = performance.now()){
       if (settings.weight) run.kcalEst += kcalPerMin(live.speed, live.incline, settings.weight) * dt / 60;
     }
     run.dist += d;
+    if (settings.height && d > 0) run.steps += d / stepLength(Math.max(live.speed, 3));
     if (d > 0) run.track.push([run.moving, run.dist]);
     if (live.incline > 0) run.climb += d * live.incline / 100;
     run.maxSpeed = Math.max(run.maxSpeed, live.speed);
@@ -996,6 +1250,8 @@ function toRecord(r){
     avgHr: r.hrT ? Math.round(r.hrSum / r.hrT) : null, maxHr: r.hrMax || null,
     zones: r.hrT && r.zones.some(z => z > 0) ? r.zones.map(Math.round) : null,
     splitsKm: r.splitsKm.map(Math.round), splitsMi: r.splitsMi.map(Math.round),
+    steps: settings.height ? Math.round(r.steps) : null,
+    cadence: settings.height && r.moving > 30 ? Math.round(r.steps / (r.moving / 60)) : null,
     samples: r.samples, best: bestEfforts(r.track),
     workout: r.workoutName, tags: r.workoutKind === 'int' ? ['Intervals'] : [], note: ''
   };
@@ -1009,7 +1265,7 @@ function finishRun(){
   else {
     const rec = toRecord(run), runs = store.get(KEY, []);
     runs.unshift(rec);
-    if (store.set(KEY, runs)){ toast('Run saved'); savedId = rec.id; planCheck(rec); }
+    if (store.set(KEY, runs)){ toast('Run saved'); savedId = rec.id; exportAfterRun(rec); planCheck(rec); }
     else toast('Couldn’t save: browser storage is full or blocked. Back up and delete old runs.');
   }
   store.del(DRAFT);
@@ -1047,6 +1303,8 @@ function summary(w){
   if (L.incline){
     const lo = Math.min(...L.incline), hi = Math.max(...L.incline), back = L.incline[L.incline.length - 1] === L.incline[0];
     p.push(`${w.reps} × ${amtText(w.work)} at ${speedText(w.work.speed)}, incline ${lo}% up to ${hi}%${back ? ' and back down' : ''}`);
+  } else if (L.speed){
+    p.push(`${w.reps} × ${amtText(w.work)} building from ${speedText(Math.min(...L.speed))} to ${speedText(Math.max(...L.speed))}${inc}`);
   } else if (L.value){
     p.push(`intervals of ${L.value.map(v => w.work.by === 'time' ? +(v / 60).toFixed(1) : v).join('-')} ${w.work.by === 'time' ? 'min' : 'm'} at ${speedText(w.work.speed)}${inc}`);
   } else p.push(w.reps === 1 && !(w.rest.value > 0) ? `${amtText(w.work)} at ${speedText(w.work.speed)}${inc}` : `${w.reps} × ${amtText(w.work)} at ${speedText(w.work.speed)}${inc}`);
@@ -1395,7 +1653,8 @@ function renderLive(){
   $('#hr').textContent = live.hr || '–';
   const z = zoneOf(live.hr);
   $('#hrL').textContent = z ? `bpm, Z${z}` : 'bpm';
-  $('#climb').textContent = r ? Math.round(r.climb) : 0;
+  $('#steps').textContent = settings.height ? (r ? Math.round(r.steps).toLocaleString('en-GB') : 0) : '–';
+  $('#stepsL').textContent = !settings.height ? 'Steps: add height' : cadenceAt(live.speed) ? `Steps, ${cadenceAt(live.speed)}/min` : 'Steps';
   $('#kcal').textContent = !r ? '–' : settings.weight ? Math.round(r.kcalEst) : r.hasKcal ? r.kcal : '–';
   $('#kcalL').textContent = 'kcal';
   const connected = !!ch || isDemo;
@@ -1422,6 +1681,7 @@ function renderRunWorkout(){
   $('#woName').textContent = w ? w.name : 'Free run';
   $('#woSum').textContent = w ? summary(w) : 'No targets. Just run.';
   $('#woTimeline').innerHTML = w ? workoutTimeline(w, workoutProgress(w)) : '';
+  $('#woLab').textContent = !w ? 'Workout' : (wo && run && wo.def.id === w.id) ? (wo.done ? 'Workout complete' : `Workout, ${fmtTime(remainingSeconds(w))} to finish`) : `Workout, takes ${durLabel(w).toLowerCase()}`;
   $('#stepPanel').hidden = !(w && w.kind === 'int');
   $('#pacer').hidden = !(w && w.kind === 'goal');
   if (!w) return;
@@ -1499,14 +1759,14 @@ function renderWorkouts(){
   const ap = activePlan();
   $('#selCard').hidden = !!(ap && String(selected).startsWith('plan:') && nextPlanIndex(ap) === +String(selected).slice(5));
   $('#selCard').innerHTML = `<span class="muted">Selected for your next run</span><strong>${sw ? esc(sw.name) : 'Free run'}</strong>
-    <span class="wsum">${sw ? esc(summary(sw)) : 'No targets. Just run.'}</span>
+    <span class="wsum">${sw ? esc(summary(sw)) : 'No targets. Just run.'}</span>${sw ? `<span class="wdur">Takes ${durLabel(sw).toLowerCase()}</span>` : ''}
     ${sw ? `<div class="tl">${workoutTimeline(sw, null)}</div>` : ''}
     <p class="fhint" style="margin:.5rem 0 0">Start the belt and the steps change automatically, with spoken cues.</p>`;
   const item = (w, isCustom) => {
     const id = w ? w.id : '', sel = (selected || '') === id;
     return `<li class="witem${sel ? ' sel' : ''}"><button class="wpick" data-pick="${esc(id)}">
       <span class="wname">${w ? esc(w.name) : 'Free run'}</span>
-      <span class="wsum">${w ? esc(summary(w)) : 'No targets. Just run.'}</span>
+      <span class="wsum">${w ? esc(summary(w)) : 'No targets. Just run.'}</span>${w ? `<span class="wdur">Takes ${durLabel(w).toLowerCase()}</span>` : ''}
       ${sel ? '<span class="wsel">Selected</span>' : ''}</button>
       ${isCustom ? `<div class="wedit"><button class="link" data-edit="${esc(id)}">Edit</button><button class="link" data-del="${esc(id)}">Delete</button></div>` : ''}</li>`;
   };
@@ -1717,7 +1977,7 @@ function renderPlan(){
   for (let w = 1; w <= def.weeks; w++){
     weeks += `<p class="pweek">Week ${w}</p>` + list.map((s, i) => s.week !== w ? '' : `<div class="psess${plan.done[i] ? ' done' : ''}${i === next ? ' next' : ''}">
       <span class="tick" aria-hidden="true">${plan.done[i] ? '✓' : ''}</span>
-      <span>${esc(s.title)}<br><span class="wsum">${esc(summary(s.def))}</span></span>
+      <span>${esc(s.title)}<br><span class="wsum">${esc(summary(s.def))}</span> <span class="wdur">${durLabel(s.def)}</span></span>
       <button class="link" data-ptoggle="${i}" aria-label="${plan.done[i] ? 'Undo' : 'Mark done'}: ${esc(s.title)}">${plan.done[i] ? 'Undo' : 'Mark done'}</button></div>`).join('');
   }
   box.innerHTML = `<div class="plan">
@@ -1725,7 +1985,7 @@ function renderPlan(){
     <h3>${esc(def.name)}</h3>
     <div class="prog"><i style="width:${(doneN / list.length * 100).toFixed(1)}%"></i></div>
     <p class="muted" style="margin:0">${doneN} of ${list.length} sessions done${next != null ? `, now in week ${list[next].week} of ${def.weeks}` : ''}</p>
-    ${next != null ? `<div class="plan-next"><span class="muted">Next session</span><strong>Week ${list[next].week}, run ${list[next].n}: ${esc(list[next].title)}</strong><span class="wsum">${esc(summary(list[next].def))}</span><div class="tl">${workoutTimeline(list[next].def, null)}</div></div>
+    ${next != null ? `<div class="plan-next"><span class="muted">Next session</span><strong>Week ${list[next].week}, run ${list[next].n}: ${esc(list[next].title)}</strong><span class="wsum">${esc(summary(list[next].def))}</span><span class="wdur">Takes ${durLabel(list[next].def).toLowerCase()}</span><div class="tl">${workoutTimeline(list[next].def, null)}</div></div>
       <button class="sm${isSel ? '' : ' primary'}" data-pnext="${next}">${isSel ? 'Selected for your next run' : 'Use for my next run'}</button>` : '<p><strong>Plan complete.</strong> Brilliant work.</p>'}
     <details class="sect" data-sect="psess"${sectOpen('psess', false) ? ' open' : ''}><summary>All sessions<span class="count">${list.length}</span></summary><div class="sbody">${weeks}</div></details>
     <div class="row" style="margin-top:.8rem"><button class="sm" id="planPaces">Update paces</button><button class="sm danger" id="planEnd">End plan</button></div>
@@ -1799,6 +2059,7 @@ function openSummary(ws){
       <div><div class="v">${fmtTime(time)}</div><div class="l">Time running</div></div>
       <div><div class="v">${fP(avgPaceKm(time, dist))}</div><div class="l">Avg pace /${dU()}</div></div>
       <div><div class="v">${fD(longest.dist)} ${dU()}</div><div class="l">Longest run</div></div>
+      ${inWeek.some(r => r.steps) ? `<div><div class="v">${inWeek.reduce((a, r) => a + (r.steps || 0), 0).toLocaleString('en-GB')}</div><div class="l">Steps (est.)</div></div>` : ''}
       <div><div class="v">${diff >= 0 ? '+' : '−'}${fD(Math.abs(diff), 1)}</div><div class="l">${dU()} vs week before</div></div>
     </div>
     ${goal ? `<p>${dist >= goal ? `<strong>Weekly goal met</strong> (${fD(goal, 1)} ${dU()}).` : `${fD(goal - dist, 1)} ${dU()} short of your ${fD(goal, 1)} ${dU()} goal.`}</p>` : ''}
@@ -1831,7 +2092,7 @@ function renderGlance(){
   $('#glPaceU').textContent = `pace /${dU()}`;
   copy('#glState', '#state');
   copy('#glSpeed', '#speed'); copy('#glSpeedL', '#speedL'); copy('#glTime', '#time'); copy('#glIncline', '#incline');
-  copy('#glHr', '#hr'); copy('#glHrL', '#hrL'); copy('#glClimb', '#climb'); copy('#glKcal', '#kcal');
+  copy('#glHr', '#hr'); copy('#glHrL', '#hrL'); copy('#glSteps', '#steps'); copy('#glStepsL', '#stepsL'); copy('#glKcal', '#kcal');
   const ctl = controlAvailable();
   $('#glance').classList.toggle('has-ctrl', ctl);
   $('#glCtrl').hidden = !ctl;
@@ -1850,8 +2111,9 @@ function renderGlance(){
   const gw = getWorkout(selected) || (wo && wo.def);
   $('#glance').classList.toggle('has-tl', !!gw);
   $('#glTl').hidden = !gw;
-  if (gw){ const t = glanceTimeline(gw); $('#glTlSvg').innerHTML = t.svg; $('#glTlInfo').textContent = t.info; }
+  if (gw){ const t = glanceTimeline(gw); $('#glTlSvg').innerHTML = t.svg; $('#glTlInfo').textContent = t.info; if (glTlMax) $('#glTlSvg svg').style.maxHeight = glTlMax + 'px'; }
   const mw = $('#glMain').clientWidth * .98;
+  fitGlance();
   fitText($('#glDist'), mw); fitText($('#glPace'), mw);
 }
 // shrink a big number if it would overflow its area (e.g. 10.00+ km)
@@ -1860,14 +2122,60 @@ function fitText(el, maxW){
   const w = el.getBoundingClientRect().width;
   if (maxW > 0 && w > maxW) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * maxW / w) + 'px';
 }
-window.addEventListener('resize', () => renderGlance());
+window.addEventListener('resize', () => { $('#glNums').style.zoom = ''; glTlMax = 0; renderGlance(); });
+function fitGlance(){
+  // 1) shrink the big numbers (down to half size); 2) if it still doesn't fit, cap the timeline's height
+  const main = $('#glMain'), inner = $('#glInner'), nums = $('#glNums'), avail = main.clientHeight - 8;
+  if (avail <= 0) return;
+  let z = parseFloat(nums.style.zoom || '1');
+  const h = inner.getBoundingClientRect().height, nh = nums.getBoundingClientRect().height, room = avail - (h - nh);
+  if (h > avail){ z = Math.max(.5, room > 20 ? z * room / nh * .97 : .5); nums.style.zoom = z; }
+  else if (z < 1 && nh < room * .85){ z = Math.min(1, z * Math.min(1.15, room * .94 / nh)); nums.style.zoom = z; }
+  const svg = $('#glTlSvg svg'), h2 = inner.getBoundingClientRect().height;
+  if (svg && h2 > avail){ glTlMax = Math.max(36, svg.getBoundingClientRect().height - (h2 - avail) - 4); svg.style.maxHeight = glTlMax + 'px'; }
+}
 function applyTheme(){
   if (settings.theme === 'light' || settings.theme === 'dark') document.documentElement.setAttribute('data-theme', settings.theme);
   else document.documentElement.removeAttribute('data-theme');
 }
 
+/* ---------- workout duration and time left ---------- */
+function durText(sec){ const m = Math.max(1, Math.round(sec / 60)); return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60 ? `${m % 60} min` : ''}`.trim(); }
+function durLabel(def){
+  const steps = workoutSteps(def), total = steps.reduce((a, x) => a + stepSeconds(x), 0);
+  return `${def.kind === 'goal' || steps.some(x => x.by === 'dist') ? 'About ' : ''}${durText(total)}`;
+}
+function remainingSeconds(def){
+  const isLive = !!(wo && run && wo.def.id === def.id);
+  if (def.kind === 'goal'){
+    if (!isLive) return def.time;
+    if (wo.done) return 0;
+    const sp = live.speed > MOVING ? live.speed : def.dist / def.time * 3.6;
+    return Math.max(0, def.dist - run.dist) / (sp / 3.6);
+  }
+  const steps = isLive ? wo.steps : workoutSteps(def);
+  if (!isLive) return steps.reduce((a, x) => a + stepSeconds(x), 0);
+  if (wo.done) return 0;
+  let rem = 0;
+  steps.forEach((st, i) => {
+    if (i < wo.idx) return;
+    if (i > wo.idx){ rem += stepSeconds(st); return; }
+    const el = st.by === 'time' ? run.moving - wo.t0 : run.dist - wo.d0;
+    if (st.by === 'time') rem += Math.max(0, st.value - el);
+    else rem += Math.max(0, st.value - el) / ((live.speed > MOVING ? live.speed : st.speed) / 3.6);
+  });
+  return rem;
+}
+function finishText(def){
+  const isLive = !!(wo && run && wo.def.id === def.id);
+  if (isLive && wo.done) return 'Finished';
+  const rem = remainingSeconds(def);
+  if (!isLive) return `Takes ${durLabel(def).toLowerCase()}`;
+  return `${fmtTime(rem)} to go, ends about ${fmtClock(Date.now() + rem * 1000)}`;
+}
+
 /* ---------- glance view: live workout timeline with finish flag ---------- */
-let glSel = null, glSelTs = 0;
+let glSel = null, glSelTs = 0, glTlMax = 0;
 function glanceTimeline(def){
   const live_ = !!(wo && run && wo.def.id === def.id);
   const steps = live_ ? wo.steps : workoutSteps(def);
@@ -1875,7 +2183,7 @@ function glanceTimeline(def){
   const prog = live_ ? (workoutProgress(def) || 0) : 0;
   const cur = live_ ? (wo.done ? steps.length : (def.kind === 'goal' ? 0 : wo.idx)) : -1;
   if (glSel != null && performance.now() - glSelTs > 5000) glSel = null;
-  const W = 320, FW = 22, BW = W - FW, top = 12, sh = 40, gap = 5, ih = 16, H = top + sh + gap + ih + 3;
+  const W = 320, FW = 22, BW = W - FW, LBL = 14, top = 12 + LBL, sh = 40, gap = 5, ih = 16, H = top + sh + gap + ih + 3;
   const maxS = Math.max(8, ...steps.map(x => x.speed)), maxI = Math.max(4, ...steps.map(x => x.incline || 0));
   let x = 0, svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Workout progress, ${Math.round(prog * 100)} percent">`;
   steps.forEach((st, i) => {
@@ -1891,8 +2199,9 @@ function glanceTimeline(def){
   svg += `<line x1="0" x2="${BW}" y1="${top + sh + gap + ih + .5}" y2="${top + sh + gap + ih + .5}" class="gbase"/>`;
   // finish flag: pole plus a 3 x 3 checkered flag
   const fx = BW + 5;
-  svg += `<line x1="${fx}" x2="${fx}" y1="1" y2="${H}" class="gpole"/>`;
-  for (let r = 0; r < 3; r++) for (let c2 = 0; c2 < 3; c2++) svg += `<rect x="${fx + .8 + c2 * 4.5}" y="${1 + r * 4.5}" width="4.5" height="4.5" class="ck${(r + c2) % 2}"/>`;
+  svg += `<line x1="${fx}" x2="${fx}" y1="${LBL + 1}" y2="${H}" class="gpole"/>`;
+  for (let r = 0; r < 3; r++) for (let c2 = 0; c2 < 3; c2++) svg += `<rect x="${fx + .8 + c2 * 4.5}" y="${LBL + 1 + r * 4.5}" width="4.5" height="4.5" class="ck${(r + c2) % 2}"/>`;
+  svg += `<text x="${W}" y="10" text-anchor="end" class="geta">${esc(finishText(def))}</text>`;
   // where you are now
   const mx = Math.min(BW, Math.max(1.5, prog * BW));
   svg += `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${top - 2}" y2="${H}" class="gmark"/><circle cx="${mx.toFixed(1)}" cy="${top - 5}" r="5" class="gdot"/>`;
@@ -1952,16 +2261,22 @@ function sparkline(r){
 function renderProfile(){
   const p = curProfile();
   $('#profName').textContent = p.name;
-  $('#profAv').textContent = (p.name.trim()[0] || '?').toUpperCase();
+  $('#profAv').innerHTML = avatarInner(p);
+  $('#profAv').classList.toggle('has-photo', !!p.photo);
 }
 function openProfiles(){
   const d = $('#profDlg');
   d.innerHTML = `<h3>Profiles</h3>
     <p class="fhint">Each profile has its own runs, workouts, training plan and settings. Connected devices are shared.</p>
     <ul class="plist">${profiles.list.map(x => `<li class="prow${x.id === profiles.current ? ' cur' : ''}">
+      ${avatar(x)}
       <button class="pswitch" data-sw="${esc(x.id)}"><span class="pname">${esc(x.name)}</span><span class="wsum">${x.id === profiles.current ? 'Current profile' : 'Tap to switch'}</span></button>
-      <button class="link" data-ren="${esc(x.id)}">Rename</button>
-      ${x.id !== profiles.current && x.id !== 'default' ? `<button class="link danger-link" data-delp="${esc(x.id)}">Delete</button>` : ''}</li>`).join('')}</ul>
+      <div class="pacts">
+        <button class="link" data-photo="${esc(x.id)}">${x.photo ? 'Change photo' : 'Add photo'}</button>
+        ${x.photo ? `<button class="link" data-rmphoto="${esc(x.id)}" aria-label="Remove photo for ${esc(x.name)}">Remove</button>` : ''}
+        <button class="link" data-ren="${esc(x.id)}">Rename</button>
+        ${x.id !== profiles.current && x.id !== 'default' ? `<button class="link danger-link" data-delp="${esc(x.id)}">Delete</button>` : ''}
+      </div></li>`).join('')}</ul>
     <div class="row"><input type="text" id="newProf" placeholder="New profile name" maxlength="24"><button class="sm primary" id="addProf">Add</button></div>
     <p class="err" id="profErr"></p>
     <div class="drow"><span></span><button class="sm" id="profClose">Close</button></div>`;
@@ -1975,6 +2290,11 @@ function openProfiles(){
     const b = e.target.closest('button'); if (!b) return;
     if (b.id === 'profClose') return d.close();
     if (b.dataset.sw) return switchTo(b.dataset.sw);
+    if (b.dataset.photo) return pickPhoto(b.dataset.photo);
+    if (b.dataset.rmphoto){
+      const x = profiles.list.find(y => y.id === b.dataset.rmphoto);
+      delete x.photo; saveProfiles(); renderProfile(); openProfiles(); return;
+    }
     if (b.dataset.ren){
       const x = profiles.list.find(y => y.id === b.dataset.ren);
       const n = (prompt('Profile name', x.name) || '').trim().slice(0, 24);
@@ -2000,6 +2320,36 @@ function openProfiles(){
   if (!d.open) d.showModal();
 }
 
+// choose a picture from the gallery, crop it to a square and shrink it so it stores in a few KB
+function squarePhoto(file, size = 192){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const sq = Math.min(img.naturalWidth, img.naturalHeight), c = document.createElement('canvas');
+      c.width = c.height = size;
+      c.getContext('2d').drawImage(img, (img.naturalWidth - sq) / 2, (img.naturalHeight - sq) / 2, sq, sq, 0, 0, size, size);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', .82));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('unreadable image')); };
+    img.src = url;
+  });
+}
+function pickPhoto(id){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0]; if (!f) return;
+    const x = profiles.list.find(y => y.id === id); if (!x) return;
+    try {
+      const before = x.photo;
+      x.photo = await squarePhoto(f);
+      if (!saveProfiles()){ x.photo = before; toast('Couldn’t save the photo: phone storage is full'); return; }
+      renderProfile(); openProfiles(); toast('Photo updated');
+    } catch(e){ toast('Couldn’t read that picture. Try a different photo.'); }
+  };
+  inp.click();
+}
+
 /* ---------- first-run setup checklist ---------- */
 function renderSetup(){
   const box = $('#setup');
@@ -2008,6 +2358,7 @@ function renderSetup(){
     ['units', 'Choose kilometres or miles', !!settings.unitsSet, 'Choose'],
     ['weight', 'Add your weight, for calorie estimates', !!settings.weight, 'Add'],
     ['maxhr', 'Add your maximum heart rate, for zones', !!settings.maxHr, 'Add'],
+    ['height', 'Add your height, for step counts', !!settings.height, 'Add'],
     ['goal', 'Set a weekly distance goal', !!settings.goalSet, 'Set'],
     ['wo', 'Pick a workout or training plan', !!selected || !!activePlan(), 'Browse']
   ];
@@ -2023,7 +2374,7 @@ function renderSetup(){
 /* ---------- leaderboard (all profiles on this phone) ---------- */
 let lbWeek = 0;
 const profileRuns = id => { try { return JSON.parse(localStorage.getItem(id === 'default' ? KEY : `${KEY}@${id}`)) || []; } catch(e){ return []; } };
-const avatar = p => `<span class="pav" aria-hidden="true">${esc((p.name.trim()[0] || '?').toUpperCase())}</span>`;
+const avatar = p => `<span class="pav${p.photo ? ' has-photo' : ''}" aria-hidden="true">${avatarInner(p)}</span>`;
 function boardCard(label, entries, fmt){
   if (!entries.length) return `<div class="prcard"><div class="lab">${label}</div><div class="t">–</div><div class="wsum">No one yet</div></div>`;
   const h = entries[0];
@@ -2189,7 +2540,7 @@ function renderHistory(){
     return `<li><button class="runrow" data-id="${esc(r.id)}">
       <span class="rl"><span class="rd">${fmtDate(r.date)}</span><span class="rs">${fmtClock(r.date)}${r.workout ? ', ' + esc(r.workout) : ''}</span>${tags ? `<span class="tags">${tags}</span>` : ''}</span>
       <span class="spark" aria-hidden="true">${sparkline(r)}</span>
-      <span class="rr"><span class="rk">${fD(r.dist)} ${dU()}</span><span class="rp">${fmtTime(r.moving)}, ${fP(avgPaceKm(r.moving, r.dist))} /${dU()}</span>${r.avgHr ? `<span class="rp">${r.avgHr} bpm avg</span>` : ''}</span>
+      <span class="rr"><span class="rk">${fD(r.dist)} ${dU()}</span><span class="rp">${fmtTime(r.moving)}, ${fP(avgPaceKm(r.moving, r.dist))} /${dU()}</span>${r.steps ? `<span class="rp">${r.steps.toLocaleString('en-GB')} steps</span>` : ''}${r.avgHr ? `<span class="rp">${r.avgHr} bpm avg</span>` : ''}</span>
     </button></li>`;
   }).join('');
 }
@@ -2264,6 +2615,7 @@ function openDetail(id){
       <div><div class="v">${toDispSpeed(r.maxSpeed).toFixed(1)}</div><div class="l">Top ${sU()}</div></div>
       <div><div class="v">${r.climb} m</div><div class="l">Climb (${r.avgIncline}% avg)</div></div>
       <div><div class="v">${r.kcal != null ? r.kcal : '–'}</div><div class="l">kcal${r.kcalSource === 'estimate' ? ' (est.)' : r.kcalSource === 'treadmill' ? ' (treadmill)' : ''}</div></div>
+      ${r.steps != null ? `<div><div class="v">${r.steps.toLocaleString('en-GB')}</div><div class="l">Steps (est.)</div></div><div><div class="v">${r.cadence || '–'}</div><div class="l">Avg steps/min</div></div>` : ''}
       ${r.avgHr ? `<div><div class="v">${r.avgHr}</div><div class="l">Avg bpm</div></div><div><div class="v">${r.maxHr}</div><div class="l">Max bpm</div></div>` : ''}
     </div>
     <div class="chart">${runChart(r)}</div>
@@ -2303,6 +2655,25 @@ function openDetail(id){
 }
 
 /* ---------- exports ---------- */
+function tcxName(rec){ const dt = new Date(rec.date); return `treadmill-run-${dt.toISOString().slice(0, 10)}-${pad(dt.getHours())}${pad(dt.getMinutes())}.tcx`; }
+function exportAfterRun(rec){
+  if (settings.autoExport === 'file'){
+    download(tcxName(rec), buildTcx(rec), 'application/vnd.garmin.tcx+xml');
+    setTimeout(() => toast('Run saved to your Downloads, ready to import into Garmin Connect'), 900);
+  } else if (settings.autoExport === 'share') shareRun(rec);
+}
+async function shareRun(rec){
+  const name = tcxName(rec), text = buildTcx(rec);
+  let file = null;
+  try { file = new File([text], name, { type: 'application/vnd.garmin.tcx+xml' }); } catch(e){}
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })){
+    try { await navigator.share({ files: [file], title: 'Treadmill run' }); return; }
+    catch(e){ if (e.name === 'AbortError') return; }
+  }
+  download(name, text, 'application/vnd.garmin.tcx+xml');
+  setTimeout(() => toast('Android couldn’t share this file type, so it was saved to your Downloads instead'), 900);
+}
+
 function buildTcx(r){
   const x = s => String(s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&apos;' }[c]));
   const iso = ms => new Date(ms).toISOString();
@@ -2327,17 +2698,17 @@ function buildTcx(r){
 <Lap StartTime="${iso(r.date)}"><TotalTimeSeconds>${r.moving}</TotalTimeSeconds><DistanceMeters>${r.dist}</DistanceMeters><MaximumSpeed>${(r.maxSpeed / 3.6).toFixed(2)}</MaximumSpeed><Calories>${r.kcal || 0}</Calories>${r.avgHr ? `<AverageHeartRateBpm><Value>${r.avgHr}</Value></AverageHeartRateBpm>` : ''}${r.maxHr ? `<MaximumHeartRateBpm><Value>${r.maxHr}</Value></MaximumHeartRateBpm>` : ''}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod>
 <Track>
 ${tps}
-</Track></Lap>
+</Track>${r.steps ? `<Extensions><LX xmlns="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Steps>${Math.min(65535, r.steps)}</Steps></LX></Extensions>` : ''}</Lap>
 <Notes>${x(notes)}</Notes>
 </Activity></Activities></TrainingCenterDatabase>
 `;
 }
 function exportCsv(){
   const q = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
-  const lines = ['date,time,distance_km,moving_time,avg_pace_per_km,top_speed_kmh,climb_m,avg_incline_pct,kcal,avg_hr,max_hr,workout,tags,notes'];
+  const lines = ['date,time,distance_km,moving_time,avg_pace_per_km,top_speed_kmh,climb_m,avg_incline_pct,kcal,avg_hr,max_hr,steps,avg_steps_per_min,workout,tags,notes'];
   allRuns().forEach(r => lines.push([
     new Date(r.date).toISOString().slice(0, 10), fmtClock(r.date), (r.dist / 1000).toFixed(2), fmtTime(r.moving),
-    fmtPace(avgPaceKm(r.moving, r.dist)), r.maxSpeed, r.climb, r.avgIncline, r.kcal ?? '', r.avgHr ?? '', r.maxHr ?? '',
+    fmtPace(avgPaceKm(r.moving, r.dist)), r.maxSpeed, r.climb, r.avgIncline, r.kcal ?? '', r.avgHr ?? '', r.maxHr ?? '', r.steps ?? '', r.cadence ?? '',
     r.workout || '', (r.tags || []).join('; '), r.note || ''
   ].map(q).join(',')));
   download('treadmill-runs.csv', lines.join('\n'), 'text/csv');
@@ -2379,6 +2750,7 @@ function controlStatusText(){
 function renderSettings(){
   $$('#unitSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.u === settings.units));
   $('#setWeight').value = settings.weight || '';
+  $('#setHeight').value = settings.height ? `${settings.height} cm` : '';
   $('#setMaxHr').value = settings.maxHr || '';
   $('#goalLabel').textContent = `Weekly distance goal (${dU()})`;
   $('#setGoal').value = settings.weeklyGoal ? +(settings.weeklyGoal / unitM()).toFixed(1) : 0;
@@ -2387,6 +2759,10 @@ function renderSettings(){
   $('#setCues').checked = settings.cues;
   $('#setControl').checked = settings.control;
   $('#setConfetti').checked = settings.confetti;
+  $('#setConfettiTheme').value = settings.confettiTheme || 'classic';
+  populateVoices();
+  $('#setConfettiSound').checked = settings.confettiSound;
+  $$('#exportSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.x === settings.autoExport));
   $('#setSummary').checked = settings.weeklySummary;
   $$('#themeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.th === settings.theme));
   $('#confettiLabel').textContent = `Confetti explosion on each ${isMi() ? 'mile' : 'kilometre'}`;
@@ -2467,7 +2843,7 @@ $('#setup').addEventListener('click', e => {
   if (a === 'hide'){ settings.setupDone = true; saveSettings(); renderSetup(); return; }
   if (a === 'tm') return $('#connDlg').showModal();
   if (a === 'wo') return showTab('workouts');
-  const target = { units: 'unitSeg', weight: 'setWeight', maxhr: 'setMaxHr', goal: 'setGoal' }[a];
+  const target = { height: 'setHeight', units: 'unitSeg', weight: 'setWeight', maxhr: 'setMaxHr', goal: 'setGoal' }[a];
   showTab('settings');
   setTimeout(() => { const el = $('#' + target); el.scrollIntoView({ block: 'center' }); if (el.focus) el.focus(); }, 60);
 });
@@ -2479,11 +2855,30 @@ $('#export').onclick = exportCsv;
 
 $('#unitSeg').addEventListener('click', e => { const b = e.target.closest('button[data-u]'); if (b){ settings.units = b.dataset.u; settings.unitsSet = true; saveSettings(); renderAll(); } });
 $('#setWeight').addEventListener('change', e => { const v = parseFloat(e.target.value); settings.weight = v >= 30 && v <= 250 ? v : null; saveSettings(); renderSettings(); renderLive(); });
+$('#setHeight').addEventListener('change', e => {
+  const cm = parseHeight(e.target.value);
+  if (e.target.value.trim() && !cm) toast('Enter your height in cm (like 178) or feet and inches (like 5\'10").');
+  settings.height = cm; saveSettings(); renderSettings(); renderLive();
+});
 $('#setMaxHr').addEventListener('change', e => { const v = parseInt(e.target.value, 10); settings.maxHr = v >= 120 && v <= 230 ? v : null; saveSettings(); renderSettings(); renderLive(); });
 $('#setGoal').addEventListener('change', e => { const v = parseFloat(e.target.value); settings.weeklyGoal = v > 0 ? Math.round(v * unitM()) : 0; settings.goalSet = true; saveSettings(); renderHistory(); renderSetup(); });
 $('#setAnnounce').onchange = e => { settings.announce = e.target.checked; saveSettings(); };
 $('#setCues').onchange = e => { settings.cues = e.target.checked; saveSettings(); };
 $('#setConfetti').onchange = e => { settings.confetti = e.target.checked; saveSettings(); };
+$('#setConfettiSound').onchange = e => { settings.confettiSound = e.target.checked; saveSettings(); if (e.target.checked){ popSound(.55, 1300); crackle(.9, .07, .1); } };
+$('#exportSeg').addEventListener('click', e => { const b = e.target.closest('button[data-x]'); if (b){ settings.autoExport = b.dataset.x; saveSettings(); renderSettings(); } });
+$('#garminImport').onclick = () => window.open('https://connect.garmin.com/modern/import-data', '_blank', 'noopener');
+function renderMute(){
+  const b = $('#glMute');
+  b.setAttribute('aria-pressed', settings.muted);
+  b.setAttribute('aria-label', settings.muted ? 'Unmute audio' : 'Mute audio');
+}
+$('#glMute').addEventListener('click', e => {
+  e.stopPropagation();
+  settings.muted = !settings.muted; saveSettings(); renderMute();
+  if (settings.muted && 'speechSynthesis' in window) speechSynthesis.cancel();
+  toast(settings.muted ? 'Audio muted' : 'Audio on');
+});
 $('#setSummary').onchange = e => { settings.weeklySummary = e.target.checked; saveSettings(); };
 $('#themeSeg').addEventListener('click', e => { const b = e.target.closest('button[data-th]'); if (b){ settings.theme = b.dataset.th; saveSettings(); applyTheme(); renderSettings(); } });
 $('#lastWeekBtn').onclick = () => { const ws = weekStart(Date.now()); ws.setDate(ws.getDate() - 7); openSummary(ws); };
@@ -2492,6 +2887,8 @@ $('#lastWeekBtn').onclick = () => { const ws = weekStart(Date.now()); ws.setDate
 function openGlance(){
   if (glanceOpen()) return;
   $('#glance').hidden = false;
+  $('#glNums').style.zoom = ''; glTlMax = 0;
+  renderMute();
   try { history.pushState({ glance: true }, ''); } catch(e){}
   renderGlance();
 }
@@ -2539,7 +2936,10 @@ $('#planBox').addEventListener('click', e => {
     renderWorkouts(); renderRunWorkout(); toast('Plan ended');
   }
 });
-$('#testConfetti').onclick = () => confetti(1);
+$('#testConfetti').onclick = () => { audio(); confetti(1); };
+$('#testSuper').onclick = () => { audio(); superConfetti(); };
+$('#setConfettiTheme').onchange = e => { settings.confettiTheme = e.target.value; saveSettings(); audio(); confetti(1); };
+$('#setVoice').onchange = e => { settings.voice = e.target.value; saveSettings(); populateVoices(); say('This is your new voice. Kilometre 1, 5 minutes 30 seconds.'); };
 $('#setControl').onchange = e => { settings.control = e.target.checked; saveSettings(); renderConn(); renderLive(); };
 $('#testAudio').onclick = () => { audio(); beep(990, .25); setTimeout(() => say(`Audio check. ${isMi() ? 'Mile' : 'Kilometre'} 1. 5 minutes 30 seconds.`), 300); };
 $('#testControl').onclick = async () => {
