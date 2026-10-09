@@ -479,6 +479,30 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .gl-finish{width:100%;min-height:clamp(48px,7vh,60px);margin-top:.6rem;font-size:1.15rem;background:var(--track-ink);color:var(--track);border-color:var(--track-ink);animation:finpulse 1.6s ease-in-out infinite}
 @keyframes finpulse{50%{box-shadow:0 0 0 6px rgba(251,246,238,.35)}}
 @media (prefers-reduced-motion:reduce){.gl-finish{animation:none}}
+.celrow{display:grid;grid-template-columns:2.8rem minmax(0,1fr) auto 1.8rem;gap:.6rem;align-items:center;padding:.45rem 0;border-bottom:1px solid var(--rule)}
+.celrow .bdisc{width:2.6rem;height:2.6rem;font-size:1.3rem}
+.bdisc.plain{background:#F6E3C8}
+.celtext{display:flex;flex-direction:column;min-width:0}
+.celrow.locked .bdisc{background:var(--rule)}
+.celrow.locked .bdisc span{filter:grayscale(1);opacity:.45}
+.celplay{min-width:44px;padding:0;font-size:.95rem}
+.celchk{width:1.5rem;height:1.5rem;accent-color:var(--infield);justify-self:center}
+.cellock{text-align:center;opacity:.6}
+#celGlow{position:fixed;inset:0;pointer-events:none;z-index:29;opacity:0;background:radial-gradient(circle at 50% 40%, var(--glow, #FFD54A) 0%, transparent 65%)}
+#celGlow.on{animation:glowpulse 1.5s ease-out}
+@keyframes glowpulse{0%{opacity:0}20%{opacity:.55}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){#celGlow.on{animation:none}}
+.livebadge{position:fixed;left:50%;top:32%;transform:translate(-50%,-50%);z-index:34;width:min(86vw,21rem);cursor:pointer}
+.livebadge .lbcard{background:var(--surface);color:var(--ink);border-radius:22px;padding:1.1rem 1.2rem 1rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:.4rem;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.livebadge .bdisc{width:5.2rem;height:5.2rem;font-size:2.7rem}
+.lbkick{font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--track)}
+.livebadge strong{font-family:var(--num);font-size:1.8rem;line-height:1.1}
+.lbtap{font-size:.75rem;color:var(--muted)}
+.livebadge.show{animation:lbpop .55s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes lbpop{from{transform:translate(-50%,-50%) scale(.4);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.livebadge.show{animation:none}}
+.bdisc.poo{background:#E3C9A6}
+.lbof{font-family:var(--body);font-size:.85rem;font-weight:500;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -593,6 +617,9 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <h3>Medal table</h3>
   <p class="fhint">Every Sunday at midnight, the top three for the week win gold, silver and bronze.</p>
   <div id="lbMedals"></div>
+  <h3>Badges earned</h3>
+  <p class="fhint">Who has unlocked the most badges. Tap your own badges further down to replay their celebrations.</p>
+  <ul class="lb" id="lbBadges"></ul>
   <h3>Personal records</h3>
   <p class="fhint">Fastest efforts by anyone on this phone, found anywhere inside their runs.</p>
   <div class="prgrid" id="lbPrs"></div>
@@ -640,12 +667,11 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 
   <h3>Celebrations</h3>
   <label class="check"><input type="checkbox" id="setConfetti"><span id="confettiLabel">Confetti explosion on each kilometre</span></label>
-  <label class="field"><span class="flabel">Confetti style</span>
-    <select id="setConfettiTheme">
-      <option value="classic">Classic</option><option value="sausages">Sausages</option><option value="fruit">Fruit salad</option>
-      <option value="maltipoo">Maltipoo</option><option value="guinea">Guinea pigs</option><option value="surprise">Surprise me</option>
-    </select>
-    <span class="fhint">Each style has its own soundtrack. Surprise me picks a different one each time.</span></label>
+  <div class="field"><span class="flabel">Celebrations</span>
+    <span class="fhint">Each time the app celebrates, it picks one of your ticked celebrations at random. Earning badges and medals unlocks more. Tap ▶ to preview the ones you’ve unlocked.</span>
+    <div class="row"><button class="sm" id="celAll">Tick all</button><button class="sm" id="celNone">Untick all</button></div>
+    <div id="celList"></div>
+  </div>
   <div class="row"><button class="sm" id="testConfetti">Test confetti</button><button class="sm" id="testSuper">Test finish celebration</button></div>
   <label class="check"><input type="checkbox" id="setConfettiSound"><span>Play a sound with confetti</span></label>
   <label class="check"><input type="checkbox" id="setSummary"><span>Show a summary of last week when a new week starts</span></label>
@@ -735,6 +761,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <dialog id="sumDlg"></dialog>
 <dialog id="builder"></dialog>
 <div class="toast" id="toast" hidden></div>
+<div id="celGlow" aria-hidden="true"></div>
+<div class="livebadge" id="liveBadge" role="status" aria-live="assertive" hidden></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 <div class="splitbadge" id="splitBadge" aria-hidden="true" hidden></div>
 
@@ -1062,8 +1090,9 @@ function confetti(n){
   let ox = innerWidth / 2, oy = innerHeight * 0.4;
   const hero = (glanceOpen() ? $('#glDist') : $('#dist')).getBoundingClientRect();
   if ((glanceOpen() || !$('#tab-run').hidden) && hero.width && hero.bottom > 0 && hero.top < innerHeight){ ox = hero.left + hero.width / 2; oy = hero.top + hero.height / 2; }
-  const theme = pickTheme();
-  if (theme === 'classic'){
+  const pick = pickCeleb(), theme = pick.base ? pick.id : null;
+  if (!theme) playCeleb(pick, false, ox, oy);
+  else if (theme === 'classic'){
     for (let i = 0; i < 170; i++){
       const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 10;
       confettiParts.push({ x: ox, y: oy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 7,
@@ -1091,14 +1120,25 @@ function confettiFrame(){
   if (c.width !== Math.round(innerWidth * dpr) || c.height !== Math.round(innerHeight * dpr)){ c.width = Math.round(innerWidth * dpr); c.height = Math.round(innerHeight * dpr); }
   x.setTransform(dpr, 0, 0, dpr, 0, 0);
   x.clearRect(0, 0, innerWidth, innerHeight);
-  confettiParts = confettiParts.filter(p => p.life < p.max && p.y < innerHeight + 40);
+  confettiParts = confettiParts.filter(p => p.life < p.max && p.y < innerHeight + 60 && (p.y > -160 || p.vy > 0));
+  if (confettiParts.length > 1400) confettiParts.splice(0, confettiParts.length - 1400); // keep slower phones smooth: the oldest pieces go first
   for (const p of confettiParts){
     p.life += CTS; p.wob += 0.13 * CTS;
-    p.vx *= CDRAG; p.vy = p.vy * CDRAG + 0.3 * CTS;
-    p.x += (p.vx + Math.sin(p.wob) * 0.7) * CTS; p.y += p.vy * CTS; p.r += p.vr * CTS;
+    const dk = p.dk ?? CDRAG;
+    p.vx *= dk; p.vy = p.vy * dk + (p.g ?? .3) * CTS;
+    if (p.vt && p.vy > p.vt) p.vy = p.vt;
+    p.x += (p.vx + Math.sin(p.wob) * (p.sway ?? .7)) * CTS; p.y += p.vy * CTS; p.r += p.vr * CTS;
     x.globalAlpha = Math.min(1, (p.max - p.life) / 30);
     x.save(); x.translate(p.x, p.y);
     if (p.img){ x.rotate(Math.sin(p.r) * .6); const sc = .9 + .1 * Math.cos(p.wob); x.drawImage(p.img, -p.s / 2, -p.s / 2 * sc, p.s, p.s * sc); }
+    else if (p.balloon){ // balloon with a knot, a shine and a string
+      const r = p.dot, ry = r * 1.2;
+      x.fillStyle = p.c; x.beginPath(); x.ellipse(0, 0, r, ry, 0, 0, 7); x.fill();
+      x.beginPath(); x.moveTo(-2.2, ry - .5); x.lineTo(2.2, ry - .5); x.lineTo(0, ry + 3); x.closePath(); x.fill();
+      x.fillStyle = 'rgba(255,255,255,.45)'; x.beginPath(); x.ellipse(-r * .35, -ry * .4, r * .22, ry * .28, -.4, 0, 7); x.fill();
+      x.strokeStyle = 'rgba(0,0,0,.35)'; x.lineWidth = 1; x.beginPath(); x.moveTo(0, ry + 3); x.quadraticCurveTo(r * .5, ry * 1.8, 0, ry * 2.6); x.stroke();
+    }
+    else if (p.dot){ x.beginPath(); x.arc(0, 0, p.dot, 0, 7); x.fillStyle = p.c; x.fill(); }
     else { x.rotate(p.r); x.scale(1, Math.cos(p.wob)); x.fillStyle = p.c; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
     x.restore();
   }
@@ -1151,11 +1191,13 @@ function crackle(dur = 1, gain = .1, delay = 0){ // confetti pattering down
 }
 
 // end-of-workout celebration: a big central burst, three volleys from cannons in the bottom corners, then a shower from the top
-function superConfetti(){
+function superConfetti(forced){
   const c = $('#confetti'), dpr = window.devicePixelRatio || 1;
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
   const W = innerWidth, H = innerHeight, up = -Math.PI / 2;
-  const theme = pickTheme(), spr = theme === 'classic' ? null : themeSprites(theme), k = spr ? .3 : 1;
+  const pick = forced || pickCeleb();
+  if (!pick.base){ playCeleb(pick, true); showBadgeText('Workout complete'); if (navigator.vibrate) navigator.vibrate([60, 60, 60, 60, 160]); return; }
+  const theme = pick.id, spr = theme === 'classic' ? null : themeSprites(theme), k = spr ? .3 : 1;
   launch(W / 2, H * .42, Math.round(260 * k), 0, Math.PI * 2, 4, 15, 1, spr);
   if (spr) themeSound(theme, true); else { popSound(.8, 900); crackle(1.2, .1, .15); }
   [250, 700, 1150].forEach(t => setTimeout(() => {
@@ -1181,9 +1223,276 @@ function burstAt(ox, oy, kind){
   const c = $('#confetti'), dpr = window.devicePixelRatio || 1;
   c.width = innerWidth * dpr; c.height = innerHeight * dpr;
   if (kind === 'poo'){ launch(ox, oy, 34, 0, Math.PI * 2, 3, 11, .9, themeSprites('poo'), 6); themeSound('poo'); return; }
-  const theme = pickTheme();
+  const pick = pickCeleb();
+  if (!pick.base) return playCeleb(pick, false, ox, oy);
+  const theme = pick.id;
   if (theme === 'classic'){ launch(ox, oy, 160, 0, Math.PI * 2, 3, 13, .8, null, 7); popSound(.55, 1300); crackle(.9, .07, .1); }
   else { launch(ox, oy, 46, 0, Math.PI * 2, 3, 12, .9, themeSprites(theme), 6); themeSound(theme, false); }
+}
+
+/* ---------- celebrations: one per badge and medal, unlocked by earning it ---------- */
+const EFFECT_NAMES = { poo: 'Poo explosion', burst: 'Burst', fountain: 'Fountain', fireworks: 'Fireworks', spiral: 'Spiral', snow: 'Snowfall', balloons: 'Balloons', shooting: 'Shooting stars' };
+const SOUND_NAMES = { poo: 'plops and a sad trombone', brass: 'brass fanfare', glock: 'music box', marimba: 'marimba', pizz: 'pizzicato strings', synth: 'arcade synth', harp: 'harp', chimes: 'wind chimes' };
+const GRAND = { plain: 1, bronze: 1, poo: 1.4, silver: 1.4, gold: 2, special: 3 };
+const TIER_EXTRA = { poo: ' + encore', silver: ' + encore', gold: ' + grand finale', special: ' + legendary finale' };
+const RAINBOW = ['#E63946', '#F4A261', '#E9C46A', '#2A9D8F', '#457B9D', '#9C6ADE'];
+const GLOW = { silver: '#DDE6F0', gold: '#FFD54A', special: '#C9A8FF' };
+const BALLOON_COLS = ['#E63946', '#F4A261', '#2A9D8F', '#457B9D', '#E9C46A', '#9C6ADE', '#F28CC0'];
+const TIER_PAL = {
+  poo: ['#8B5A2B', '#5E3A17', '#B07C45', '#D9B48A'], bronze: ['#C08552', '#E7C3A2', '#8A5A3A', '#F2B880'], silver: ['#B9C1BE', '#DDE2E0', '#7F8A87', '#FFFFFF', '#5FA8D3'], gold: ['#D4A72C', '#F2D57E', '#FFF1B8', '#B5372A'], special: ['#9C6ADE', '#D9C8F0', '#F28CC0', '#5FC6E8', '#FFE066'] };
+const BASE_CELEBS = [
+  { id: 'classic', name: 'Classic confetti', icon: '🎊', desc: 'Burst, party poppers' },
+  { id: 'sausages', name: 'Sausages', icon: '🌭', desc: 'Burst, sizzle and polka' },
+  { id: 'fruit', name: 'Fruit salad', icon: '🍓', desc: 'Burst, tropical marimba' },
+  { id: 'maltipoo', name: 'Maltipoo', icon: '🐶', desc: 'Burst, yaps and a squeaky toy' },
+  { id: 'guinea', name: 'Guinea pigs', icon: '🐹', desc: 'Burst, wheeks and pizzicato' }
+].map(c => ({ ...c, base: true, tier: 'plain' }));
+// badge: [effect, sound, extra emoji, key (semitones)]
+const CELEB_MAP = {
+  first: ['fountain', 'glock', ['⭐'], 0], d5: ['burst', 'brass', ['5️⃣'], 2], d10: ['fireworks', 'brass', ['🔟'], 4], d21: ['fireworks', 'brass', ['🏅', '✨'], 5], d42: ['fireworks', 'brass', ['🏆', '🎆', '✨'], 7],
+  k5_30: ['shooting', 'synth', ['⚡'], 0], k5_25: ['shooting', 'synth', ['💨'], 3], k5_20: ['shooting', 'synth', ['🌩️', '⚡'], 6], k10_60: ['fountain', 'brass', ['🔥'], 1], k10_50: ['shooting', 'harp', ['☄️', '✨'], 5],
+  mi8: ['burst', 'pizz', ['🥕'], 2], mi7: ['shooting', 'pizz', ['💨'], 4], k1_4: ['shooting', 'synth', ['🏁'], 7],
+  t50: ['spiral', 'marimba', ['🛣️'], 0], t100: ['spiral', 'brass', ['💯'], 2], t250: ['spiral', 'harp', ['🧭', '🗺️'], 4], t500: ['balloons', 'synth', ['🚀', '🌙'], 5], t1000: ['spiral', 'harp', ['🌍', '🌎', '🌏'], 7],
+  c10: ['burst', 'marimba', ['🔁'], 0], c25: ['balloons', 'marimba', ['🎈'], 3], c50: ['balloons', 'brass', ['🎉', '🎈'], 5], c100: ['fireworks', 'harp', ['💎', '✨'], 8],
+  h1: ['spiral', 'glock', ['⏱️'], 1], th10: ['snow', 'chimes', ['⌛'], 3], th50: ['snow', 'chimes', ['🕰️'], 6],
+  climb100: ['fountain', 'pizz', ['⛰️'], 2], everest: ['snow', 'chimes', ['🏔️', '❄️'], 4], steps10k: ['fountain', 'marimba', ['👣'], 5],
+  week3: ['burst', 'glock', ['📅'], 0], streak4: ['spiral', 'synth', ['🔥'], 2], streak12: ['fireworks', 'synth', ['🛡️', '🔥'], 4], goal4: ['burst', 'brass', ['🎯'], 5],
+  early: ['balloons', 'harp', ['☀️', '🐦'], 0], night: ['snow', 'chimes', ['⭐', '🌙'], 3], wo10: ['fountain', 'brass', ['💪'], 1], plan: ['fireworks', 'brass', ['📋', '🎓'], 4],
+  gold1: ['fireworks', 'brass', ['🥇', '✨'], 7], pod5: ['spiral', 'brass', ['🎖️'], 3], gold5: ['fireworks', 'brass', ['👑', '💎'], 9],
+  losing5: ['poo', 'poo', [], 0], plans3: ['fireworks', 'brass', ['🎓', '📋', '🏆', '✨'], 10], presets: ['balloons', 'brass', ['🧩', '🌟', '🎈'], 8]
+};
+const MEDAL_CELEBS = [
+  { id: 'm:gold', name: 'Gold medal', icon: '🥇', tier: 'gold', effect: 'fireworks', sound: 'brass', extras: ['✨', '🏆'], key: 7, place: 0, unlockText: 'win a weekly gold medal' },
+  { id: 'm:silver', name: 'Silver medal', icon: '🥈', tier: 'silver', effect: 'balloons', sound: 'harp', extras: ['✨'], key: 4, place: 1, unlockText: 'win a weekly silver medal' },
+  { id: 'm:bronze', name: 'Bronze medal', icon: '🥉', tier: 'bronze', effect: 'fountain', sound: 'marimba', extras: ['✨'], key: 2, place: 2, unlockText: 'win a weekly bronze medal' }
+];
+let celebCache = null;
+function celebList(){
+  if (!celebCache) celebCache = BASE_CELEBS.concat(MEDAL_CELEBS, BADGES.map(b => {
+    const [effect, sound, extras, key] = CELEB_MAP[b.id] || ['burst', 'glock', [], 0];
+    return { id: 'b:' + b.id, badge: b.id, name: b.name, icon: b.icon, tier: b.tier, effect, sound, extras, key, unlockText: `earn the ${b.name} badge (${b.desc.charAt(0).toLowerCase() + b.desc.slice(1)})` };
+  }));
+  return celebCache;
+}
+const celebById = id => celebList().find(c => c.id === id) || BASE_CELEBS[0];
+const celebDesc = c => c.base ? c.desc : `${EFFECT_NAMES[c.effect]}, ${SOUND_NAMES[c.sound]}${TIER_EXTRA[c.tier] || ''}`;
+function unlockedCelebs(){
+  const { got } = computeBadges(profiles.current), places = new Set(myMedals(profiles.current).map(m => m.place));
+  return new Set(celebList().filter(c => c.base || (c.badge && got[c.badge]) || (c.place != null && places.has(c.place))).map(c => c.id));
+}
+function enabledCelebs(){
+  const un = unlockedCelebs(), off = new Set(settings.celebOff || []);
+  const l = celebList().filter(c => un.has(c.id) && !off.has(c.id));
+  return l.length ? l : [BASE_CELEBS[0]];
+}
+const pickCeleb = () => { const l = enabledCelebs(); return l[(Math.random() * l.length) | 0]; };
+const emojiSprite = e => sprite(x => { x.font = '50px "Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(e, 0, 3); });
+const celebSprites = c => spriteCache['c:' + c.id] || (spriteCache['c:' + c.id] = c.effect === 'poo' ? themeSprites('poo').concat([emojiSprite('💩')]) : [c.icon, ...(c.extras || [])].map(emojiSprite));
+const kick = () => { if (!confettiRaf) confettiRaf = requestAnimationFrame(confettiFrame); };
+function sizeCanvas(){ const c = $('#confetti'), dpr = window.devicePixelRatio || 1; c.width = innerWidth * dpr; c.height = innerHeight * dpr; }
+function showBadgeText(text){
+  const b = $('#splitBadge'); b.hidden = true; void b.offsetWidth;
+  b.textContent = text; b.classList.add('long'); b.style.left = '50%'; b.style.top = '42%'; b.hidden = false;
+  clearTimeout(confetti.t); confetti.t = setTimeout(() => b.hidden = true, 1950);
+}
+// one piece: every third (or every `every`) is an emoji sprite, the rest are coloured confetti
+function piece(spr, pal, i, x, y, vx, vy, o = {}){
+  const img = spr && i % (o.every || 3) === 0;
+  return Object.assign({ x, y, vx, vy, w: 5 + Math.random() * 6, h: 8 + Math.random() * 9, r: Math.random() * 6.28, vr: (Math.random() - .5) * .35, wob: Math.random() * 6.28,
+    c: pal[i % pal.length], life: 0, max: 150 + Math.random() * 80, img: img ? spr[(Math.random() * spr.length) | 0] : null, s: 30 + Math.random() * 16 }, o);
+}
+const push = q => { confettiParts.push(q); kick(); };
+const cap = (n, max) => Math.min(max, Math.round(n));
+const EFFECTS = {
+  poo(ox, oy, spr, pal, big, m = 1){ // poo explosion: a big burst, then poo fired from both bottom corners
+    const n = big ? cap(70 * m, 160) : 30;
+    for (let i = 0; i < n; i++){ const a = Math.random() * 6.283, sp = 3 + Math.random() * (big ? 13 : 9); push(piece(spr, pal, i, ox, oy, Math.cos(a) * sp, Math.sin(a) * sp - 6, { every: 2 })); }
+    if (big) [450, 1000].forEach(t => setTimeout(() => {
+      const up = -Math.PI / 2;
+      for (let i = 0; i < 24; i++){
+        const a1 = up + .25 + Math.random() * .5, a2 = up - .75 + Math.random() * .5, sp = 14 + Math.random() * 9;
+        push(piece(spr, pal, i, 0, innerHeight, Math.cos(a1) * sp, Math.sin(a1) * sp, { every: 2 }));
+        push(piece(spr, pal, i, innerWidth, innerHeight, Math.cos(a2) * sp, Math.sin(a2) * sp, { every: 2 }));
+      }
+      if (sfxOK()){ plop(actx.currentTime + .01, .3); plop(actx.currentTime + .12, .22); }
+    }, t));
+  },
+  burst(ox, oy, spr, pal, big, m = 1){
+    const n = cap((big ? 150 : 70) * m, 420), reach = (big ? 14 : 11) * (1 + (m - 1) * .2);
+    for (let i = 0; i < n; i++){ const a = Math.random() * 6.283, sp = 3 + Math.random() * reach; push(piece(spr, pal, i, ox, oy, Math.cos(a) * sp, Math.sin(a) * sp - 6)); }
+    popSound(.45, 1200);
+  },
+  fountain(ox, oy, spr, pal, big, m = 1){
+    const x0 = big ? innerWidth / 2 : ox, y0 = big ? innerHeight + 10 : oy, waves = big ? cap(7 * m, 16) : cap(2 * m, 4);
+    for (let w = 0; w < waves; w++) setTimeout(() => {
+      for (let i = 0; i < 26; i++){ const a = -Math.PI / 2 + (Math.random() - .5) * .7, sp = (big ? 17 : 9) + Math.random() * (big ? 9 : 5); push(piece(spr, pal, i, x0, y0, Math.cos(a) * sp, Math.sin(a) * sp)); }
+      whoosh(.05, 400, 1600);
+    }, w * 220);
+  },
+  fireworks(ox, oy, spr, pal, big, m = 1){
+    const shells = big ? cap(6 * m, 12) : cap(2 * m, 4);
+    for (let k = 0; k < shells; k++) setTimeout(() => {
+      const cx = big ? innerWidth * (.15 + Math.random() * .7) : ox + (Math.random() - .5) * 120, cy = big ? innerHeight * (.12 + Math.random() * .35) : oy + (Math.random() - .5) * 80;
+      const n = cap(34 * (1 + (m - 1) * .3), 60), col = pal[k % pal.length], speed = 5 * (1 + (m - 1) * .15);
+      for (let i = 0; i < n; i++){ const a = i / n * 6.283, sp = speed + Math.random() * 1.5; push(piece(null, [col], i, cx, cy, Math.cos(a) * sp, Math.sin(a) * sp, { dot: 2.2 + Math.random() * 1.6, g: .05, dk: Math.pow(.955, CTS), max: 110 + Math.random() * 40, sway: .2 })); }
+      if (spr) for (let i = 0; i < 4; i++){ const a = Math.random() * 6.283, sp = 2 + Math.random() * 3; push(piece(spr, pal, 0, cx, cy, Math.cos(a) * sp, Math.sin(a) * sp, { g: .08, max: 170 })); }
+      boom();
+    }, k * (m >= 2 ? 300 : 380));
+  },
+  spiral(ox, oy, spr, pal, big, m = 1){
+    const n = cap((big ? 150 : 70) * m, 420), x0 = big ? innerWidth / 2 : ox, y0 = big ? innerHeight * .42 : oy;
+    for (let i = 0; i < n; i++) setTimeout(() => { const a = i * .45, sp = 4 + i / n * (big ? 9 : 6) * (1 + (m - 1) * .2); push(piece(spr, pal, i, x0, y0, Math.cos(a) * sp, Math.sin(a) * sp, { g: .1 })); }, i * (big ? 14 : 12) / Math.sqrt(m));
+    sweep(big ? 2 : 1);
+  },
+  snow(ox, oy, spr, pal, big, m = 1){
+    const n = cap((big ? 110 : 50) * m, 300), p2 = pal.concat(['#FFFFFF', '#FFFFFF']);
+    for (let i = 0; i < n; i++){
+      const x = Math.random() * innerWidth, y = -20 - Math.random() * innerHeight * (big ? .9 : .4);
+      push(piece(i % 2 ? null : spr, p2, i, x, y, (Math.random() - .5) * .8, .6 + Math.random(),
+        i % 2 ? { dot: 2 + Math.random() * 2.5, g: .02, vt: 1.4 + Math.random(), sway: 1.4, max: 520 } : { g: .02, vt: 1.2 + Math.random() * .8, sway: 1.6, max: 520, every: 1 }));
+    }
+  },
+  balloons(ox, oy, spr, pal, big, m = 1){
+    const n = big ? cap(34 * m, 90) : cap(14 * m, 30);
+    for (let i = 0; i < n; i++) setTimeout(() => {
+      const x = big ? Math.random() * innerWidth : ox + (Math.random() - .5) * 160, y = big ? innerHeight + 30 : oy + 40;
+      const common = { g: -.015, dk: Math.pow(.995, CTS), sway: 1.2, max: 420 };
+      push(piece(i % 2 ? spr : null, BALLOON_COLS, i, x, y, (Math.random() - .5) * .8, -2.5 - Math.random() * 2, i % 2 && spr ? { ...common, every: 1 } : { ...common, dot: 9 + Math.random() * 5, balloon: true }));
+    }, i * (big ? 70 : 60) / Math.sqrt(m));
+  },
+  shooting(ox, oy, spr, pal, big, m = 1){
+    const n = big ? cap(12 * m, 30) : cap(4 * m, 8);
+    for (let k = 0; k < n; k++) setTimeout(() => {
+      const left = Math.random() < .5, x0 = left ? -40 : innerWidth + 40, y0 = big ? Math.random() * innerHeight * .45 : Math.max(0, oy - 120 + Math.random() * 80);
+      const vx = (left ? 1 : -1) * (14 + Math.random() * 6), vy = 3 + Math.random() * 3;
+      push(piece(spr, pal, 0, x0, y0, vx, vy, { g: .02, dk: 1, max: 200, every: 1, sway: 0, s: 42 + Math.random() * 12 }));
+      for (let t = 1; t <= 16; t++) push(piece(null, pal, t, x0 - vx * t * .5, y0 - vy * t * .5, vx, vy, { dot: Math.max(.8, 4.2 - t * .22), g: .02, dk: 1, max: 200 - t * 5, sway: 0 }));
+      whoosh(.07, 2400, 500);
+    }, k * (big ? 260 : 300) / Math.sqrt(m));
+  }
+};
+// finale extras for gold and special
+function goldRain(pal, g){
+  const n = cap(60 * g, 220), cols = pal.concat(['#FFD54A', '#FFF1B8']);
+  for (let i = 0; i < n; i++) push(piece(null, cols, i, Math.random() * innerWidth, -20 - Math.random() * innerHeight * .6, (Math.random() - .5) * .6, 2 + Math.random() * 2, { dot: 1.6 + Math.random() * 2.2, g: .04, vt: 3 + Math.random() * 1.5, sway: .9, max: 420 }));
+}
+function glow(tier){
+  const el = $('#celGlow'); if (!el) return;
+  el.style.setProperty('--glow', GLOW[tier] || '#FFD54A');
+  el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+}
+// sound palettes; each celebration plays its palette's tune in its own key
+const INSTR = {
+  brass: (n, t, last) => { note(midiHz(n), t, last ? .7 : .2, 'sawtooth', .07, 1800); note(midiHz(n - 12), t, last ? .7 : .2, 'square', .025, 900); },
+  glock: (n, t) => glock(n + 12, t, .09),
+  marimba: (n, t) => mallet(n, t, .15),
+  pizz: (n, t) => pizz(n, t, .15),
+  synth: (n, t) => note(midiHz(n + 12), t, .1, 'square', .04, 3500),
+  harp: (n, t) => { note(midiHz(n), t, .9, 'triangle', .1); note(midiHz(n + 12), t, .5, 'sine', .04); },
+  chimes: (n, t) => { note(midiHz(n + 24), t, 1.6, 'sine', .06); note(midiHz(n + 24) * 2.76, t, .6, 'sine', .02); }
+};
+const MELODY = {
+  brass: [[0, 4, 7, 12], [0, 4, 7, 12, 0, 7, 12, 16, 19, 24]],
+  glock: [[0, 4, 7, 12, 16], [0, 0, 7, 7, 9, 9, 7, 5, 5, 4, 4, 2, 2, 0]],
+  marimba: [[0, 4, 7, 12, 16], [0, 4, 7, 12, 7, 4, 5, 9, 12, 16, 12, 9, 7, 12]],
+  pizz: [[0, 7, 12, 7, 12], [0, 4, 7, 12, 16, 12, 7, 4, 0, 7, 12, 19]],
+  synth: [[0, 4, 7, 12, 16, 19, 24], [0, 4, 7, 12, 16, 19, 24, 19, 16, 12, 16, 19, 24, 28, 31]],
+  harp: [[0, 2, 4, 7, 9, 12], [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28]],
+  chimes: [[0, 7, 9, 14, 16], [0, 7, 9, 14, 16, 21, 12, 19, 24, 16, 9, 21]]
+};
+const STEP = { brass: .14, glock: .16, marimba: .12, pizz: .12, synth: .07, harp: .07, chimes: .22 };
+function celebSound(c, big, g = 1){
+  if (!sfxOK()) return;
+  if (c.sound === 'poo') return themeSound('poo');
+  const grandStart = big && g >= 2, now = actx.currentTime, t0 = now + (grandStart ? .75 : .05);
+  if (grandStart) drumroll(now + .03, .7);
+  const mel = MELODY[c.sound][big ? 1 : 0], step = STEP[c.sound], base = 60 + (c.key || 0) - (c.sound === 'chimes' ? 12 : 0);
+  const phrase = (shift, start) => mel.forEach((n, i) => INSTR[c.sound](base + shift + n, start + i * step + (c.sound === 'chimes' ? Math.random() * .08 : 0), i === mel.length - 1));
+  phrase(0, t0);
+  const end = t0 + mel.length * step;
+  if (big && g >= 1.4) chord(c, base, end + .05);
+  if (big && g >= 2) crash(end + .05);
+  if (big && g >= 3){ const t2 = end + .5; phrase(12, t2); const e2 = t2 + mel.length * step; drumroll(e2 - .45, .45); chord(c, base + 12, e2 + .05); crash(e2 + .05); }
+}
+function chord(c, base, t){ [0, 4, 7, 12].forEach(k => INSTR[c.sound](base + k, t, true)); }
+function drumroll(t, len){
+  const a = actx, hits = Math.round(len / .045);
+  for (let k = 0; k < hits; k++){
+    const tt = t + k * .045, o = a.createOscillator(), gn = a.createGain(), v = .04 + .16 * k / hits;
+    o.type = 'sine'; o.frequency.setValueAtTime(110, tt); o.frequency.exponentialRampToValueAtTime(60, tt + .08);
+    gn.gain.setValueAtTime(.0001, tt); gn.gain.exponentialRampToValueAtTime(v, tt + .005); gn.gain.exponentialRampToValueAtTime(.0001, tt + .09);
+    o.connect(gn).connect(a.destination); o.start(tt); o.stop(tt + .1);
+  }
+}
+function crash(t){
+  const a = actx, src = a.createBufferSource(); src.buffer = noiseBuffer(a); src.loop = true;
+  const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4500;
+  const gn = a.createGain(); gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(.16, t + .01); gn.gain.exponentialRampToValueAtTime(.0001, t + 1.8);
+  src.connect(hp).connect(gn).connect(a.destination); src.start(t); src.stop(t + 1.9);
+}
+function boom(){
+  if (!sfxOK()) return;
+  const a = actx, t = a.currentTime + .02, o = a.createOscillator(), g = a.createGain();
+  o.type = 'sine'; o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(40, t + .4);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.3, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .5);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + .55); crackle(.8, .05, .25);
+}
+function whoosh(gain = .06, f0 = 400, f1 = 2000){
+  if (!sfxOK()) return;
+  const a = actx, t = a.currentTime + .01, src = a.createBufferSource(); src.buffer = noiseBuffer(a);
+  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 2; bp.frequency.setValueAtTime(f0, t); bp.frequency.exponentialRampToValueAtTime(f1, t + .45);
+  const g = a.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .12); g.gain.exponentialRampToValueAtTime(.0001, t + .48);
+  src.connect(bp).connect(g).connect(a.destination); src.start(t); src.stop(t + .5);
+}
+function sweep(sec = 1){
+  if (!sfxOK()) return;
+  const a = actx, t = a.currentTime + .02, o = a.createOscillator(), g = a.createGain(); o.type = 'sine';
+  o.frequency.setValueAtTime(300, t); o.frequency.exponentialRampToValueAtTime(1500, t + sec);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + .1); g.gain.exponentialRampToValueAtTime(.0001, t + sec);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + sec + .05);
+}
+function playCeleb(c, big, ox = innerWidth / 2, oy = innerHeight * .4){
+  sizeCanvas();
+  if (c.base){
+    if (big) return superConfetti(c);
+    if (c.id === 'classic'){ launch(ox, oy, 160, 0, 6.283, 3, 13, .8, null, 7); popSound(.55, 1300); crackle(.9, .07, .1); }
+    else { launch(ox, oy, 46, 0, 6.283, 3, 12, .9, themeSprites(c.id), 6); themeSound(c.id, false); }
+    return kick();
+  }
+  const g = GRAND[c.tier] || 1, m = big ? g : 1 + (g - 1) * .35, spr = celebSprites(c), pal = TIER_PAL[c.tier] || CONFETTI_COLOURS;
+  EFFECTS[c.effect](ox, oy, spr, pal, big, m);
+  celebSound(c, big, g);
+  if (!big) return;
+  if (g >= 1.4) setTimeout(() => EFFECTS.burst(innerWidth / 2, innerHeight * .35, spr, pal, true, .45 * g), 1400);           // silver+: encore burst
+  if (g >= 2){                                                                                                              // gold+: finale
+    glow(c.tier);
+    setTimeout(() => EFFECTS[c.effect === 'fireworks' ? 'shooting' : 'fireworks'](ox, oy, spr, pal, true, g >= 3 ? 1.2 : .6), 1800);
+    setTimeout(() => goldRain(pal, g), 2500);
+  }
+  if (g >= 3){                                                                                                              // special: legendary finale
+    setTimeout(() => { EFFECTS.shooting(ox, oy, spr, RAINBOW, true, 1); glow(c.tier); }, 3300);
+    setTimeout(() => EFFECTS.fireworks(ox, oy, spr, RAINBOW, true, 1.2), 4300);
+  }
+  if (navigator.vibrate) navigator.vibrate(g >= 3 ? [100, 50, 100, 50, 100, 50, 400] : g >= 2 ? [80, 60, 80, 60, 200] : [60, 40, 120]);
+}
+function renderCelebs(){
+  const box = $('#celList'); if (!box) return;
+  const list = celebList(), un = unlockedCelebs(), off = new Set(settings.celebOff || []);
+  const row = c => { const u = un.has(c.id); return `<div class="celrow${u ? '' : ' locked'}">
+    <span class="bdisc ${c.tier}"><span>${c.icon}</span></span>
+    <span class="celtext"><strong>${esc(c.name)}</strong><span class="wsum">${esc(celebDesc(c))}${u ? '' : `. Unlock: ${esc(c.unlockText)}`}</span></span>
+    ${u ? `<button class="sm celplay" data-play="${c.id}" aria-label="Preview ${esc(c.name)}">▶</button>` : '<span></span>'}
+    ${u ? `<input type="checkbox" class="celchk" data-cel="${c.id}" aria-label="Use ${esc(c.name)}"${off.has(c.id) ? '' : ' checked'}>` : '<span class="cellock" role="img" aria-label="Locked">🔒</span>'}</div>`; };
+  const unl = list.filter(c => un.has(c.id)), lock = list.filter(c => !un.has(c.id)), on = unl.filter(c => !off.has(c.id)).length;
+  box.innerHTML = `<p class="fhint" id="celHint">${on ? `${on} of ${unl.length} unlocked celebrations ticked.` : 'Nothing ticked, so Classic confetti is used.'}</p>`
+    + unl.map(row).join('')
+    + (lock.length ? sect('cellocked', 'Locked', lock.length, false, lock.map(row).join('')) : '');
+}
+function initCelebs(){
+  if (settings.celebOff) return;
+  const t = settings.confettiTheme; // keep an earlier choice of one specific style
+  settings.celebOff = ['sausages', 'fruit', 'maltipoo', 'guinea'].includes(t) ? BASE_CELEBS.map(c => c.id).filter(id => id !== t) : [];
+  saveSettings();
 }
 
 /* ---------- themed soundtracks, synthesised with Web Audio ---------- */
@@ -1391,7 +1700,7 @@ function onData(r, now = performance.now()){
     if (moving && run.moving - run.lastSample >= 5){
       run.samples.push([Math.round(run.moving), +live.speed.toFixed(1), +live.incline.toFixed(1), live.hr || 0, Math.round(run.dist)]);
       run.lastSample = run.moving;
-      if (!run.demo) store.set(DRAFT, toRecord(run));
+      if (!run.demo){ store.set(DRAFT, toRecord(run)); liveBadgeCheck(); }
     }
     tickWorkout();
   }
@@ -1422,7 +1731,7 @@ function toRecord(r){
     steps: settings.height ? Math.round(r.steps) : null,
     cadence: settings.height && r.moving > 30 ? Math.round(r.steps / (r.moving / 60)) : null,
     samples: r.samples, best: bestEfforts(r.track),
-    workout: r.workoutName, tags: r.workoutKind === 'int' ? ['Intervals'] : [], note: ''
+    workout: r.workoutName, workoutId: wo ? wo.def.id : null, workoutDone: !!(wo && wo.done), tags: r.workoutKind === 'int' ? ['Intervals'] : [], note: ''
   };
 }
 
@@ -1439,12 +1748,13 @@ function finishRun(){
   }
   store.del(DRAFT);
   run = null; wo = null; releaseWake(); renderLive(); renderHistory();
+  if (!savedId) liveBadges.clear();
   if (savedId) openDetail(savedId);
 }
 function discardRun(){
   if (!run) return;
   if (!run.demo && run.dist > 200 && !confirm('Discard this run without saving?')) return;
-  store.del(DRAFT); run = null; wo = null; releaseWake(); renderLive();
+  store.del(DRAFT); run = null; wo = null; releaseWake(); renderLive(); liveBadges.clear();
 }
 
 /* ---------- wake lock ---------- */
@@ -2293,6 +2603,11 @@ function plannedSeconds(def){
   if (def.kind === 'goal') return def.time;
   return expand(def).reduce((a, s) => a + (s.by === 'time' ? s.value : s.value / (s.speed / 3.6)), 0);
 }
+const PDONE = 'tm-plans-done-v1';
+function recordPlanDone(plan){
+  const pd = store.get(PDONE, []);
+  if (!pd.some(x => x.id === plan.id && x.started === plan.started)){ pd.push({ id: plan.id, started: plan.started, date: Date.now() }); store.set(PDONE, pd); }
+}
 function planCheck(rec){
   if (run.planIdx == null) return;
   const plan = activePlan(); if (!plan) return;
@@ -2301,6 +2616,7 @@ function planCheck(rec){
   if (!finished){ setTimeout(() => toast('Plan session not ticked off, as it was cut short. You can tick it in Workouts.'), 1800); return; }
   plan.done[run.planIdx] = rec.id; savePlan(plan);
   const next = nextPlanIndex(plan);
+  if (next == null) recordPlanDone(plan);
   selected = next != null ? 'plan:' + next : null; store.set(SELKEY, selected);
   setTimeout(() => toast(next != null ? `Plan session done. Next up: ${planSessions()[next].title}` : 'Training plan complete. Brilliant work.'), 1800);
   if (next == null && settings.confetti) setTimeout(() => confetti(0), 400);
@@ -2737,8 +3053,8 @@ function weeklyResults(){
     w.set(p.id, (w.get(p.id) || 0) + r.dist);
   }));
   return [...map.entries()].sort((a, b) => b[0] - a[0]).map(([k, w]) => ({ ws: k,
-    ranked: [...w.entries()].filter(([, d]) => d > 0).map(([id, d]) => ({ p: profiles.list.find(x => x.id === id), dist: d }))
-      .filter(x => x.p).sort((a, b) => b.dist - a.dist || a.p.name.localeCompare(b.p.name)).slice(0, 3) }));
+    all: [...w.entries()].filter(([, d]) => d > 0).map(([id, d]) => ({ p: profiles.list.find(x => x.id === id), dist: d }))
+      .filter(x => x.p).sort((a, b) => b.dist - a.dist || a.p.name.localeCompare(b.p.name)) })).map(w => ({ ...w, ranked: w.all.slice(0, 3) }));
 }
 const myMedals = pid => weeklyResults().map(w => ({ ws: w.ws, place: w.ranked.findIndex(x => x.p.id === pid), dist: (w.ranked.find(x => x.p.id === pid) || {}).dist })).filter(m => m.place >= 0);
 function earliestWeekOffset(){
@@ -2805,6 +3121,20 @@ function renderLeaders(){
   const total = people.map(x => ({ p: x.p, v: x.runs.reduce((a, r) => a + r.dist, 0) })).filter(x => x.v > 0).sort((a, b) => b.v - a.v);
   $('#lbAll').innerHTML = boardCard('Longest run', longest, v => `${fD(v)} ${dU()}`) + boardCard('Total distance', total, v => `${fD(v, 1)} ${dU()}`);
   renderBadges();
+  renderBadgeBoard();
+}
+function renderBadgeBoard(){
+  const total = BADGES.length;
+  const rows = profiles.list.map(x => {
+    const { got } = computeBadges(x.id), ids = BADGES.filter(b => got[b.id]);
+    const latest = ids.slice().sort((a, b) => got[b.id] - got[a.id])[0];
+    return { p: x, n: ids.length, latest };
+  }).sort((a, b) => b.n - a.n || a.p.name.localeCompare(b.p.name));
+  $('#lbBadges').innerHTML = rows.map((x, i) => `<li class="lbrow${x.p.id === profiles.current ? ' me' : ''}${i === 0 && x.n > 0 ? ' first' : ''}">
+    <span class="lbrank">${x.n ? i + 1 : '–'}</span>${avatar(x.p)}
+    <span class="lbname">${esc(x.p.name)}<span class="wsum">${x.latest ? `Latest: ${x.latest.icon} ${esc(x.latest.name)}` : 'No badges yet'}</span></span>
+    <span class="lbval">${x.n} <span class="lbof">of ${total}</span></span>
+    <span class="lbbar"><i style="width:${(x.n / total * 100).toFixed(1)}%"></i></span></li>`).join('');
 }
 function renderMedals(){
   const res = weeklyResults(), counts = new Map(profiles.list.map(x => [x.id, [0, 0, 0]]));
@@ -2860,17 +3190,28 @@ const BADGES = [
   ['plan', 'Plan complete', 'Finish a whole training plan', 'gold', '📋'],
   ['gold1', 'Champion', 'Win a weekly gold medal', 'gold', '🥇'],
   ['pod5', 'Podium regular', 'Finish in the top three in 5 weeks', 'silver', '🎖️'],
-  ['gold5', 'Dynasty', 'Win 5 weekly gold medals', 'special', '👑']
+  ['gold5', 'Dynasty', 'Win 5 weekly gold medals', 'special', '👑'],
+  ['losing5', 'Losing Streak', 'Run in 5 weeks in a row without finishing first', 'poo', '💩'],
+  ['plans3', 'Plan master', 'Finish all three training plans', 'special', '🎓'],
+  ['presets', 'Workout completionist', 'Finish every ready-made workout', 'special', '🧩']
 ].map(([id, name, desc, tier, icon]) => ({ id, name, desc, tier, icon }));
-function computeBadges(pid){
-  const runs = profileRuns(pid).slice().sort((a, b) => a.date - b.date);
+function computeBadges(pid, extra = []){
+  const runs = profileRuns(pid).concat(extra).sort((a, b) => a.date - b.date);
   const ps = pid === profiles.current ? settings : rawGet(SKEY, pid, {});
   const goal = ps.weeklyGoal || 0, got = {}, prog = {};
   const earn = (id, d) => { if (!got[id]) got[id] = d; };
   let tDist = 0, tTime = 0, tClimb = 0, nRuns = 0, nWo = 0, maxDist = 0, maxTime = 0, maxClimb = 0, maxSteps = 0;
   const weeks = new Map(), best = { '1k': Infinity, '1mi': Infinity, '5k': Infinity, '10k': Infinity };
   const streakTo = (key, test) => { let n = 0; const k = new Date(key); for (;;){ const w = weeks.get(k.getTime()); if (!w || !test(w)) break; n++; k.setDate(k.getDate() - 7); } return n; };
+  const presetIds = new Set(PRESETS.map(x => x.id)), presetsDone = new Set();
   runs.forEach(r => {
+    const wid = r.workoutId || (PRESETS.find(x => x.name === r.workout) || {}).id;
+    if (wid && presetIds.has(wid)){
+      const def = PRESETS.find(x => x.id === wid);
+      // older runs didn't record completion: count them if the run was long enough
+      const ok = r.workoutDone != null ? r.workoutDone : def.kind === 'goal' ? r.dist >= def.dist : r.moving >= .9 * plannedSeconds(def);
+      if (ok){ presetsDone.add(wid); if (presetsDone.size === presetIds.size) earn('presets', r.date); }
+    }
     const d = r.date, hr = new Date(d).getHours();
     nRuns++; tDist += r.dist; tTime += r.moving; tClimb += r.climb || 0; if (r.workout) nWo++;
     maxDist = Math.max(maxDist, r.dist); maxTime = Math.max(maxTime, r.moving); maxClimb = Math.max(maxClimb, r.climb || 0); maxSteps = Math.max(maxSteps, r.steps || 0);
@@ -2892,6 +3233,14 @@ function computeBadges(pid){
     if (hr < 7) earn('early', d); if (hr >= 21) earn('night', d);
     if (nWo >= 10) earn('wo10', d);
   });
+  // Losing Streak: 5 consecutive weeks running but not finishing first
+  let lose = 0, prevWs = null;
+  weeklyResults().slice().reverse().forEach(w => {
+    const i = w.all.findIndex(x => x.p.id === pid), next = prevWs !== null && Math.round((w.ws - prevWs) / (7 * DAY)) === 1;
+    lose = i > 0 ? (next && lose > 0 ? lose + 1 : 1) : 0;
+    prevWs = w.ws;
+    if (lose >= 5) earn('losing5', w.ws + 7 * DAY);
+  });
   let golds = 0, pods = 0;
   weeklyResults().slice().reverse().forEach(w => {
     const i = w.ranked.findIndex(x => x.p.id === pid); if (i < 0) return;
@@ -2899,11 +3248,15 @@ function computeBadges(pid){
     if (i === 0){ golds++; earn('gold1', when); if (golds >= 5) earn('gold5', when); }
     if (pods >= 5) earn('pod5', when);
   });
-  const plan = pid === profiles.current ? activePlan() : rawGet(PKEY, pid, null);
+  const plan = pid === profiles.current ? activePlan() : rawGet(PKEY, pid, null), comp = rawGet(PDONE, pid, []).slice();
   if (plan){
     const total = buildPlanSessions(plan.id, plan.paces).length, doneIds = Object.values(plan.done);
-    if (doneIds.length >= total){ const ds = runs.filter(r => doneIds.includes(r.id)).map(r => r.date); earn('plan', ds.length ? Math.max(...ds) : Date.now()); }
+    if (doneIds.length >= total){ const ds = runs.filter(r => doneIds.includes(r.id)).map(r => r.date); comp.push({ id: plan.id, date: ds.length ? Math.max(...ds) : Date.now() }); }
   }
+  comp.sort((a, b) => a.date - b.date);
+  if (comp.length) earn('plan', comp[0].date);
+  const firstDone = {}; comp.forEach(x => { if (!(x.id in firstDone)) firstDone[x.id] = x.date; });
+  if (PLANS.every(pl => pl.id in firstDone)) earn('plans3', Math.max(...PLANS.map(pl => firstDone[pl.id])));
   const bestTxt = (k, lab) => isFinite(best[k]) ? `Best ${lab}: ${fmtTime(best[k])}` : '';
   Object.assign(prog, {
     d5: [maxDist / 5000, `Longest: ${fD(maxDist, 1)} ${dU()}`], d10: [maxDist / 10000, `Longest: ${fD(maxDist, 1)} ${dU()}`], d21: [maxDist / 21097, `Longest: ${fD(maxDist, 1)} ${dU()}`], d42: [maxDist / 42195, `Longest: ${fD(maxDist, 1)} ${dU()}`],
@@ -2915,6 +3268,10 @@ function computeBadges(pid){
     mi8: [0, bestTxt('1mi', 'mile')], mi7: [0, bestTxt('1mi', 'mile')], k1_4: [0, bestTxt('1k', '1 km')]
   });
   ['t50', 't100', 't250', 't500', 't1000'].forEach(id => prog[id][1] = `${fD(tDist, 0)} of ${fD({ t50: 5e4, t100: 1e5, t250: 2.5e5, t500: 5e5, t1000: 1e6 }[id], 0)} ${dU()}`);
+  const nPlans = Object.keys(firstDone).length;
+  prog.plans3 = [nPlans / 3, `${nPlans} of 3 plans finished`];
+  prog.presets = [presetsDone.size / presetIds.size, `${presetsDone.size} of ${presetIds.size} ready-made workouts finished`];
+  prog.losing5 = [lose / 5, `${lose} of 5 weeks`];
   return { got, prog };
 }
 function renderBadges(){
@@ -2929,6 +3286,33 @@ function renderBadges(){
   }).join('');
 }
 const BSEEN = 'tm-badges-seen-v1', MSEEN = 'tm-medals-seen-v1';
+// live unlocks during a run: badges earned by what you're doing right now
+const LIVE_SKIP = new Set(['losing5', 'plans3', 'presets', 'first', 'c10', 'c25', 'c50', 'c100', 'week3', 'streak4', 'streak12', 'early', 'night', 'wo10', 'plan', 'gold1', 'pod5', 'gold5']);
+const liveBadges = new Set();
+let liveQ = [], liveT = 0;
+function liveBadgeCheck(){
+  if (!run || run.demo || run.dist < 100) return;
+  const { got } = computeBadges(profiles.current, [toRecord(run)]), seen = new Set(store.get(BSEEN, []));
+  const fresh = BADGES.filter(b => got[b.id] && !seen.has(b.id) && !liveBadges.has(b.id) && !LIVE_SKIP.has(b.id));
+  if (!fresh.length) return;
+  fresh.forEach(b => liveBadges.add(b.id));
+  liveQ.push(...fresh);
+  if (!liveT) nextLiveBadge();
+}
+function nextLiveBadge(){
+  const el = $('#liveBadge'), b = liveQ.shift();
+  if (!b){ el.hidden = true; liveT = 0; return; }
+  const cel = celebById('b:' + b.id);
+  el.innerHTML = `<div class="lbcard"><span class="lbkick">Badge unlocked</span><span class="bdisc ${b.tier}"><span>${b.icon}</span></span>
+    <strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span><span class="lbtap">Tap to close</span></div>`;
+  el.hidden = false; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  audio();
+  if (settings.confetti) playCeleb(cel, true);          // the celebration plays behind the card
+  if (settings.cues) say(`Badge unlocked. ${b.name}.`);
+  if (navigator.vibrate && !settings.confetti) navigator.vibrate([60, 40, 120]);
+  liveT = setTimeout(nextLiveBadge, 5200);
+}
+$('#liveBadge').addEventListener('click', () => { clearTimeout(liveT); nextLiveBadge(); });
 function initBadgeSeen(){
   if (store.get(BSEEN, null) === null){ const { got } = computeBadges(profiles.current); store.set(BSEEN, BADGES.filter(b => got[b.id]).map(b => b.id)); }
   if (store.get(MSEEN, null) === null){ // first time: only last week's medals get announced
@@ -2939,9 +3323,10 @@ function initBadgeSeen(){
 function checkNewBadges(){
   if (isDemo) return;
   const { got } = computeBadges(profiles.current), seen = new Set(store.get(BSEEN, []));
-  const fresh = BADGES.filter(b => got[b.id] && !seen.has(b.id));
+  const fresh = BADGES.filter(b => got[b.id] && !seen.has(b.id) && !liveBadges.has(b.id));
   const medals = myMedals(profiles.current), mseen = new Set(store.get(MSEEN, []));
   const newMedals = medals.filter(m => !mseen.has(m.ws));
+  if (liveBadges.size){ store.set(BSEEN, BADGES.filter(b => got[b.id]).map(b => b.id)); liveBadges.clear(); }
   if (!fresh.length && !newMedals.length) return;
   store.set(BSEEN, BADGES.filter(b => got[b.id]).map(b => b.id));
   store.set(MSEEN, medals.map(m => m.ws));
@@ -2950,17 +3335,20 @@ function checkNewBadges(){
   const title = newMedals.length && !fresh.length ? `You won ${newMedals.length === 1 ? 'a medal' : 'medals'}` : (fresh.length + newMedals.length) === 1 ? 'New badge' : `${fresh.length + newMedals.length} new badges`;
   d.innerHTML = `<h3>${title}</h3>
     ${newMedals.map(m => `<div class="bcard"><span class="bdisc ${['gold', 'silver', 'bronze'][m.place]}"><span>${['🥇', '🥈', '🥉'][m.place]}</span></span><div><strong>${['Gold', 'Silver', 'Bronze'][m.place]} medal</strong><span class="wsum">${['1st', '2nd', '3rd'][m.place]} place in the week of ${md(m.ws)}, with ${fD(m.dist, 1)} ${dU()}</span></div></div>`).join('')}
-    ${fresh.map(b => `<div class="bcard"><span class="bdisc ${b.tier}"><span>${b.icon}</span></span><div><strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span></div></div>`).join('')}
+    ${fresh.map(b => `<div class="bcard"><span class="bdisc ${b.tier}"><span>${b.icon}</span></span><div><strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span><span class="wdur">New celebration: ${esc(celebDesc(celebById('b:' + b.id)))}</span></div></div>`).join('')}
     <div class="drow"><button class="sm" id="bdAll">See all badges</button><button class="sm primary" id="bdOk">Brilliant</button></div>`;
   d.querySelector('#bdOk').onclick = () => d.close();
   d.querySelector('#bdAll').onclick = () => { d.close(); showTab('leaders'); setTimeout(() => $('#badges').scrollIntoView({ block: 'start', behavior: 'smooth' }), 80); };
-  d.addEventListener('close', () => { audio(); if (settings.confetti) burstAt(innerWidth / 2, innerHeight * .4, 'theme'); }, { once: true });
+  const cel = fresh.length ? celebById('b:' + fresh[0].id) : celebById('m:' + ['gold', 'silver', 'bronze'][newMedals[0].place]);
+  d.addEventListener('close', () => { audio(); if (settings.confetti){ playCeleb(cel, true); showBadgeText(cel.name); } }, { once: true });
   d.showModal();
 }
 $('#badges').addEventListener('click', e => {
   const el = e.target.closest('[data-badge]'); if (!el) return;
-  const b = BADGES.find(x => x.id === el.dataset.badge), { got, prog } = computeBadges(profiles.current), pr = prog[b.id];
-  toast(got[b.id] ? `${b.name}: ${b.desc}. Earned ${fmtDate(got[b.id])}.` : `${b.name}: ${b.desc}.${pr && pr[1] ? ` ${pr[1]}.` : ''}`);
+  const b = BADGES.find(x => x.id === el.dataset.badge), { got, prog } = computeBadges(profiles.current), pr = prog[b.id], cel = celebById('b:' + b.id);
+  audio();
+  if (got[b.id]){ playCeleb(cel, true); showBadgeText(b.name); toast(`${b.desc}. Earned ${fmtDate(got[b.id])}.`); }
+  else toast(`${b.name}: ${b.desc}.${pr && pr[1] ? ` ${pr[1]}.` : ''} Earn it to unlock its celebration.`);
 });
 $('#podium').addEventListener('click', e => {
   const av = e.target.closest('.pod:not(.empty) .pav'); if (!av) return;
@@ -3171,7 +3559,7 @@ function openDetail(id){
     <div class="chips" id="dtags">${TAGS.map(t => `<button class="chip" data-t="${esc(t)}" aria-pressed="${tags.includes(t)}">${esc(t)}</button>`).join('')}</div>
     <label class="f"><span>Notes</span><textarea id="dnote" placeholder="How did it feel?">${esc(r.note || '')}</textarea></label>
     <div class="drow">
-      <button class="sm" id="dtcx">Export for Strava or Garmin</button>
+      <button class="sm" id="dtcx">Export to Garmin Connect</button>
       <button class="sm danger" id="ddel">Delete run</button>
       <button class="sm primary" id="dclose">Close</button>
     </div>`;
@@ -3184,10 +3572,11 @@ function openDetail(id){
   d.querySelector('#dnote').addEventListener('input', e => updateRun(id, x => x.note = e.target.value));
   d.querySelector('#dclose').onclick = () => { d.close(); renderHistory(); };
   d.querySelector('#dtcx').onclick = () => {
-    const rec = allRuns().find(x => x.id === id);
-    const dt = new Date(rec.date);
-    download(`treadmill-run-${dt.toISOString().slice(0, 10)}-${pad(dt.getHours())}${pad(dt.getMinutes())}.tcx`, buildTcx(rec), 'application/vnd.garmin.tcx+xml');
-    toast('TCX file downloaded. Upload it at strava.com/upload or in Garmin Connect.');
+    const rec = allRuns().find(x => x.id === id), name = tcxName(rec);
+    download(name, buildTcx(rec), 'application/vnd.garmin.tcx+xml');
+    // open Garmin's import page in the same tap, so the browser doesn't block it
+    window.open(GARMIN_IMPORT, '_blank', 'noopener');
+    toast(`Saved ${name} to Downloads. On Garmin’s page, choose Import Data and pick that file.`);
   };
   d.querySelector('#ddel').onclick = () => {
     if (!confirm('Delete this run? This can’t be undone.')) return;
@@ -3200,7 +3589,8 @@ function openDetail(id){
 }
 
 /* ---------- exports ---------- */
-function tcxName(rec){ const dt = new Date(rec.date); return `treadmill-run-${dt.toISOString().slice(0, 10)}-${pad(dt.getHours())}${pad(dt.getMinutes())}.tcx`; }
+function tcxName(rec){ const dt = new Date(rec.date); return `treadmill-run-${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}_${pad(dt.getHours())}-${pad(dt.getMinutes())}.tcx`; }
+const GARMIN_IMPORT = 'https://connect.garmin.com/modern/import-data';
 function exportAfterRun(rec){
   if (settings.autoExport === 'file'){
     download(tcxName(rec), buildTcx(rec), 'application/vnd.garmin.tcx+xml');
@@ -3351,7 +3741,7 @@ function renderSettings(){
   $('#setCues').checked = settings.cues;
   $('#setControl').checked = settings.control;
   $('#setConfetti').checked = settings.confetti;
-  $('#setConfettiTheme').value = settings.confettiTheme || 'classic';
+  renderCelebs();
   populateVoices();
   $('#setConfettiSound').checked = settings.confettiSound;
   $$('#exportSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.x === settings.autoExport));
@@ -3459,7 +3849,7 @@ $('#setCues').onchange = e => { settings.cues = e.target.checked; saveSettings()
 $('#setConfetti').onchange = e => { settings.confetti = e.target.checked; saveSettings(); };
 $('#setConfettiSound').onchange = e => { settings.confettiSound = e.target.checked; saveSettings(); if (e.target.checked){ popSound(.55, 1300); crackle(.9, .07, .1); } };
 $('#exportSeg').addEventListener('click', e => { const b = e.target.closest('button[data-x]'); if (b){ settings.autoExport = b.dataset.x; saveSettings(); renderSettings(); } });
-$('#garminImport').onclick = () => window.open('https://connect.garmin.com/modern/import-data', '_blank', 'noopener');
+$('#garminImport').onclick = () => window.open(GARMIN_IMPORT, '_blank', 'noopener');
 function renderMute(){
   const b = $('#glMute');
   b.setAttribute('aria-pressed', settings.muted);
@@ -3518,6 +3908,7 @@ $('#planBox').addEventListener('click', e => {
     const plan = activePlan(), i = +t.dataset.ptoggle;
     if (plan.done[i]) delete plan.done[i]; else plan.done[i] = true;
     savePlan(plan);
+    if (nextPlanIndex(plan) == null) recordPlanDone(plan);
     if (!selected || String(selected).startsWith('plan:')){ const n = nextPlanIndex(plan); selected = n != null ? 'plan:' + n : null; store.set(SELKEY, selected); }
     renderPlan(); renderRunWorkout(); return;
   }
@@ -3531,7 +3922,17 @@ $('#planBox').addEventListener('click', e => {
 });
 $('#testConfetti').onclick = () => { audio(); confetti(1); };
 $('#testSuper').onclick = () => { audio(); superConfetti(); };
-$('#setConfettiTheme').onchange = e => { settings.confettiTheme = e.target.value; saveSettings(); audio(); confetti(1); };
+$('#celList').addEventListener('change', e => {
+  const cb = e.target.closest('.celchk'); if (!cb) return;
+  const off = new Set(settings.celebOff || []);
+  if (cb.checked) off.delete(cb.dataset.cel); else off.add(cb.dataset.cel);
+  settings.celebOff = [...off]; saveSettings();
+  const n = $$('#celList .celchk').filter(x => x.checked).length;
+  $('#celHint').textContent = n ? `${n} of ${$$('#celList .celchk').length} unlocked celebrations ticked.` : 'Nothing ticked, so Classic confetti is used.';
+});
+$('#celList').addEventListener('click', e => { const b = e.target.closest('[data-play]'); if (!b) return; const c = celebById(b.dataset.play); if (!unlockedCelebs().has(c.id)) return; audio(); playCeleb(c, !c.base); });
+$('#celAll').onclick = () => { settings.celebOff = []; saveSettings(); renderCelebs(); };
+$('#celNone').onclick = () => { settings.celebOff = celebList().map(c => c.id); saveSettings(); renderCelebs(); };
 $('#setVoice').onchange = e => { settings.voice = e.target.value; saveSettings(); populateVoices(); say('This is your new voice. Kilometre 1, 5 minutes 30 seconds.'); };
 $('#setControl').onchange = e => { settings.control = e.target.checked; saveSettings(); renderConn(); renderLive(); };
 $('#testAudio').onclick = () => { audio(); beep(990, .25); setTimeout(() => say(`Audio check. ${isMi() ? 'Mile' : 'Kilometre'} 1. 5 minutes 30 seconds.`), 300); };
@@ -3599,6 +4000,7 @@ restoreDevices();
 maybeWeeklySummary();
 renderBackupStatus();
 initBadgeSeen();
+initCelebs();
 setTimeout(() => { if ($('#sumDlg').open) $('#sumDlg').addEventListener('close', () => setTimeout(checkNewBadges, 400), { once: true }); else checkNewBadges(); }, 1500);
 if (backupDue()) setTimeout(() => toast('Backup reminder: it’s been a while. Open History to back up your runs.'), 2600);
 document.addEventListener('click', e => {
