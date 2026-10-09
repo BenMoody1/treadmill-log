@@ -503,6 +503,17 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 @media (prefers-reduced-motion:reduce){.livebadge.show{animation:none}}
 .bdisc.poo{background:#E3C9A6}
 .lbof{font-family:var(--body);font-size:.85rem;font-weight:500;color:var(--muted)}
+.gavring{fill:var(--track-ink);pointer-events:none}
+.gavbg{fill:#161B18;pointer-events:none}
+.gavtxt{fill:var(--track-ink);font-family:var(--num);font-weight:700;font-size:11px;pointer-events:none}
+#glTlSvg image{pointer-events:none}
+.gtag{fill:#791F1F;font-family:var(--num);font-weight:600;font-size:11px}
+.frgrp{font-size:.8rem;color:var(--muted);margin:.75rem 0 .35rem}
+.frchips{display:flex;flex-wrap:wrap;gap:.4rem}
+.frc{min-height:40px;min-width:3.4rem;padding:0 .85rem;border-radius:20px;border:1.5px solid var(--rule);background:var(--paper);font-weight:500;font-size:.95rem;color:var(--ink)}
+.frc.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.frnote{font-size:.85rem;color:var(--muted);margin:.6rem 0 0}
+.frline{min-height:44px}
 </style>
 </head>
 <body>
@@ -569,6 +580,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
       <div class="wotext" id="woText"><span class="muted wolab" id="woLab">Workout</span><strong id="woName">Free run</strong><span class="muted wosum" id="woSum"></span></div>
       <button class="sm" id="woChange">Change</button>
     </div>
+    <div id="frTargets"></div>
     <div class="tl" id="woTimeline"></div>
   </div>
   <p class="weekline" id="weekline"></p>
@@ -656,6 +668,9 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <label class="field"><span class="flabel" id="goalLabel">Weekly distance goal (km)</span>
     <input type="number" inputmode="decimal" id="setGoal" min="0" step="0.5">
     <span class="fhint">Set to 0 to turn the goal off.</span></label>
+
+  <h3>Workouts</h3>
+  <label class="check"><input type="checkbox" id="setGhost"><span>Show a ghost of your last attempt at the same workout in the big view</span></label>
 
   <h3>Audio</h3>
   <label class="check"><input type="checkbox" id="setAnnounce"><span id="announceLabel">Announce each kilometre split</span></label>
@@ -872,7 +887,7 @@ const keyFor = (base, id) => id === 'default' ? base : `${base}@${id}`;
 function rawGet(base, id, d){ const k = keyFor(base, id); if (isBig(base)) return bigGet(k, d); try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
 function rawSet(base, id, v){ const k = keyFor(base, id); if (isBig(base)) return bigSet(k, v); try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
 await bigStoreInit();
-const settings = Object.assign({ confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
+const settings = Object.assign({ freeTarget: 'none', ghost: true, confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
 // older versions defaulted the goal to 20 km without it ever being set; treat that as not set
 if (!settings.goalSet && settings.weeklyGoal === 20000) settings.weeklyGoal = 0;
 const saveSettings = () => store.set(SKEY, settings);
@@ -1650,6 +1665,7 @@ function startRun(){
           lastSample: -5, demo: isDemo, workoutName: null, workoutKind: null };
   lastDist = null; lastKcal = null; tmDist = false;
   requestWake();
+  run.freeTarget = getWorkout(selected) ? null : (settings.freeTarget || 'none'); run.freeDone = false;
   if (getWorkout(selected)) beginWorkout();
 }
 
@@ -1695,7 +1711,8 @@ function onData(r, now = performance.now()){
     const arr = isMi() ? run.splitsMi : run.splitsKm;
     if (arr.length > (isMi() ? miBefore : kmBefore)){
       if (settings.announce) announceSplit(arr);
-      if (settings.confetti) confetti(arr.length);
+      const ftNow = !wo && !run.freeDone && ftById(run.freeTarget); // a split that is also the free-run target gets the finish celebration instead
+      if (settings.confetti && !(ftNow && ftNow.k === 'dist' && run.dist >= ftNow.v)) confetti(arr.length);
     }
     if (moving && run.moving - run.lastSample >= 5){
       run.samples.push([Math.round(run.moving), +live.speed.toFixed(1), +live.incline.toFixed(1), live.hr || 0, Math.round(run.dist)]);
@@ -1703,6 +1720,7 @@ function onData(r, now = performance.now()){
       if (!run.demo){ store.set(DRAFT, toRecord(run)); liveBadgeCheck(); }
     }
     tickWorkout();
+    checkFreeTarget();
   }
   renderLive();
 }
@@ -1731,7 +1749,7 @@ function toRecord(r){
     steps: settings.height ? Math.round(r.steps) : null,
     cadence: settings.height && r.moving > 30 ? Math.round(r.steps / (r.moving / 60)) : null,
     samples: r.samples, best: bestEfforts(r.track),
-    workout: r.workoutName, workoutId: wo ? wo.def.id : null, workoutDone: !!(wo && wo.done), tags: r.workoutKind === 'int' ? ['Intervals'] : [], note: ''
+    workout: r.workoutName, workoutId: wo ? wo.def.id : null, workoutDone: !!(wo && wo.done), freeTarget: r.freeTarget || null, freeDone: !!r.freeDone, tags: r.workoutKind === 'int' ? ['Intervals'] : [], note: ''
   };
 }
 
@@ -1749,6 +1767,7 @@ function finishRun(){
   store.del(DRAFT);
   run = null; wo = null; releaseWake(); renderLive(); renderHistory();
   if (!savedId) liveBadges.clear();
+  frExpanded = false; frKey = '';
   if (savedId) openDetail(savedId);
 }
 function discardRun(){
@@ -1850,7 +1869,7 @@ function advance(){
   wo.idx++;
   if (wo.idx >= wo.steps.length){
     wo.done = true;
-    if (settings.confetti) superConfetti();
+    finishCelebrate();
     if (settings.cues){ if (!settings.confetti) beep(880, .6); say('Workout complete. Carry on, or finish your run.'); }
     renderRunWorkout(); return;
   }
@@ -1862,7 +1881,7 @@ function tickWorkout(){
     if (run.dist >= wo.def.dist){
       wo.done = true; wo.finish = run.moving;
       const diff = wo.def.time - run.moving;
-      if (settings.confetti) superConfetti();
+      finishCelebrate();
       if (settings.cues){ if (!settings.confetti) beep(880, .6); say(`Goal reached in ${spokenTime(run.moving)}. ${diff >= 0 ? 'Target beaten by' : 'Target missed by'} ${spokenTime(Math.abs(diff))}.`); }
     }
     return;
@@ -2170,7 +2189,8 @@ function renderLive(){
 function renderRunWorkout(){
   const w = getWorkout(selected);
   $('#woName').textContent = w ? w.name : 'Free run';
-  $('#woSum').textContent = w ? summary(w) : 'No targets. Just run.';
+  $('#woSum').textContent = w ? summary(w) : 'Pick a target, or just run.';
+  renderFreeTargets();
   $('#woTimeline').innerHTML = w ? workoutTimeline(w, workoutProgress(w)) : '';
   $('#woLab').textContent = !w ? 'Workout' : (wo && run && wo.def.id === w.id) ? (wo.done ? 'Workout complete' : `Workout, ${fmtTime(remainingSeconds(w))} to finish`) : `Workout, takes ${durLabel(w).toLowerCase()}`;
   $('#stepPanel').hidden = !(w && w.kind !== 'goal');
@@ -2767,11 +2787,10 @@ function renderGlance(){
     }
   }
   $('#glStep').textContent = step;
-  const gw = getWorkout(selected) || (wo && wo.def);
-  $('#glance').classList.toggle('has-tl', !!gw);
-  $('#glTl').hidden = !gw;
-  $('#glFinish').hidden = !(run && wo && wo.done);
-  if (gw){ const t = glanceTimeline(gw); $('#glTlSvg').innerHTML = t.svg; $('#glTlInfo').textContent = t.info; if (glTlMax) $('#glTlSvg svg').style.maxHeight = glTlMax + 'px'; }
+  $('#glance').classList.add('has-tl');
+  $('#glTl').hidden = false;
+  $('#glFinish').hidden = !(run && ((wo && wo.done) || (!wo && run.freeDone)));
+  drawGlTimeline();
   const mw = $('#glMain').clientWidth * .98;
   fitGlance();
   fitText($('#glDist'), mw); fitText($('#glPace'), mw);
@@ -2836,45 +2855,318 @@ function finishText(def){
 
 /* ---------- glance view: live workout timeline with finish flag ---------- */
 let glSel = null, glSelTs = 0, glTlMax = 0;
+// layout of the glance timeline (viewBox units)
+const GTW = 320, GBW = 262, GGX = 276, GEND = 306, GAY = 24, GBT = 44, GBH = 40, GBASE = 84, GMT = 88, GMH = 26, GTOP = 36, GBOT = 118, GH = 136, GN = 22;
+const EFF_COL = { easy: '#9FE1CB', steady: '#FAC775', hard: '#FF5A4E' };
+const GT = { key: '', dispX: null, rope: [], segs: [], snapT: 0, finishAt: 0, sparks: [], pendingCeleb: false, lastSim: 0, ghostKey: '', ghost: null };
+// effort: recovery/warm-up/cool-down are easy; the hardest work steps (by speed and incline) are hard, the rest steady
+function effortOf(steps){
+  const score = x => x.speed * (1 + (x.incline || 0) * .08), work = steps.filter(x => x.kind === 'work'), max = Math.max(0, ...work.map(score));
+  return steps.map(x => x.kind !== 'work' ? 'easy' : work.length > 1 && score(x) >= .9 * max ? 'hard' : 'steady');
+}
+// the finish ribbon is a small rope simulation: it bows when you reach it, snaps, and the halves flutter
+function gtResetRope(){
+  GT.rope = []; GT.segs = []; const len = (GBOT - GTOP) * 1.05 / (GN - 1);
+  for (let i = 0; i < GN; i++){ const y = GTOP + (GBOT - GTOP) * i / (GN - 1); GT.rope.push({ x: GGX, y, px: GGX, py: y, pin: i === 0 || i === GN - 1 }); }
+  for (let j = 0; j < GN - 1; j++) GT.segs.push({ a: j, b: j + 1, len, on: true });
+  GT.snapT = 0; GT.sparks = [];
+}
+gtResetRope();
+function gtSim(mx, now){
+  if (now - GT.lastSim < 14) return; GT.lastSim = now;
+  GT.rope.forEach(q => { if (q.pin) return; const vx = (q.x - q.px) * .965, vy = (q.y - q.py) * .965; q.px = q.x; q.py = q.y; q.x += vx + (GT.snapT ? .02 : 0); q.y += vy + (GT.snapT ? .09 : .02); });
+  for (let it = 0; it < 8; it++){
+    GT.segs.forEach(sg => { if (!sg.on) return; const a = GT.rope[sg.a], b = GT.rope[sg.b], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || .001, f = (d - sg.len) / d * .5;
+      if (!a.pin){ a.x += dx * f; a.y += dy * f; } if (!b.pin){ b.x -= dx * f; b.y -= dy * f; } });
+    if (!GT.snapT && mx > GGX - 6) GT.rope.forEach(q => { if (!q.pin && q.x < mx + 2.5){ const bulge = Math.sin(Math.PI * (q.y - GTOP) / (GBOT - GTOP)); q.x += (mx + 2.5 - q.x) * bulge; } });
+  }
+}
+function gtSnap(now){
+  GT.snapT = now; const mid = Math.floor(GN / 2) - 1; GT.segs[mid].on = false;
+  const a = GT.rope[mid], b = GT.rope[mid + 1], bx = (a.x + b.x) / 2, by = (a.y + b.y) / 2;
+  a.px = a.x - 4.5; a.py = a.y + 2.5; b.px = b.x - 4.5; b.py = b.y - 2.5;
+  GT.sparks = Array.from({ length: 10 }, (_, k) => ({ a: k / 10 * 6.283, x: bx, y: by }));
+  if (GT.pendingCeleb){ GT.pendingCeleb = false; if (settings.confetti) superConfetti(); }
+  if (navigator.vibrate) navigator.vibrate(40);
+}
+function finishCelebrate(){ // called when a workout completes
+  GT.finishAt = performance.now();
+  if (glanceOpen()) GT.pendingCeleb = true;           // fires when the marker breaks the ribbon
+  else { GT.finishAt -= 6000; if (settings.confetti) superConfetti(); }
+}
+function gtRopePath(from, to){
+  const pts = GT.rope.slice(from, to + 1); let d = `M${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+  for (let i = 1; i < pts.length - 1; i++) d += ` Q${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)} ${((pts[i].x + pts[i + 1].x) / 2).toFixed(1)} ${((pts[i].y + pts[i + 1].y) / 2).toFixed(1)}`;
+  const l = pts[pts.length - 1]; d += ` L${l.x.toFixed(1)} ${l.y.toFixed(1)}`;
+  return `<path d="${d}" fill="none" stroke="#FBF6EE" stroke-width="4.5" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#E24B4A" stroke-width="4.5" stroke-dasharray="5 5"/>`;
+}
+function gtFlag(x, y, now, ph){
+  let o = ''; const fw = 18, fh = 12, cols = 4, rows = 3;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++){
+    const x1 = x + c * fw / cols, x2 = x + (c + 1) * fw / cols, w1 = Math.sin(now / 220 + ph + c * .9) * 1.6 * c / cols, w2 = Math.sin(now / 220 + ph + (c + 1) * .9) * 1.6 * (c + 1) / cols;
+    const y1 = y + r * fh / rows, y2 = y + (r + 1) * fh / rows;
+    o += `<path d="M${x1.toFixed(1)} ${(y1 + w1).toFixed(1)} L${x2.toFixed(1)} ${(y1 + w2).toFixed(1)} L${x2.toFixed(1)} ${(y2 + w2).toFixed(1)} L${x1.toFixed(1)} ${(y2 + w1).toFixed(1)} Z" fill="${(r + c) % 2 ? '#FBF6EE' : '#161B18'}"/>`;
+  }
+  return o;
+}
+// the ghost: your most recent previous run of the same workout
+function ghostFor(def){
+  const key = run ? run.start + '|' + def.id : '';
+  if (GT.ghostKey === key) return GT.ghost;
+  GT.ghostKey = key;
+  GT.ghost = !run ? null : allRuns().filter(r => r.id !== String(run.start) && (r.workoutId ? r.workoutId === def.id : r.workout === def.name)
+    && r.samples && r.samples.length > 3 && r.samples[r.samples.length - 1].length >= 5).sort((a, b) => b.date - a.date)[0] || null;
+  return GT.ghost;
+}
+function ghostDistAt(r, t){
+  const sm = r.samples;
+  if (t <= sm[0][0]) return 0;
+  for (let i = 1; i < sm.length; i++) if (sm[i][0] >= t){ const a = sm[i - 1], b = sm[i], f = (t - a[0]) / ((b[0] - a[0]) || 1); return a[4] + (b[4] - a[4]) * f; }
+  return r.dist;
+}
+const avatarSvg = (me, x, y, r, id, op) => me.photo
+  ? `<clipPath id="${id}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath><image href="${me.photo}" x="${(x - r).toFixed(1)}" y="${(y - r).toFixed(1)}" width="${r * 2}" height="${r * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})" opacity="${op}"/>`
+  : `<circle cx="${x}" cy="${y}" r="${r}" fill="#161B18" opacity="${op}"/><text x="${x}" y="${(y + 3.8).toFixed(1)}" text-anchor="middle" class="gavtxt" opacity="${op}">${esc((me.name.trim()[0] || '?').toUpperCase())}</text>`;
 function glanceTimeline(def){
-  const live_ = !!(wo && run && wo.def.id === def.id);
-  const steps = live_ ? wo.steps : workoutSteps(def);
-  const durs = steps.map(stepSeconds), total = durs.reduce((a, b) => a + b, 0) || 1;
-  const prog = live_ ? (workoutProgress(def) || 0) : 0;
-  const cur = live_ ? (wo.done ? steps.length : (def.kind === 'goal' ? 0 : wo.idx)) : -1;
-  if (glSel != null && performance.now() - glSelTs > 5000) glSel = null;
-  const W = 320, FW = 22, BW = W - FW, LBL = 14, top = 12 + LBL, sh = 40, gap = 5, ih = 16, H = top + sh + gap + ih + 3;
-  const maxS = Math.max(8, ...steps.map(x => x.speed)), maxI = Math.max(4, ...steps.map(x => x.incline || 0));
-  let x = 0, svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Workout progress, ${Math.round(prog * 100)} percent">`;
+  const now = performance.now(), isLive = !!(wo && run && wo.def.id === def.id), me = curProfile();
+  const key = (isLive ? run.start : 'idle') + '|' + def.id;
+  if (GT.key !== key){ GT.key = key; GT.dispX = null; GT.finishAt = isLive && wo.done ? now - 6000 : 0; GT.pendingCeleb = false; gtResetRope(); }
+  const steps = isLive ? wo.steps : workoutSteps(def), durs = steps.map(stepSeconds), total = durs.reduce((a, b) => a + b, 0) || 1;
+  const prog = isLive ? (workoutProgress(def) || 0) : 0, finished = isLive && wo.done;
+  const cur = isLive ? (finished ? steps.length : (def.kind === 'goal' ? 0 : wo.idx)) : -1;
+  if (glSel != null && now - glSelTs > 5000) glSel = null;
+  const maxS = Math.max(10, ...steps.map(x => x.speed)), eff = effortOf(steps);
+  const cuts = []; let cx = 0; durs.forEach(d => { cuts.push(cx); cx += d / total * GBW; }); cuts.push(GBW);
+  let svg = `<svg viewBox="0 0 ${GTW} ${GH}" role="img" aria-label="Workout progress, ${Math.round(prog * 100)} percent">`;
+  // hills: incline as a mountain outline
+  const pts = [`M0 ${GMT + GMH}`];
+  steps.forEach((st, i) => { const mxp = (cuts[i] + cuts[i + 1]) / 2, yy = GMT + GMH - GMH * (st.incline || 0) / 11; pts.push(i === 0 ? `L0 ${yy.toFixed(1)} L${mxp.toFixed(1)} ${yy.toFixed(1)}` : `L${mxp.toFixed(1)} ${yy.toFixed(1)}`); });
+  pts.push(`L${GBW} ${(GMT + GMH - GMH * (steps[steps.length - 1].incline || 0) / 11).toFixed(1)} L${GBW} ${GMT + GMH} Z`);
+  svg += `<path d="${pts.join(' ')}" fill="#FBF6EE" fill-opacity=".22" stroke="#FBF6EE" stroke-opacity=".55" stroke-width="1.2" stroke-linejoin="round"/>`;
+  // bars coloured by effort; done and current solid, upcoming faded
   steps.forEach((st, i) => {
-    const w = durs[i] / total * BW, h = Math.max(3, sh * st.speed / maxS), hi = ih * (st.incline || 0) / maxI;
-    const state = cur < 0 || i > cur ? 'fut' : i === cur ? 'cur' : 'done';
-    svg += `<g class="${state}"><rect x="${(x + .6).toFixed(1)}" y="${(top + sh - h).toFixed(1)}" width="${Math.max(.8, w - 1.2).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" class="${st.kind === 'work' ? 'gtw' : 'gtr'}"/>`;
-    if (hi > 0) svg += `<rect x="${(x + .6).toFixed(1)}" y="${(top + sh + gap + ih - hi).toFixed(1)}" width="${Math.max(.8, w - 1.2).toFixed(1)}" height="${hi.toFixed(1)}" rx="1" class="gti"/>`;
-    svg += '</g>';
-    if (i === glSel) svg += `<rect x="${(x - .2).toFixed(1)}" y="${top - 3}" width="${(w + .4).toFixed(1)}" height="${sh + gap + ih + 5}" rx="3" class="gselbox"/>`;
-    svg += `<rect x="${x.toFixed(1)}" y="0" width="${w.toFixed(1)}" height="${H}" class="hit" data-step="${i}"/>`;
-    x += w;
+    const w = cuts[i + 1] - cuts[i], h = Math.max(3, GBH * st.speed / maxS), lit = cur >= 0 && i <= cur, hard = eff[i] === 'hard';
+    svg += `<rect x="${(cuts[i] + .7).toFixed(1)}" y="${(GBASE - h).toFixed(1)}" width="${Math.max(.8, w - 1.4).toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="${EFF_COL[eff[i]]}" opacity="${lit ? 1 : .45}"${hard ? ' stroke="#FBF6EE" stroke-width="1.2"' : ''}/>`;
+    if (i === cur && !finished) svg += `<rect x="${(cuts[i] - .6).toFixed(1)}" y="${(GBASE - h - 2.5).toFixed(1)}" width="${(w + 1.2).toFixed(1)}" height="${(h + 2.5).toFixed(1)}" rx="3" fill="none" stroke="#FBF6EE" stroke-width="1.5" stroke-dasharray="3 2"/>`;
+    if (i === glSel) svg += `<rect x="${(cuts[i] - .6).toFixed(1)}" y="${GAY + 14}" width="${(w + 1.2).toFixed(1)}" height="${GMT + GMH - GAY - 12}" rx="3" class="gselbox"/>`;
   });
-  svg += `<line x1="0" x2="${BW}" y1="${top + sh + gap + ih + .5}" y2="${top + sh + gap + ih + .5}" class="gbase"/>`;
-  // finish flag: pole plus a 3 x 3 checkered flag
-  const fx = BW + 5;
-  svg += `<line x1="${fx}" x2="${fx}" y1="${LBL + 1}" y2="${H}" class="gpole"/>`;
-  for (let r = 0; r < 3; r++) for (let c2 = 0; c2 < 3; c2++) svg += `<rect x="${fx + .8 + c2 * 4.5}" y="${LBL + 1 + r * 4.5}" width="4.5" height="4.5" class="ck${(r + c2) % 2}"/>`;
-  svg += `<text x="${W}" y="10" text-anchor="end" class="geta">${esc(finishText(def))}</text>`;
-  // where you are now
-  const mx = Math.min(BW, Math.max(1.5, prog * BW));
-  svg += `<line x1="${mx.toFixed(1)}" x2="${mx.toFixed(1)}" y1="${top - 2}" y2="${H}" class="gmark"/><circle cx="${mx.toFixed(1)}" cy="${top - 5}" r="5" class="gdot"/>`;
+  steps.forEach((st, i) => { svg += `<rect x="${cuts[i].toFixed(1)}" y="0" width="${(cuts[i + 1] - cuts[i]).toFixed(1)}" height="${GH}" class="hit" data-step="${i}"/>`; });
+  svg += `<line x1="0" x2="${GTW}" y1="${GBASE + .5}" y2="${GBASE + .5}" stroke="#FBF6EE" stroke-opacity=".35"/><line x1="${GBW}" x2="${GTW}" y1="${GMT + GMH}" y2="${GMT + GMH}" stroke="#FBF6EE" stroke-opacity=".35" stroke-dasharray="3 3"/>`;
+  // marker position: glides smoothly; after the finish it runs on through the ribbon
+  let target;
+  if (finished){
+    if (!GT.finishAt) GT.finishAt = now - 6000;
+    const t = Math.min(1, (now - GT.finishAt) / 1600), e = 1 - Math.pow(1 - t, 3);
+    target = GBW + (GEND - GBW) * e; GT.dispX = target;
+    if (!GT.snapT && target > GGX + 5) gtSnap(now);
+  } else {
+    target = Math.min(GBW, Math.max(13, prog * GBW));
+    GT.dispX = GT.dispX == null ? target : GT.dispX + (target - GT.dispX) * .2;
+  }
+  const mx = GT.dispX;
+  gtSim(mx, now);
+  // finish gate: chequered flags at both ends of the ribbon
+  svg += `<line x1="${GGX}" x2="${GGX}" y1="20" y2="${GTOP}" stroke="#FBF6EE" stroke-width="2"/>${gtFlag(GGX + 1, 20, now, 0)}`;
+  svg += `<line x1="${GGX}" x2="${GGX}" y1="${GBOT}" y2="${GH}" stroke="#FBF6EE" stroke-width="2"/>${gtFlag(GGX + 1, GBOT + 1, now, 1.7)}`;
+  const mid = Math.floor(GN / 2) - 1;
+  svg += GT.snapT ? gtRopePath(0, mid) + gtRopePath(mid + 1, GN - 1) : gtRopePath(0, GN - 1);
+  if (GT.snapT){
+    const st = (now - GT.snapT) / 260;
+    if (st < 1) GT.sparks.forEach(sp => { const r1 = 3 + 10 * st, r2 = 6 + 18 * st;
+      svg += `<line x1="${(sp.x + Math.cos(sp.a) * r1).toFixed(1)}" y1="${(sp.y + Math.sin(sp.a) * r1).toFixed(1)}" x2="${(sp.x + Math.cos(sp.a) * r2).toFixed(1)}" y2="${(sp.y + Math.sin(sp.a) * r2).toFixed(1)}" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="${(1 - st).toFixed(2)}"/>`; });
+    if (st < .6 && GT.sparks.length) svg += `<circle cx="${GT.sparks[0].x.toFixed(1)}" cy="${GT.sparks[0].y.toFixed(1)}" r="${(4 + 10 * st).toFixed(1)}" fill="#FFFFFF" opacity="${(.8 - st * 1.3).toFixed(2)}"/>`;
+  }
+  // ghost of your last attempt
+  let ghostTxt = '', ghostX = null;
+  const gr = isLive && !finished && settings.ghost !== false ? ghostFor(def) : null;
+  if (gr){
+    const diff = (ghostDistAt(gr, run.moving) - run.dist) / (Math.max(live.speed, 3) / 3.6);
+    const gx = Math.min(GBW, Math.max(13, (prog * total + diff) / total * GBW)); ghostX = gx;
+    svg += `<line x1="${gx.toFixed(1)}" x2="${gx.toFixed(1)}" y1="${GAY + 10}" y2="${GBASE}" stroke="#FBF6EE" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    svg += avatarSvg(me, +gx.toFixed(1), GAY, 9, 'glGhClip', .45) + `<circle cx="${gx.toFixed(1)}" cy="${GAY}" r="10" fill="none" stroke="#FBF6EE" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="3 2"/>`;
+    ghostTxt = Math.abs(diff) < 2 ? 'Level with last time' : diff > 0 ? `Last time ${fmtTime(diff)} ahead` : `${fmtTime(-diff)} ahead of last time`;
+  }
+  // your marker: photo, countdown ring and time-left tag
+  const R = 11.5, C = 2 * Math.PI * R, X = mx.toFixed(1);
+  let left = 0, frac = 0;
+  if (isLive && !finished){ const sp = steps[cur], el = sp.by === 'time' ? run.moving - wo.t0 : run.dist - wo.d0; left = Math.max(0, sp.value - el); frac = sp.value ? left / sp.value : 0; }
+  svg += `<line x1="${X}" x2="${X}" y1="${GAY + R}" y2="${GMT + GMH}" class="gmark"/>`;
+  svg += `<circle cx="${X}" cy="${GAY}" r="${R}" fill="none" stroke="#FBF6EE" stroke-opacity="${finished ? 1 : .3}" stroke-width="3"/>`;
+  if (frac > 0) svg += `<circle cx="${X}" cy="${GAY}" r="${R}" fill="none" stroke="#FAC775" stroke-width="3" stroke-linecap="round" stroke-dasharray="${(C * frac).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 ${X} ${GAY})"/>`;
+  svg += avatarSvg(me, +X, GAY, 9.5, 'glAvClip', 1);
+  if (isLive && !finished){
+    const sp = steps[cur], tagTxt = sp.by === 'time' ? fmtTime(Math.ceil(left)) : distShort(Math.ceil(left));
+    const ghostRight = ghostX != null && ghostX > mx && ghostX < mx + 60, ghostLeft = ghostX != null && ghostX < mx && ghostX > mx - 60;
+    const tx = (mx + 52 > GBW || ghostRight) && !(ghostLeft && mx - 52 > 0) ? mx - 32 : mx + 32;
+    svg += `<rect x="${(tx - 21).toFixed(1)}" y="${GAY - 9}" width="42" height="18" rx="9" fill="#FBF6EE"/><text x="${tx.toFixed(1)}" y="${GAY + 4}" text-anchor="middle" class="gtag">${esc(tagTxt)}</text>`;
+  }
+  const eta = ghostTxt ? `${fmtTime(remainingSeconds(def))} to go` : finishText(def);
+  svg += `<text x="${finished ? GGX - 12 : GTW - 2}" y="10" text-anchor="end" class="geta">${esc(eta)}</text>`;
+  if (ghostTxt) svg += `<text x="2" y="10" class="geta" opacity=".85">${esc(ghostTxt)}</text>`;
   svg += '</svg>';
   let info;
-  if (live_ && wo.done) info = 'Workout complete. Carry on, or finish your run.';
+  if (finished) info = 'Workout complete. Carry on, or finish your run.';
   else {
-    const i = glSel != null ? glSel : Math.max(0, Math.min(steps.length - 1, cur));
-    const st = steps[i];
+    const i = glSel != null ? glSel : Math.max(0, Math.min(steps.length - 1, cur)), st = steps[i];
     const tag = glSel == null && cur < 0 ? 'First' : cur < 0 ? `Step ${i + 1} of ${steps.length}` : i < cur ? 'Done' : i === cur ? 'Now' : 'Coming up';
     info = `${tag}: ${st.label}, ${amtText(st)} at ${speedText(st.speed)}${st.incline ? `, ${st.incline}%` : ''}`;
   }
   return { svg, info };
+}
+/* ---------- free runs: quick targets and a timeline that builds as you run ---------- */
+const FREE_TARGETS = [{ id: 'none', l: 'No target', k: 'none' },
+  { id: 't600', l: '10 min', k: 'time', v: 600 }, { id: 't1200', l: '20 min', k: 'time', v: 1200 }, { id: 't1800', l: '30 min', k: 'time', v: 1800 },
+  { id: 'd1000', l: '1 km', k: 'dist', v: 1000 }, { id: 'd2000', l: '2 km', k: 'dist', v: 2000 }, { id: 'd3000', l: '3 km', k: 'dist', v: 3000 },
+  { id: 'd4000', l: '4 km', k: 'dist', v: 4000 }, { id: 'd5000', l: '5 km', k: 'dist', v: 5000 }, { id: 'd10000', l: '10 km', k: 'dist', v: 10000 }];
+const ftById = id => FREE_TARGETS.find(x => x.id === id) || FREE_TARGETS[0];
+const currentFT = () => ftById(run ? (run.freeTarget || 'none') : settings.freeTarget);
+let frExpanded = false, frKey = '';
+function renderFreeTargets(){
+  const box = $('#frTargets'), free = !getWorkout(selected) && !wo, ft = currentFT();
+  const key = [free, !!run, ft.id, frExpanded].join('|');
+  if (key === frKey) return; frKey = key;
+  if (!free){ box.innerHTML = ''; return; }
+  if (run && !frExpanded){ box.innerHTML = `<button class="link frline" id="frOpen">${ft.k === 'none' ? 'No target' : `Target: ${ft.l}`}. Change</button>`; return; }
+  const chip = x => `<button class="frc${x.id === ft.id ? ' on' : ''}" data-ft="${x.id}" aria-pressed="${x.id === ft.id}">${x.l}</button>`;
+  box.innerHTML = `<div class="frgrp">Target: time</div><div class="frchips">${FREE_TARGETS.filter(x => x.k === 'time').map(chip).join('')}</div>
+    <div class="frgrp">Target: distance</div><div class="frchips">${FREE_TARGETS.filter(x => x.k === 'dist').map(chip).join('')}</div>
+    <div class="frchips" style="margin-top:.4rem">${chip(FREE_TARGETS[0])}</div>
+    <p class="frnote">${ft.k === 'none' ? 'Run as long as you like. The big view shows your last 20 minutes.' : `The finish ribbon will be at ${ft.l}. Break it to trigger your celebration.`}</p>`;
+}
+function checkFreeTarget(){
+  if (!run || wo || run.freeDone) return;
+  const ft = ftById(run.freeTarget); if (ft.k === 'none') return;
+  if ((ft.k === 'time' ? run.moving : run.dist) < ft.v) return;
+  run.freeDone = true;
+  finishCelebrate();
+  if (settings.cues){ if (!settings.confetti) beep(880, .6); say(`Target reached. ${ft.k === 'time' ? spokenTime(ft.v) : spokenDist(ft.v)} done. Carry on, or finish your run.`); }
+}
+function timeToDist(r, m){
+  const sm = r.samples;
+  for (let i = 1; i < sm.length; i++) if (sm[i][4] >= m){ const a = sm[i - 1], b = sm[i]; return a[0] + (b[0] - a[0]) * (m - a[4]) / ((b[4] - a[4]) || 1); }
+  return r.moving * m / Math.max(1, r.dist);
+}
+// ghost for free runs: your best previous run that reached the same target (or your last free run with no target)
+function freeGhost(ft){
+  const key = run ? 'fg|' + run.start + '|' + ft.id : '';
+  if (GT.ghostKey === key) return GT.ghost;
+  GT.ghostKey = key;
+  const prev = !run ? [] : allRuns().filter(r => r.id !== String(run.start) && r.samples && r.samples.length > 3 && r.samples[r.samples.length - 1].length >= 5);
+  GT.ghost = ft.k === 'dist' ? prev.filter(r => r.dist >= ft.v).sort((a, b) => timeToDist(a, ft.v) - timeToDist(b, ft.v))[0]
+    : ft.k === 'time' ? prev.filter(r => r.moving >= ft.v).sort((a, b) => ghostDistAt(b, ft.v) - ghostDistAt(a, ft.v))[0]
+    : prev.filter(r => !r.workout).sort((a, b) => b.date - a.date)[0];
+  GT.ghost = GT.ghost || null;
+  return GT.ghost;
+}
+function freeTimeline(){
+  const now = performance.now(), ft = currentFT(), me = curProfile(), hasT = ft.k !== 'none';
+  const t = run ? run.moving : 0, d = run ? run.dist : 0, finished = !!(run && run.freeDone);
+  const key = 'free|' + (run ? run.start : 'idle') + '|' + ft.id;
+  if (GT.key !== key){ GT.key = key; GT.dispX = null; GT.finishAt = finished ? now - 6000 : 0; GT.pendingCeleb = false; gtResetRope(); }
+  const axis = ft.k === 'dist' ? 'd' : 't', segLen = ft.k === 'dist' ? (ft.v <= 5000 ? 100 : 250) : 60;
+  const span = hasT ? ft.v : 1200, nSeg = span / segLen, x0 = hasT ? 0 : Math.max(0, Math.floor((t - 1140) / 60) * 60);
+  const xOf = v => (v - x0) / span * GBW, segW = GBW / nSeg, curV = axis === 'd' ? d : t;
+  // bucket the 5-second samples into bars (one per minute, or per 100 m / 250 m for distance targets)
+  const buckets = new Map();
+  if (run) run.samples.forEach(q => { const v = axis === 'd' ? q[4] : q[0]; if (v == null) return; const i = Math.floor(Math.max(0, v - 1e-6) / segLen); if (i * segLen < x0) return;
+    const b = buckets.get(i) || { n: 0, s: 0, inc: 0 }; b.n++; b.s += q[1]; b.inc += q[2]; buckets.set(i, b); });
+  const lastI = Math.floor(Math.max(0, curV - 1e-6) / segLen), bars = [];
+  if (run && curV > 0) for (let i = Math.floor(x0 / segLen); i <= lastI; i++){
+    const b = buckets.get(i);
+    if (b) bars.push({ i, s: b.s / b.n, inc: b.inc / b.n, fill: Math.min(1, (curV - i * segLen) / segLen) });
+    else if (i === lastI) bars.push({ i, s: live.speed || 0, inc: live.incline, fill: Math.min(1, (curV - i * segLen) / segLen) });
+  }
+  const avg = t > 0 ? d / t * 3.6 : 0, maxS = Math.max(14, ...bars.map(b => b.s));
+  let svg = `<svg viewBox="0 0 ${GTW} ${GH}" role="img" aria-label="Free run timeline">`;
+  if (bars.length){
+    const pts = [`M${xOf(bars[0].i * segLen).toFixed(1)} ${GMT + GMH}`];
+    bars.forEach(b => pts.push(`L${(xOf(b.i * segLen) + segW * b.fill / 2).toFixed(1)} ${(GMT + GMH - GMH * b.inc / 11).toFixed(1)}`));
+    const lb = bars[bars.length - 1], ex = xOf(lb.i * segLen) + segW * lb.fill;
+    pts.push(`L${ex.toFixed(1)} ${(GMT + GMH - GMH * lb.inc / 11).toFixed(1)} L${ex.toFixed(1)} ${GMT + GMH} Z`);
+    svg += `<path d="${pts.join(' ')}" fill="#FBF6EE" fill-opacity=".22" stroke="#FBF6EE" stroke-opacity=".55" stroke-width="1.2" stroke-linejoin="round"/>`;
+  }
+  bars.forEach(b => {
+    const x = xOf(b.i * segLen), w = segW * b.fill, h = Math.max(2, GBH * b.s / maxS), e = b.s < avg * .97 ? 'easy' : b.s > avg * 1.03 ? 'hard' : 'steady';
+    svg += `<rect x="${(x + .6).toFixed(1)}" y="${(GBASE - h).toFixed(1)}" width="${Math.max(.6, w - 1.2).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" fill="${EFF_COL[e]}"${e === 'hard' ? ' stroke="#FBF6EE" stroke-width="1"' : ''}/>`;
+    if (glSel === b.i) svg += `<rect x="${(x - .4).toFixed(1)}" y="${GAY + 14}" width="${(segW + .8).toFixed(1)}" height="${GMT + GMH - GAY - 12}" rx="3" class="gselbox"/>`;
+    svg += `<rect x="${x.toFixed(1)}" y="0" width="${segW.toFixed(1)}" height="${GH}" class="hit" data-step="${b.i}"/>`;
+  });
+  if (hasT) for (let k = bars.length ? bars[bars.length - 1].i + 1 : 0; k < nSeg; k++) svg += `<rect x="${(k * segW + .6).toFixed(1)}" y="${GBASE - 3}" width="${Math.max(.6, segW - 1.2).toFixed(1)}" height="3" rx="1" fill="#FBF6EE" opacity=".25"/>`;
+  svg += `<line x1="0" x2="${GTW}" y1="${GBASE + .5}" y2="${GBASE + .5}" stroke="#FBF6EE" stroke-opacity=".35"/>`;
+  // a small flag at each kilometre (or mile) with its split
+  if (run){ const sp = splitsOf(toRecordLite()), um = unitM(); let prevT = 0;
+    sp.forEach((st, k) => { const kx = axis === 'd' ? xOf((k + 1) * um) : xOf(st), split = st - prevT; prevT = st;
+      if (kx < 0 || kx > GBW) return;
+      svg += `<line x1="${kx.toFixed(1)}" x2="${kx.toFixed(1)}" y1="${GBT - 6}" y2="${GMT + GMH}" stroke="#FBF6EE" stroke-opacity=".6" stroke-dasharray="2 2"/>`;
+      svg += `<path d="M${kx.toFixed(1)} ${GBT - 12} l8 3 l-8 3 Z" fill="#FBF6EE"/>`;
+      if (kx < GBW - 40) svg += `<text x="${(kx + 10).toFixed(1)}" y="${GBT - 5}" class="geta">${k + 1} ${dU()} ${fmtTime(split)}</text>`; }); }
+  // marker: glides; once the target is reached it runs on through the ribbon
+  let target;
+  if (finished){ if (!GT.finishAt) GT.finishAt = now - 6000; const tt = Math.min(1, (now - GT.finishAt) / 1600), ee = 1 - Math.pow(1 - tt, 3); target = GBW + (GEND - GBW) * ee; GT.dispX = target; if (hasT && !GT.snapT && target > GGX + 5) gtSnap(now); }
+  else { target = Math.min(GBW, Math.max(13, xOf(curV))); GT.dispX = GT.dispX == null ? target : GT.dispX + (target - GT.dispX) * .2; }
+  const mx = GT.dispX;
+  if (hasT){
+    gtSim(mx, now);
+    svg += `<line x1="${GBW}" x2="${GTW}" y1="${GMT + GMH}" y2="${GMT + GMH}" stroke="#FBF6EE" stroke-opacity=".35" stroke-dasharray="3 3"/>`;
+    svg += `<line x1="${GGX}" x2="${GGX}" y1="20" y2="${GTOP}" stroke="#FBF6EE" stroke-width="2"/>${gtFlag(GGX + 1, 20, now, 0)}`;
+    svg += `<line x1="${GGX}" x2="${GGX}" y1="${GBOT}" y2="${GH}" stroke="#FBF6EE" stroke-width="2"/>${gtFlag(GGX + 1, GBOT + 1, now, 1.7)}`;
+    const mid = Math.floor(GN / 2) - 1;
+    svg += GT.snapT ? gtRopePath(0, mid) + gtRopePath(mid + 1, GN - 1) : gtRopePath(0, GN - 1);
+    if (GT.snapT){ const st = (now - GT.snapT) / 260; if (st < 1) GT.sparks.forEach(sp => { const r1 = 3 + 10 * st, r2 = 6 + 18 * st;
+      svg += `<line x1="${(sp.x + Math.cos(sp.a) * r1).toFixed(1)}" y1="${(sp.y + Math.sin(sp.a) * r1).toFixed(1)}" x2="${(sp.x + Math.cos(sp.a) * r2).toFixed(1)}" y2="${(sp.y + Math.sin(sp.a) * r2).toFixed(1)}" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="${(1 - st).toFixed(2)}"/>`; }); }
+  }
+  // ghost
+  let ghostTxt = '', ghostX = null;
+  const gr = run && !finished && t > 5 && settings.ghost !== false ? freeGhost(ft) : null;
+  if (gr && (hasT || t <= gr.moving)){ // with no target, the ghost bows out once its run ended
+    const gd = ghostDistAt(gr, t), diff = (gd - d) / (Math.max(live.speed, 3) / 3.6);
+    const gx = Math.min(GBW, Math.max(13, axis === 'd' ? xOf(gd) : xOf(t + diff))); ghostX = gx;
+    svg += `<line x1="${gx.toFixed(1)}" x2="${gx.toFixed(1)}" y1="${GAY + 10}" y2="${GBASE}" stroke="#FBF6EE" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+    svg += avatarSvg(me, +gx.toFixed(1), GAY, 9, 'glGhClip', .45) + `<circle cx="${gx.toFixed(1)}" cy="${GAY}" r="10" fill="none" stroke="#FBF6EE" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="3 2"/>`;
+    const who = hasT ? 'your best' : 'last run';
+    ghostTxt = Math.abs(diff) < 2 ? `Level with ${who}` : diff > 0 ? `${who.charAt(0).toUpperCase() + who.slice(1)} ${fmtTime(diff)} ahead` : `${fmtTime(-diff)} ahead of ${who}`;
+  }
+  // your marker with a ring showing how much of the target is left
+  const R = 11.5, C = 2 * Math.PI * R, X = mx.toFixed(1), frac = !hasT || finished || !run ? 0 : 1 - Math.min(1, curV / ft.v);
+  svg += `<line x1="${X}" x2="${X}" y1="${GAY + R}" y2="${GMT + GMH}" class="gmark"/><circle cx="${X}" cy="${GAY}" r="${R}" fill="none" stroke="#FBF6EE" stroke-opacity="${finished ? 1 : .3}" stroke-width="3"/>`;
+  if (frac > 0) svg += `<circle cx="${X}" cy="${GAY}" r="${R}" fill="none" stroke="#FAC775" stroke-width="3" stroke-linecap="round" stroke-dasharray="${(C * frac).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 ${X} ${GAY})"/>`;
+  svg += avatarSvg(me, +X, GAY, 9.5, 'glAvClip', 1);
+  if (!finished && run){
+    const tag = ft.k === 'time' ? fmtTime(ft.v - t) : ft.k === 'dist' ? distShort(Math.max(0, ft.v - d)) : fmtTime(t);
+    const ghostRight = ghostX != null && ghostX > mx && ghostX < mx + 62, tx = mx + 56 > GBW || ghostRight ? mx - 34 : mx + 34;
+    svg += `<rect x="${(tx - 24).toFixed(1)}" y="${GAY - 9}" width="48" height="18" rx="9" fill="#FBF6EE"/><text x="${tx.toFixed(1)}" y="${GAY + 4}" text-anchor="middle" class="gtag">${esc(tag)}</text>`;
+  }
+  const right = finished ? `Target reached: ${ft.l}` : !run ? (hasT ? `Target: ${ft.l}` : 'Free run') : hasT ? (ft.k === 'time' ? `${fmtTime(ft.v - t)} to go` : `${distShort(Math.max(0, ft.v - d))} to go`) : `${fD(d)} ${dU()}, ${fmtTime(t)}`;
+  svg += `<text x="${finished ? GGX - 12 : GTW - 2}" y="10" text-anchor="end" class="geta">${esc(right)}</text>`;
+  if (ghostTxt) svg += `<text x="2" y="10" class="geta" opacity=".85">${esc(ghostTxt)}</text>`;
+  svg += '</svg>';
+  let info;
+  const sb = glSel != null && bars.find(b => b.i === glSel);
+  if (sb && now - glSelTs < 5000){
+    const lab = axis === 'd' ? `${distShort(sb.i * segLen)} to ${distShort((sb.i + 1) * segLen)}` : `Minute ${sb.i + 1}`;
+    info = `${lab}: ${speedText(sb.s)}, ${fP(3600 / Math.max(.1, sb.s))} /${dU()}, ${sb.inc.toFixed(0)}% incline`;
+  } else {
+    if (glSel != null && now - glSelTs >= 5000) glSel = null;
+    info = finished ? 'Target reached. Carry on, or finish your run.' : !run ? (hasT ? `Free run to ${ft.l}. Start the belt when you’re ready.` : 'Free run. Start the belt when you’re ready.')
+      : `Now: ${speedText(live.speed)}, ${fP(paceFromSpeed(live.speed))} /${dU()}, average ${speedText(avg)}`;
+  }
+  return { svg, info };
+}
+const toRecordLite = () => ({ splitsKm: run.splitsKm, splitsMi: run.splitsMi });
+
+// draw the timeline (also called every animation frame while the glance view is open)
+let glTlLast = 0, glRaf = 0;
+function drawGlTimeline(){
+  const gw = getWorkout(selected) || (wo && wo.def);
+  const t = gw ? glanceTimeline(gw) : freeTimeline();
+  $('#glTlSvg').innerHTML = t.svg;
+  if ($('#glTlInfo').textContent !== t.info) $('#glTlInfo').textContent = t.info;
+  if (glTlMax) $('#glTlSvg svg').style.maxHeight = glTlMax + 'px';
+}
+function glLoop(now){
+  if (!glanceOpen()){ glRaf = 0; return; }
+  if (now - glTlLast > 30 && !$('#glTl').hidden){ glTlLast = now; drawGlTimeline(); }
+  glRaf = requestAnimationFrame(glLoop);
 }
 
 /* ---------- workout timeline (planned pace and incline per step) ---------- */
@@ -3741,6 +4033,7 @@ function renderSettings(){
   $('#setCues').checked = settings.cues;
   $('#setControl').checked = settings.control;
   $('#setConfetti').checked = settings.confetti;
+  $('#setGhost').checked = settings.ghost !== false;
   renderCelebs();
   populateVoices();
   $('#setConfettiSound').checked = settings.confettiSound;
@@ -3847,6 +4140,7 @@ $('#setGoal').addEventListener('change', e => { const v = parseFloat(e.target.va
 $('#setAnnounce').onchange = e => { settings.announce = e.target.checked; saveSettings(); };
 $('#setCues').onchange = e => { settings.cues = e.target.checked; saveSettings(); };
 $('#setConfetti').onchange = e => { settings.confetti = e.target.checked; saveSettings(); };
+$('#setGhost').onchange = e => { settings.ghost = e.target.checked; saveSettings(); };
 $('#setConfettiSound').onchange = e => { settings.confettiSound = e.target.checked; saveSettings(); if (e.target.checked){ popSound(.55, 1300); crackle(.9, .07, .1); } };
 $('#exportSeg').addEventListener('click', e => { const b = e.target.closest('button[data-x]'); if (b){ settings.autoExport = b.dataset.x; saveSettings(); renderSettings(); } });
 $('#garminImport').onclick = () => window.open(GARMIN_IMPORT, '_blank', 'noopener');
@@ -3873,10 +4167,12 @@ function openGlance(){
   renderMute();
   try { history.pushState({ glance: true }, ''); } catch(e){}
   renderGlance();
+  if (!glRaf) glRaf = requestAnimationFrame(glLoop);
 }
 function closeGlance(fromPop){
   if (!glanceOpen()) return;
   $('#glance').hidden = true;
+  if (GT.pendingCeleb){ GT.pendingCeleb = false; if (settings.confetti) superConfetti(); }
   if (!fromPop && history.state && history.state.glance){ try { history.back(); } catch(e){} }
 }
 window.addEventListener('popstate', () => closeGlance(true));
@@ -3884,10 +4180,20 @@ $('#live').addEventListener('click', openGlance);
 $('#live').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGlance(); } });
 $('#glMain').addEventListener('click', () => closeGlance(false));
 $('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun(); });
-$('#glTl').addEventListener('click', e => {
-  e.stopPropagation(); // tapping the timeline shows step details instead of closing
+$('#frTargets').addEventListener('click', e => {
+  const b = e.target.closest('[data-ft]');
+  if (b){
+    settings.freeTarget = b.dataset.ft; saveSettings();
+    if (run){ run.freeTarget = b.dataset.ft; run.freeDone = false; frExpanded = false; }
+    if (navigator.vibrate) navigator.vibrate(10);
+    renderFreeTargets(); renderRunWorkout(); return;
+  }
+  if (e.target.closest('#frOpen')){ frExpanded = true; renderFreeTargets(); }
+});
+$('#glTl').addEventListener('click', e => e.stopPropagation()); // tapping the timeline shows step details instead of closing
+$('#glTl').addEventListener('pointerdown', e => {
   const h = e.target.closest('[data-step]');
-  if (h){ glSel = +h.dataset.step; glSelTs = performance.now(); if (navigator.vibrate) navigator.vibrate(10); renderGlance(); }
+  if (h){ glSel = +h.dataset.step; glSelTs = performance.now(); if (navigator.vibrate) navigator.vibrate(10); drawGlTimeline(); }
 });
 $('#glClose').addEventListener('click', () => closeGlance(false));
 $('#glCtrl').addEventListener('click', e => {
