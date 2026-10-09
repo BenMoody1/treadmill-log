@@ -409,7 +409,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 @media (prefers-reduced-motion:reduce){.pod-block{animation:none}}
 /* glance view: live workout timeline */
 .gl-tl{align-self:stretch;margin-top:1.2vh;cursor:default;-webkit-tap-highlight-color:transparent}
-.gl-tl svg{display:block;width:100%;height:auto;max-height:20vh}
+.gl-tl svg{display:block;width:100%;height:auto;max-height:30vh}
+.glance.no-ctrl .gl-tl svg{max-height:40vh}
 .gl-tlinfo{font-size:.95rem;font-weight:600;line-height:1.3;margin-top:.35rem;min-height:2.6em;text-align:center}
 .gtw{fill:var(--track-ink)}
 .gtr{fill:var(--track-ink);fill-opacity:.55}
@@ -427,7 +428,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 @media (orientation:landscape){
   .glance.has-tl #glDist{font-size:clamp(3.2rem,min(15vw,24vh),12rem)}
   .glance.has-tl #glPace{font-size:clamp(2.4rem,min(10vw,14vh),9rem)}
-  .gl-tl svg{max-height:22vh}
+  .gl-tl svg{max-height:34vh}
+  .glance.no-ctrl .gl-tl svg{max-height:46vh}
 }
 .splitbadge.long{font-size:clamp(1.5rem,7.5vw,2.4rem)}
 .gl-topbtns{display:flex;gap:.5rem;align-items:center}
@@ -514,6 +516,8 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .frc.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .frnote{font-size:.85rem;color:var(--muted);margin:.6rem 0 0}
 .frline{min-height:44px}
+.gl-ctl[aria-pressed="true"]{background:var(--track-ink);color:var(--track)}
+#glCtlBtn[aria-pressed="true"]{background:var(--track-ink);color:var(--track)}
 </style>
 </head>
 <body>
@@ -670,7 +674,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
     <span class="fhint">Set to 0 to turn the goal off.</span></label>
 
   <h3>Workouts</h3>
-  <label class="check"><input type="checkbox" id="setGhost"><span>Show a ghost of your last attempt at the same workout in the big view</span></label>
+  <label class="check"><input type="checkbox" id="setGhost"><span>Show a ghost of your personal best at the same workout or free-run target in the big view</span></label>
 
   <h3>Audio</h3>
   <label class="check"><input type="checkbox" id="setAnnounce"><span id="announceLabel">Announce each kilometre split</span></label>
@@ -731,13 +735,13 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <div class="glance" id="glance" hidden>
   <div class="gl-top"><span class="gl-state" id="glState"></span>
     <div class="gl-topbtns">
+      <button class="gl-close gl-mute" id="glCtlBtn" aria-label="Hide treadmill controls" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
       <button class="gl-close gl-mute" id="glMute" aria-label="Mute audio" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="snd-on" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="snd-off" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       <button class="gl-close" id="glClose">Close</button>
     </div></div>
   <div class="gl-body">
     <div class="gl-main" id="glMain"><div class="gl-inner" id="glInner"><div class="gl-nums" id="glNums">
       <div class="gl-block"><span class="gl-n" id="glDist">0.00</span><span class="gl-l" id="glDistU">km</span></div>
-      <div class="gl-block"><span class="gl-n" id="glPace">–:––</span><span class="gl-l" id="glPaceU">pace /km</span></div>
       <div class="gl-step" id="glStep"></div></div>
       <div class="gl-tl" id="glTl" hidden><div id="glTlSvg"></div><div class="gl-tlinfo" id="glTlInfo"></div></div>
     </div></div>
@@ -745,7 +749,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
       <div class="gl-stats">
         <div><div class="v" id="glSpeed">0.0</div><div class="l" id="glSpeedL">km/h</div></div>
         <div><div class="v" id="glTime">0:00</div><div class="l">Time</div></div>
-        <div><div class="v" id="glIncline">0.0</div><div class="l">Incline %</div></div>
+        <div><div class="v" id="glPaceS">–:––</div><div class="l" id="glPaceSU">Pace /km</div></div>
         <div><div class="v" id="glHr">–</div><div class="l" id="glHrL">bpm</div></div>
         <div><div class="v" id="glSteps">–</div><div class="l" id="glStepsL">Steps</div></div>
         <div><div class="v" id="glKcal">–</div><div class="l">kcal</div></div>
@@ -794,17 +798,18 @@ const PKEY = 'tm-plan-v1', SUMKEY = 'tm-summary-week-v1';
 const MOVING = 0.3, MI = 1609.344;
 const TAGS = ['Easy', 'Tempo', 'Intervals', 'Long', 'Hills', 'Race', 'Felt good', 'Felt rough'];
 const BESTS = [['1k', 1000, '1 km'], ['1mi', MI, '1 mile'], ['5k', 5000, '5 km'], ['10k', 10000, '10 km']];
+// speeds: warm-up and cool-down walk 4 km/h, brisk-walk recoveries 5, steady jogging 7-8.5, hardest efforts up to 10
 const PRESETS = [
-  { id: 'p-400', name: '6 × 400 m', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 6, work: { by: 'dist', value: 400, speed: 13, incline: 1 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 } },
-  { id: 'p-1k', name: '5 × 1 km threshold', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 5, work: { by: 'dist', value: 1000, speed: 12, incline: 1 }, rest: { by: 'time', value: 120, speed: 7, incline: 1 }, cool: { min: 5, speed: 6.5, incline: 1 } },
-  { id: 'p-hill', name: '8 × 1 min hills', kind: 'int', warm: { min: 8, speed: 8, incline: 1 }, reps: 8, work: { by: 'time', value: 60, speed: 10, incline: 6 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 } },
-  { id: 'p-10min', name: '10-minute express', kind: 'int', warm: { min: 2, speed: 8, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 12, incline: 1 }, rest: { by: 'time', value: 30, speed: 7, incline: 1 }, cool: { min: 1, speed: 6, incline: 1 } },
-  { id: 'p-20min', name: '20-minute progression run', kind: 'int', warm: { min: 4, speed: 8, incline: 1 }, reps: 4, work: { by: 'time', value: 180, speed: 10, incline: 1 }, rest: { by: 'time', value: 0, speed: 6, incline: 1 }, cool: { min: 4, speed: 6.5, incline: 1 }, workLabel: 'Block', ladder: { speed: [10, 10.5, 11, 11.5] } },
-  { id: 'p-hillpyr', name: 'Hill pyramid', kind: 'int', warm: { min: 8, speed: 8, incline: 1 }, reps: 9, work: { by: 'time', value: 120, speed: 8, incline: 2 }, rest: { by: 'time', value: 60, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 }, workLabel: 'Climb', ladder: { incline: [2, 4, 6, 8, 10, 8, 6, 4, 2] } },
-  { id: 'p-pyr', name: 'Pyramid intervals 1-2-3-2-1', kind: 'int', warm: { min: 10, speed: 8, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 12, incline: 1 }, rest: { by: 'time', value: 90, speed: 6, incline: 1 }, cool: { min: 5, speed: 6, incline: 1 }, ladder: { value: [60, 120, 180, 120, 60] } },
+  { id: 'p-400', name: '6 × 400 m', kind: 'int', warm: { min: 10, speed: 4, incline: 1 }, reps: 6, work: { by: 'dist', value: 400, speed: 10, incline: 1 }, rest: { by: 'time', value: 90, speed: 5, incline: 1 }, cool: { min: 5, speed: 4, incline: 1 } },
+  { id: 'p-1k', name: '5 × 1 km threshold', kind: 'int', warm: { min: 10, speed: 4, incline: 1 }, reps: 5, work: { by: 'dist', value: 1000, speed: 8.5, incline: 1 }, rest: { by: 'time', value: 120, speed: 5, incline: 1 }, cool: { min: 5, speed: 4, incline: 1 } },
+  { id: 'p-hill', name: '8 × 1 min hills', kind: 'int', warm: { min: 8, speed: 4, incline: 1 }, reps: 8, work: { by: 'time', value: 60, speed: 7, incline: 6 }, rest: { by: 'time', value: 90, speed: 5, incline: 1 }, cool: { min: 5, speed: 4, incline: 1 } },
+  { id: 'p-10min', name: '10-minute express', kind: 'int', warm: { min: 2, speed: 4, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 9, incline: 1 }, rest: { by: 'time', value: 30, speed: 5, incline: 1 }, cool: { min: 1, speed: 4, incline: 1 } },
+  { id: 'p-20min', name: '20-minute progression run', kind: 'int', warm: { min: 4, speed: 4, incline: 1 }, reps: 4, work: { by: 'time', value: 180, speed: 7, incline: 1 }, rest: { by: 'time', value: 0, speed: 5, incline: 1 }, cool: { min: 4, speed: 4, incline: 1 }, workLabel: 'Block', ladder: { speed: [7, 7.5, 8, 8.5] } },
+  { id: 'p-hillpyr', name: 'Hill pyramid', kind: 'int', warm: { min: 8, speed: 4, incline: 1 }, reps: 9, work: { by: 'time', value: 120, speed: 5, incline: 2 }, rest: { by: 'time', value: 60, speed: 4, incline: 1 }, cool: { min: 5, speed: 4, incline: 1 }, workLabel: 'Climb', ladder: { incline: [2, 4, 6, 8, 10, 8, 6, 4, 2] } },
+  { id: 'p-pyr', name: 'Pyramid intervals 1-2-3-2-1', kind: 'int', warm: { min: 10, speed: 4, incline: 1 }, reps: 5, work: { by: 'time', value: 60, speed: 9, incline: 1 }, rest: { by: 'time', value: 90, speed: 5, incline: 1 }, cool: { min: 5, speed: 4, incline: 1 }, ladder: { value: [60, 120, 180, 120, 60] } },
   { id: 'p-12330', name: '12-3-30 incline walk', kind: 'int', warm: { min: 0, speed: 4.8, incline: 1 }, reps: 1, work: { by: 'time', value: 1800, speed: 4.8, incline: 12 }, rest: { by: 'time', value: 0, speed: 4.8, incline: 1 }, cool: { min: 0, speed: 4.8, incline: 1 }, workLabel: 'Incline walk' },
-  { id: 'p-5k', name: '5 km in 27:00', kind: 'goal', dist: 5000, time: 1620 },
-  { id: 'p-10k', name: '10 km in 60:00', kind: 'goal', dist: 10000, time: 3600 }
+  { id: 'p-5k', name: '5 km in 40:00', kind: 'goal', dist: 5000, time: 2400 },
+  { id: 'p-10k', name: '10 km in 1:25:00', kind: 'goal', dist: 10000, time: 5100 }
 ];
 
 /* ---------- storage ---------- */
@@ -887,7 +892,7 @@ const keyFor = (base, id) => id === 'default' ? base : `${base}@${id}`;
 function rawGet(base, id, d){ const k = keyFor(base, id); if (isBig(base)) return bigGet(k, d); try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
 function rawSet(base, id, v){ const k = keyFor(base, id); if (isBig(base)) return bigSet(k, v); try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
 await bigStoreInit();
-const settings = Object.assign({ freeTarget: 'none', ghost: true, confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
+const settings = Object.assign({ glControls: true, freeTarget: 'none', ghost: true, confettiTheme: 'classic', voice: 'auto', height: null, muted: false, confettiSound: true, autoExport: 'off',  units: 'km', weight: null, maxHr: null, weeklyGoal: 0, announce: true, cues: true, control: false, theme: 'auto', weeklySummary: true, goalSet: false, unitsSet: false, setupDone: store.get(KEY, []).length > 0, confetti: !window.matchMedia('(prefers-reduced-motion: reduce)').matches }, store.get(SKEY, {}));
 // older versions defaulted the goal to 20 km without it ever being set; treat that as not set
 if (!settings.goalSet && settings.weeklyGoal === 20000) settings.weeklyGoal = 0;
 const saveSettings = () => store.set(SKEY, settings);
@@ -903,6 +908,7 @@ let ctrl = freshCtrl();
 let isDemo = false, demo = null;
 let live = { speed: 0, incline: 0, hr: null, hrTs: 0 };
 let run = null, lastTs = null, lastDist = null, lastKcal = null, tmDist = false;
+let needStop = false;
 let ctrlTarget = { sp: null, spTs: 0, inc: null, inTs: 0 };
 let wo = null, wakeLock = null, chartMode = 'week', filterTag = null;
 
@@ -1677,7 +1683,8 @@ function onData(r, now = performance.now()){
   const dt = lastTs == null ? 0 : Math.min((now - lastTs) / 1000, 3);
   lastTs = now;
 
-  if (!run && live.speed > MOVING) startRun();
+  if (needStop && live.speed <= MOVING) needStop = false; // a new run only starts once the belt has stopped
+  if (!run && !needStop && live.speed > MOVING) startRun();
   if (run){
     const moving = live.speed > MOVING;
     let d = 0;
@@ -1755,6 +1762,7 @@ function toRecord(r){
 
 function finishRun(){
   if (!run) return;
+  const wasMoving = live.speed > MOVING;
   let savedId = null;
   if (run.demo){ toast('Demo runs aren’t saved'); }
   else if (run.dist < 50 && run.moving < 60){ toast('Run too short to save'); }
@@ -1768,6 +1776,7 @@ function finishRun(){
   run = null; wo = null; releaseWake(); renderLive(); renderHistory();
   if (!savedId) liveBadges.clear();
   frExpanded = false; frKey = '';
+  if (wasMoving){ needStop = true; if (controlAvailable()) gradualStop(10); }
   if (savedId) openDetail(savedId);
 }
 function discardRun(){
@@ -1785,7 +1794,16 @@ document.addEventListener('visibilitychange', () => { if (document.visibilitySta
 
 /* ---------- workouts ---------- */
 const customWorkouts = () => store.get(WKEY, []);
-const allWorkouts = () => PRESETS.concat(customWorkouts());
+const PEDITS = 'tm-preset-edits-v1';
+const isPresetId = id => PRESETS.some(x => x.id === id);
+const presetList = () => { const ed = store.get(PEDITS, {}); return PRESETS.map(x => ed[x.id] ? { ...ed[x.id], id: x.id, preset: true, edited: true } : { ...x, preset: true }); };
+function saveWorkoutDef(out){
+  if (isPresetId(out.id)){ const ed = store.get(PEDITS, {}); ed[out.id] = out; store.set(PEDITS, ed); return; }
+  const list = customWorkouts(), i = list.findIndex(x => x.id === out.id);
+  if (i >= 0) list[i] = out; else list.push(out);
+  store.set(WKEY, list);
+}
+const allWorkouts = () => presetList().concat(customWorkouts());
 function getWorkout(id){
   if (!id) return null;
   if (String(id).startsWith('plan:')){ const s = planSessions()[+String(id).slice(5)]; return s ? s.def : null; }
@@ -1958,6 +1976,22 @@ async function setIncline(p){
   p = Math.min(mx, Math.max(mn, Math.round(p / inc) * inc));
   return cpCommand([0x03, ...i16(Math.round(p * 10))]);
 }
+// slow the belt smoothly to a stop: one speed step per second
+let stopping = false;
+async function gradualStop(secs = 10){
+  if (stopping) return; stopping = true;
+  const v0 = live.speed, minV = isDemo ? .5 : ctrl.speedRange[0];
+  if (settings.cues) say('Slowing down.');
+  setTimeout(() => toast(`Slowing the belt to a stop over ${secs} seconds`), 1600);
+  for (let k = 1; k <= secs; k++){
+    await sleep(1000);
+    const v = v0 * (1 - k / secs);
+    if (k === secs || v < minV){ await stopBelt(); break; }
+    if (!(isDemo || ch)) break;
+    await setSpeed(Math.round(v * 10) / 10);
+  }
+  stopping = false;
+}
 async function stopBelt(){
   if (isDemo){ demo.manual = true; demo.target = 0; return; }
   if (!cpCh){ toast('Use the stop button on the treadmill'); return; }
@@ -2107,7 +2141,7 @@ function startDemo(){
 function demoTick(){
   const t = ++demo.t; demo.clock += 1000;
   if (!demo.manual){
-    demo.target = t < 120 ? 8.5 : t < 600 ? (Math.floor((t - 120) / 90) % 2 ? 12 : 9.5) : t < 690 ? 6.5 : 0;
+    demo.target = t < 120 ? 5 : t < 600 ? (Math.floor((t - 120) / 90) % 2 ? 9 : 7) : 5;
     demo.incline = t > 300 && t < 450 ? 3 : 1;
   }
   demo.speed += Math.max(-1.5, Math.min(1.5, demo.target - demo.speed));
@@ -2279,10 +2313,11 @@ function renderWorkouts(){
       <span class="wname">${w ? esc(w.name) : 'Free run'}</span>
       <span class="wsum">${w ? esc(summary(w)) : 'No targets. Just run.'}</span>${w ? `<span class="wdur">Takes ${durLabel(w).toLowerCase()}</span>` : ''}
       ${sel ? '<span class="wsel">Selected</span>' : ''}</button>
-      ${isCustom ? `<div class="wedit"><button class="link" data-edit="${esc(id)}">Edit</button><button class="link" data-del="${esc(id)}">Delete</button></div>` : ''}</li>`;
+      ${isCustom ? `<div class="wedit"><button class="link" data-edit="${esc(id)}">Edit</button><button class="link" data-del="${esc(id)}">Delete</button></div>`
+        : w && w.preset ? `<div class="wedit"><button class="link" data-edit="${esc(id)}">Edit</button>${w.edited ? `<button class="link" data-preset-reset="${esc(id)}">Reset to original</button>` : ''}</div>` : ''}</li>`;
   };
   $('#wlist').innerHTML =
-    sect('ready', 'Ready-made workouts', PRESETS.length + 1, false, `<ul class="wlist">${item(null)}${PRESETS.map(w => item(w)).join('')}</ul>`)
+    sect('ready', 'Ready-made workouts', PRESETS.length + 1, false, `<ul class="wlist">${item(null)}${presetList().map(w => item(w)).join('')}</ul>`)
     + sect('custom', 'Your workouts', custom.length, false,
       (custom.length ? `<ul class="wlist">${custom.map(w => item(w, true)).join('')}</ul>` : '<p class="muted">Build your own interval or goal-pace session.</p>')
       + '<button class="primary" id="newWo">Create workout</button>');
@@ -2303,7 +2338,7 @@ function openStepBuilder(src){
   const d = $('#builder');
   const fromDef = def => expand(def).map(x => ({ type: x.kind === 'work' ? 'work' : x.kind === 'warm' ? 'warm' : x.kind === 'cool' ? 'cool' : (x.label.startsWith('Walk') ? 'walk' : 'rest'), by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 }));
   const B = {
-    id: src && src.id && String(src.id).startsWith('c-') ? src.id : 'c-' + Date.now(),
+    id: src && src.id && (String(src.id).startsWith('c-') || isPresetId(src.id)) ? src.id : 'c-' + Date.now(),
     name: src ? src.name : '',
     steps: src ? (src.kind === 'steps' ? JSON.parse(JSON.stringify(src.steps)) : fromDef(src)) : [
       { type: 'warm', by: 'time', value: 300, speed: 7, incline: 1 }, { type: 'work', by: 'time', value: 240, speed: 10, incline: 1 },
@@ -2448,9 +2483,7 @@ function openStepBuilder(src){
     if (B.steps.some(x => !(x.value > 0))) return err('Every step needs a time or distance.');
     const name = d.querySelector('#sbName').value.trim() || 'My workout';
     const out = { id: B.id, name, kind: 'steps', steps: B.steps.map(x => ({ type: x.type, by: x.by, value: x.value, speed: x.speed, incline: x.incline || 0 })) };
-    const list = customWorkouts(), i = list.findIndex(x => x.id === out.id);
-    if (i >= 0) list[i] = out; else list.push(out);
-    store.set(WKEY, list);
+    saveWorkoutDef(out);
     selected = out.id; store.set(SELKEY, selected);
     d.close(); renderWorkouts(); renderRunWorkout();
     toast(`${name} saved and selected`);
@@ -2541,9 +2574,7 @@ function openBuilder(src){
       if (!speeds.every(okSpeed)) return err(`Speeds must be between ${toDispSpeed(1).toFixed(1)} and ${toDispSpeed(25).toFixed(1)} ${sU()}.`);
       out.name = d.querySelector('#b-name').value.trim() || `${reps} × ${amtText(work)}`;
     }
-    const list = customWorkouts(), i = list.findIndex(x => x.id === out.id);
-    if (i >= 0) list[i] = out; else list.push(out);
-    store.set(WKEY, list);
+    saveWorkoutDef(out);
     d.close();
     selected = out.id; store.set(SELKEY, selected);
     renderWorkouts(); renderRunWorkout();
@@ -2767,12 +2798,16 @@ function renderGlance(){
   const r = run, copy = (to, from) => { $(to).textContent = $(from).textContent; };
   $('#glDist').textContent = fD(r ? r.dist : 0);
   $('#glDistU').textContent = isMi() ? 'miles' : 'km';
-  $('#glPace').textContent = fP(paceFromSpeed(live.speed));
-  $('#glPaceU').textContent = `pace /${dU()}`;
+  $('#glPaceS').textContent = fP(paceFromSpeed(live.speed));
+  $('#glPaceSU').textContent = `Pace /${dU()}`;
   copy('#glState', '#state');
-  copy('#glSpeed', '#speed'); copy('#glSpeedL', '#speedL'); copy('#glTime', '#time'); copy('#glIncline', '#incline');
+  copy('#glSpeed', '#speed'); copy('#glSpeedL', '#speedL'); copy('#glTime', '#time');
   copy('#glHr', '#hr'); copy('#glHrL', '#hrL'); copy('#glSteps', '#steps'); copy('#glStepsL', '#stepsL'); copy('#glKcal', '#kcal');
-  const ctl = controlAvailable();
+  const canCtl = controlAvailable(), ctl = canCtl && settings.glControls !== false;
+  $('#glCtlBtn').hidden = !canCtl;
+  $('#glCtlBtn').setAttribute('aria-pressed', canCtl && !ctl);
+  $('#glCtlBtn').setAttribute('aria-label', ctl ? 'Hide treadmill controls' : 'Show treadmill controls');
+  $('#glance').classList.toggle('no-ctrl', !ctl);
   $('#glance').classList.toggle('has-ctrl', ctl);
   $('#glCtrl').hidden = !ctl;
   if (ctl){ copy('#glSpVal', '#spVal'); copy('#glSpLabel', '#spLabel'); copy('#glInVal', '#inVal'); copy('#glInLabel', '#inLabel'); }
@@ -2793,7 +2828,7 @@ function renderGlance(){
   drawGlTimeline();
   const mw = $('#glMain').clientWidth * .98;
   fitGlance();
-  fitText($('#glDist'), mw); fitText($('#glPace'), mw);
+  fitText($('#glDist'), mw);
 }
 // shrink a big number if it would overflow its area (e.g. 10.00+ km)
 function fitText(el, maxW){
@@ -2856,7 +2891,15 @@ function finishText(def){
 /* ---------- glance view: live workout timeline with finish flag ---------- */
 let glSel = null, glSelTs = 0, glTlMax = 0;
 // layout of the glance timeline (viewBox units)
-const GTW = 320, GBW = 262, GGX = 276, GEND = 306, GAY = 24, GBT = 44, GBH = 40, GBASE = 84, GMT = 88, GMH = 26, GTOP = 36, GBOT = 118, GH = 136, GN = 22;
+let GTW = 320, GBW = 262, GGX = 276, GEND = 306, GAY = 24, GBT = 44, GTOP = 36, GN = 22, GBH, GBASE, GMT, GMH, GBOT, GH, GF = 0;
+// the graph is taller now that pace sits in the stats, and taller still with the treadmill controls hidden
+function gtLayout(){
+  const f = settings.glControls === false ? 2.2 : 1.5;
+  if (f === GF) return false;
+  GF = f; GBH = 40 * f; GBASE = GBT + GBH; GMT = GBASE + 4; GMH = 26 * f; GBOT = GMT + GMH + 4; GH = GBOT + 18;
+  return true;
+}
+gtLayout();
 const EFF_COL = { easy: '#9FE1CB', steady: '#FAC775', hard: '#FF5A4E' };
 const GT = { key: '', dispX: null, rope: [], segs: [], snapT: 0, finishAt: 0, sparks: [], pendingCeleb: false, lastSim: 0, ghostKey: '', ghost: null };
 // effort: recovery/warm-up/cool-down are easy; the hardest work steps (by speed and incline) are hard, the rest steady
@@ -2890,6 +2933,7 @@ function gtSnap(now){
   if (navigator.vibrate) navigator.vibrate(40);
 }
 function finishCelebrate(){ // called when a workout completes
+  if (isDemo && demo){ demo.manual = true; demo.target = demo.speed; } // keep the current speed
   GT.finishAt = performance.now();
   if (glanceOpen()) GT.pendingCeleb = true;           // fires when the marker breaks the ribbon
   else { GT.finishAt -= 6000; if (settings.confetti) superConfetti(); }
@@ -2909,13 +2953,18 @@ function gtFlag(x, y, now, ph){
   }
   return o;
 }
-// the ghost: your most recent previous run of the same workout
+// the ghost: your fastest previous attempt at the same workout (completed attempts first)
 function ghostFor(def){
   const key = run ? run.start + '|' + def.id : '';
   if (GT.ghostKey === key) return GT.ghost;
   GT.ghostKey = key;
-  GT.ghost = !run ? null : allRuns().filter(r => r.id !== String(run.start) && (r.workoutId ? r.workoutId === def.id : r.workout === def.name)
-    && r.samples && r.samples.length > 3 && r.samples[r.samples.length - 1].length >= 5).sort((a, b) => b.date - a.date)[0] || null;
+  const tries = !run ? [] : allRuns().filter(r => r.id !== String(run.start) && (r.workoutId ? r.workoutId === def.id : r.workout === def.name)
+    && r.samples && r.samples.length > 3 && r.samples[r.samples.length - 1].length >= 5);
+  const T = plannedSeconds(def);
+  const finishedTry = r => r.workoutDone != null ? r.workoutDone : r.moving >= .9 * T;
+  const pace = r => { const win = Math.min(T, r.moving) || 1; return ghostDistAt(r, win) / win; }; // ground covered over the workout's length
+  const pool = tries.some(finishedTry) ? tries.filter(finishedTry) : tries;
+  GT.ghost = pool.sort((a, b) => pace(b) - pace(a))[0] || null;
   return GT.ghost;
 }
 function ghostDistAt(r, t){
@@ -2928,6 +2977,7 @@ const avatarSvg = (me, x, y, r, id, op) => me.photo
   ? `<clipPath id="${id}"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath><image href="${me.photo}" x="${(x - r).toFixed(1)}" y="${(y - r).toFixed(1)}" width="${r * 2}" height="${r * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})" opacity="${op}"/>`
   : `<circle cx="${x}" cy="${y}" r="${r}" fill="#161B18" opacity="${op}"/><text x="${x}" y="${(y + 3.8).toFixed(1)}" text-anchor="middle" class="gavtxt" opacity="${op}">${esc((me.name.trim()[0] || '?').toUpperCase())}</text>`;
 function glanceTimeline(def){
+  if (gtLayout()){ GT.key = ''; }
   const now = performance.now(), isLive = !!(wo && run && wo.def.id === def.id), me = curProfile();
   const key = (isLive ? run.start : 'idle') + '|' + def.id;
   if (GT.key !== key){ GT.key = key; GT.dispX = null; GT.finishAt = isLive && wo.done ? now - 6000 : 0; GT.pendingCeleb = false; gtResetRope(); }
@@ -2984,7 +3034,7 @@ function glanceTimeline(def){
     const gx = Math.min(GBW, Math.max(13, (prog * total + diff) / total * GBW)); ghostX = gx;
     svg += `<line x1="${gx.toFixed(1)}" x2="${gx.toFixed(1)}" y1="${GAY + 10}" y2="${GBASE}" stroke="#FBF6EE" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="3 3"/>`;
     svg += avatarSvg(me, +gx.toFixed(1), GAY, 9, 'glGhClip', .45) + `<circle cx="${gx.toFixed(1)}" cy="${GAY}" r="10" fill="none" stroke="#FBF6EE" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="3 2"/>`;
-    ghostTxt = Math.abs(diff) < 2 ? 'Level with last time' : diff > 0 ? `Last time ${fmtTime(diff)} ahead` : `${fmtTime(-diff)} ahead of last time`;
+    ghostTxt = Math.abs(diff) < 2 ? 'Level with your best' : diff > 0 ? `Your best ${fmtTime(diff)} ahead` : `${fmtTime(-diff)} ahead of your best`;
   }
   // your marker: photo, countdown ring and time-left tag
   const R = 11.5, C = 2 * Math.PI * R, X = mx.toFixed(1);
@@ -3059,6 +3109,7 @@ function freeGhost(ft){
   return GT.ghost;
 }
 function freeTimeline(){
+  if (gtLayout()){ GT.key = ''; }
   const now = performance.now(), ft = currentFT(), me = curProfile(), hasT = ft.k !== 'none';
   const t = run ? run.moving : 0, d = run ? run.dist : 0, finished = !!(run && run.freeDone);
   const key = 'free|' + (run ? run.start : 'idle') + '|' + ft.id;
@@ -4098,6 +4149,13 @@ $('#wlist').addEventListener('click', e => {
   if (e.target.closest('#newWo')){ openStepBuilder(null); return; }
   const p = e.target.closest('[data-pick]'), ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
   if (ed){ const w = getWorkout(ed.dataset.edit); w.kind === 'goal' ? openBuilder(w) : openStepBuilder(w); return; }
+  const pr = e.target.closest('[data-preset-reset]');
+  if (pr){
+    const orig = PRESETS.find(x => x.id === pr.dataset.presetReset);
+    if (!orig || !confirm(`Reset “${orig.name}” to the original version?`)) return;
+    const edits = store.get(PEDITS, {}); delete edits[orig.id]; store.set(PEDITS, edits);
+    renderWorkouts(); renderRunWorkout(); toast(`${orig.name} reset to the original`); return;
+  }
   if (del){
     const w = getWorkout(del.dataset.del);
     if (!w || !confirm(`Delete “${w.name}”?`)) return;
@@ -4180,6 +4238,12 @@ $('#live').addEventListener('click', openGlance);
 $('#live').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGlance(); } });
 $('#glMain').addEventListener('click', () => closeGlance(false));
 $('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun(); });
+$('#glCtlBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  settings.glControls = settings.glControls === false; saveSettings();
+  $('#glNums').style.zoom = ''; glTlMax = 0; renderGlance();
+  toast(settings.glControls ? 'Treadmill controls shown' : 'Treadmill controls hidden. Tap the sliders to bring them back.');
+});
 $('#frTargets').addEventListener('click', e => {
   const b = e.target.closest('[data-ft]');
   if (b){
