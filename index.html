@@ -401,6 +401,10 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .p2 .pod-block{height:88px;background:#B9C1BE}
 .p3 .pod-block{height:64px;background:#C08552;animation-delay:.34s}
 .pod.empty .pod-block{opacity:.3}
+.pod.zero .pod-block{opacity:.45}
+.pod.zero .pod-dist{color:var(--muted)}
+.pod.zero .pav{opacity:.75}
+.pod.zero.p1 .pav{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--rule)}
 .pod.empty .pav{background:var(--rule);color:var(--muted)}
 .pod.empty .pod-name,.pod.empty .pod-dist{color:var(--muted)}
 .podbase{height:6px;background:var(--ink);opacity:.15;border-radius:3px;margin:0 0 .4rem}
@@ -3432,8 +3436,8 @@ function renderLeaders(){
   // podium: 2nd on the left, 1st in the middle, 3rd on the right; tap a photo to celebrate
   const places = [2, 1, 3], suffix = { 1: 'st', 2: 'nd', 3: 'rd' };
   $('#podium').innerHTML = places.map(place => {
-    const x = ranked[place - 1], has = !!(x && x.wkDist > 0);
-    return `<div class="pod p${place}${has ? '' : ' empty'}${has && x.p.id === profiles.current ? ' me' : ''}" role="listitem"
+    const x = ranked[place - 1], has = !!x, zero = has && x.wkDist <= 0; // every profile stands on the podium, even before their first run
+    return `<div class="pod p${place}${has ? '' : ' empty'}${zero ? ' zero' : ''}${has && x.p.id === profiles.current ? ' me' : ''}" role="listitem"
       aria-label="${place}${suffix[place]} place: ${has ? `${esc(x.p.name)}, ${fD(x.wkDist, 1)} ${dU()}` : 'open'}">
       <div class="pod-who">${has ? avatar(x.p) : '<span class="pav" aria-hidden="true">?</span>'}
         <span class="pod-name">${has ? esc(x.p.name) : 'Open'}</span>
