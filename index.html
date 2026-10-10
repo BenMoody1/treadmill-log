@@ -596,6 +596,8 @@ body.picking{overflow:hidden}
 .cogbtn{width:44px;min-width:44px;height:44px;padding:0;justify-content:center;flex:none}
 .cogbtn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 #connOpen{display:none !important}
+.mtot{font-weight:500;color:var(--muted);font-size:.85rem;margin-left:.6rem}
+#runs .sect .sbody{padding:0}
 </style>
 </head>
 <body>
@@ -691,14 +693,14 @@ body.picking{overflow:hidden}
   </div>
   <div class="chart" id="chart"></div>
   <div class="stats" id="totals"></div>
-  <h3 id="runsHead">Runs</h3>
-  <div class="chips" id="filters"></div>
-  <ul class="runs" id="runs"></ul>
-  <p class="muted" id="empty" hidden>No runs yet. Your runs appear here when you finish them.</p>
-  <div class="foot"><span>Tap a run for details, tags and exports.</span><button class="link" id="export">Export all as CSV</button></div>
   <h3>Personal bests</h3>
   <p class="fhint">Fastest efforts found anywhere inside your runs.</p>
   <div class="stats two" id="pbs"></div>
+  <h3 id="runsHead">Runs</h3>
+  <div class="chips" id="filters"></div>
+  <div id="runs"></div>
+  <p class="muted" id="empty" hidden>No runs yet. Your runs appear here when you finish them.</p>
+  <div class="foot"><span>Tap a run for details, tags and exports.</span><button class="link" id="export">Export all as CSV</button></div>
 </section>
 
 <!-- ================= LEADERS ================= -->
@@ -4138,13 +4140,21 @@ function renderHistory(){
   $('#empty').hidden = shown.length > 0;
   $('#empty').textContent = !runs.length ? 'No runs yet. Your runs appear here when you finish them.' : calSel ? 'No runs recorded on this day.' : 'No runs with this tag.';
   $('#export').hidden = !runs.length;
-  $('#runs').innerHTML = shown.map(r => {
+  const rowHtml = r => {
     const tags = (r.tags || []).map(t => `<span class="tagchip">${esc(t)}</span>`).join('');
     return `<li><button class="runrow" data-id="${esc(r.id)}">
       <span class="rl"><span class="rd">${fmtDate(r.date)}</span><span class="rs">${fmtClock(r.date)}${r.workout ? ', ' + esc(r.workout) : ''}</span>${tags ? `<span class="tags">${tags}</span>` : ''}</span>
       <span class="spark" aria-hidden="true">${sparkline(r)}</span>
       <span class="rr"><span class="rk">${fD(r.dist)} ${dU()}</span><span class="rp">${fmtTime(r.moving)}, ${fP(avgPaceKm(r.moving, r.dist))} /${dU()}</span>${r.steps ? `<span class="rp">${r.steps.toLocaleString('en-GB')} steps</span>` : ''}${r.avgHr ? `<span class="rp">${r.avgHr} bpm avg</span>` : ''}</span>
     </button></li>`;
+  };
+  const months = new Map();
+  shown.forEach(r => { const d = new Date(r.date), k = d.getFullYear() * 100 + d.getMonth(); if (!months.has(k)) months.set(k, []); months.get(k).push(r); });
+  const nowK = new Date().getFullYear() * 100 + new Date().getMonth(), filtering = !!(calSel || filterTag);
+  $('#runs').innerHTML = [...months.entries()].map(([k, rs], gi) => {
+    const label = new Date(Math.floor(k / 100), k % 100, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    const km = rs.reduce((a, r) => a + r.dist, 0);
+    return sect(`m${k}`, `${label}<span class="mtot">${fD(km, 1)} ${dU()}</span>`, rs.length, filtering || k === nowK || gi === 0, `<ul class="runs">${rs.map(rowHtml).join('')}</ul>`);
   }).join('');
 }
 
