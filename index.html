@@ -289,7 +289,7 @@ header.bar{display:flex;justify-content:space-between;align-items:center;gap:.5r
 .chipbtn{min-height:40px;padding:0 .75rem;border-radius:20px;border:1.5px solid var(--rule);background:var(--surface);font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:.45rem;min-width:0}
 .chipbtn[data-state="on"] .dot{background:var(--infield)}
 .chipbtn[data-state="busy"] .dot{background:var(--warn)}
-#profBtn{padding-left:.3rem;max-width:45%}
+#profBtn{padding-left:.3rem;max-width:56%}
 #profName{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pav{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--ink);color:var(--paper);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem;flex:none;overflow:hidden}
 .pav img{width:100%;height:100%;object-fit:cover;display:block}
@@ -522,12 +522,81 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 .frline{min-height:44px}
 .gl-ctl[aria-pressed="true"]{background:var(--track-ink);color:var(--track)}
 #glCtlBtn[aria-pressed="true"]{background:var(--track-ink);color:var(--track)}
+.flame{font-weight:700;color:#C2410C;white-space:nowrap;font-size:.85rem;flex:none}
+.flame.risk{opacity:.5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .flame{color:#FF9F1C}}
+:root[data-theme="dark"] .flame{color:#FF9F1C}
+.pod .flame{margin-top:.1rem}
+.lbname .lbn{font-weight:600;display:flex;align-items:center;gap:.4rem;min-width:0}
+.streaks .lbbar i,.streaks .lbrow.first .lbbar i{background:#FF8A00}
+.glflame{font-weight:700;margin-left:.5rem}
+.streakline{font-size:.9rem;margin:.3rem 0 0;font-weight:600;color:#C2410C}
+.stk{background:var(--surface);border-radius:16px;padding:.9rem 1rem;margin:0 0 1rem}
+.stk-top{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+.stk-n{font-family:var(--num);font-weight:700;font-size:2.1rem;line-height:1}
+.stk-meta{font-size:.88rem;color:var(--muted)}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin:.8rem 0 .4rem}
+.cal-nav button{min-width:44px;min-height:40px;padding:0;font-size:1.2rem}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;text-align:center}
+.cal-h{font-size:.75rem;color:var(--muted)}
+.cal-d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:.85rem;font-variant-numeric:tabular-nums}
+.cal-d.act{background:#FF8A00;color:#fff;font-weight:700}
+.cal-d.frz{background:#D6EAF7}
+.cal-d.today{box-shadow:0 0 0 2px var(--ink)}
+.cal-d.fut{color:var(--rule)}
+button.cal-d{min-height:0;padding:0;border:none;background:transparent;font:inherit;font-size:.85rem;color:inherit;cursor:pointer;width:100%}
+button.cal-d:disabled{cursor:default;opacity:1}
+.cal-d.sel{box-shadow:0 0 0 3px var(--infield)}
+.cal-d.today.sel{box-shadow:0 0 0 2px var(--ink),0 0 0 5px var(--infield)}
+.calruns{margin-top:.8rem;border-top:1px solid var(--rule);padding-top:.6rem}
+.calruns-h{margin:0 0 .2rem;display:flex;flex-wrap:wrap;gap:.2rem .6rem;align-items:baseline;font-size:.95rem}
+.calruns ul.runs{border-top:none}
+.chip.daychip{background:var(--infield);color:#fff;border-color:var(--infield)}
+.whopick{position:fixed;inset:0;z-index:28;background:var(--paper);overflow:auto;padding:calc(env(safe-area-inset-top,0px) + 1.5rem) 1.1rem calc(env(safe-area-inset-bottom,0px) + 1.5rem)}
+body.picking{overflow:hidden}
+.wp-in{max-width:34rem;margin:0 auto}
+.wp-hello{color:var(--muted);margin:0}
+.wp-q{font-family:var(--num);font-size:2rem;margin:.15rem 0 1.2rem}
+.wp-grid{display:grid;gap:.8rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+.wp-card{background:var(--surface);border:2px solid transparent;border-radius:20px;padding:.9rem .6rem 1rem;display:flex;flex-direction:column;align-items:center;gap:.45rem;text-align:center;color:var(--ink);min-height:auto;font-weight:400}
+.wp-card.last{border-color:var(--infield)}
+.wp-last{font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--infield);min-height:1.1em;text-transform:uppercase}
+.wp-card > .pav{width:5.2rem;height:5.2rem;font-size:2.2rem}
+.wp-two .wp-card > .pav{width:6.6rem;height:6.6rem;font-size:2.8rem}
+.wp-body{display:flex;flex-direction:column;align-items:center;gap:.4rem}
+.wp-name{font-weight:700;font-size:1.1rem}
+.wp-two .wp-name{font-size:1.2rem}
+.wp-fl{font-weight:700;padding:.15rem .75rem;border-radius:14px;background:#FFE3CC;color:#9A3412}
+.wp-two .wp-fl{font-size:1.1rem}
+.wp-fl.dim{background:var(--rule);color:var(--muted)}
+.wp-st{font-size:.82rem;color:var(--muted);line-height:1.3;min-height:2.1em}
+.wp-st.ok{color:var(--infield);font-weight:600}
+.wp-dots{display:flex;gap:.25rem}
+.wp-dot{width:.9rem;height:.9rem;border-radius:50%;background:var(--rule);font-size:.55rem;display:flex;align-items:center;justify-content:center}
+.wp-dot.on{background:#FF8A00}.wp-dot.fz{background:#D6EAF7}.wp-dot.tdy{box-shadow:0 0 0 1.5px var(--ink)}
+.wp-wk{font-size:.72rem;color:var(--muted)}
+.wp-list{grid-template-columns:1fr}
+.wp-list .wp-card{flex-direction:row;text-align:left;justify-content:flex-start;gap:.9rem;padding:.7rem .9rem;position:relative}
+.wp-list .wp-card > .pav{width:3.4rem;height:3.4rem;font-size:1.5rem}
+.wp-list .wp-body{align-items:flex-start;gap:.15rem}
+.wp-list .wp-last{position:absolute;top:.4rem;right:.8rem}
+.wp-list .wp-st{min-height:0}
+.wp-skip{display:block;margin:1.3rem auto 0}
+.stkcard{background:var(--surface);border-radius:18px;padding:.9rem 1rem .8rem;margin:0 0 .8rem}
+.sk-top{display:flex;align-items:center;gap:.5rem}
+.sk-f{font-size:1.9rem;line-height:1}
+.sk-n{font-family:var(--num);font-size:2.3rem;font-weight:700;line-height:1}
+.sk-msg{margin:.35rem 0 0;font-size:.95rem}
+.sk-msg.ok{color:var(--infield);font-weight:600}
+.sk-week{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;margin-top:.7rem;text-align:center;font-size:.72rem;color:var(--muted)}
+.sk-d{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;margin-top:.2rem;color:var(--ink);max-width:2.6rem;margin-left:auto;margin-right:auto;width:100%}
+.sk-d.on{background:#FF8A00;color:#fff;font-weight:700}.sk-d.fz{background:#D6EAF7}.sk-d.tdy{box-shadow:inset 0 0 0 2px var(--ink)}.sk-d.fut{color:var(--rule)}
 </style>
 </head>
 <body>
 <header class="bar">
   <h1 class="sr">Treadmill log</h1>
-  <button class="chipbtn" id="profBtn" aria-label="Profiles"><span class="pav" id="profAv" aria-hidden="true">M</span><span id="profName">Me</span></button>
+  <button class="chipbtn" id="profBtn" aria-label="Profiles"><span class="pav" id="profAv" aria-hidden="true">M</span><span id="profName">Me</span><span class="flame" id="profFlame" hidden></span></button>
   <div class="hchips">
     <button class="chipbtn" id="tmChip" aria-label="Treadmill connection"><span class="dot"></span><span id="tmChipT">Treadmill</span></button>
     <button class="chipbtn" id="hrChip" aria-label="Heart rate connection"><span class="dot"></span>HR</button>
@@ -538,6 +607,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <!-- ================= RUN ================= -->
 <section class="tab" id="tab-run">
   <div id="setup" hidden></div>
+  <div class="stkcard" id="stkCard" hidden></div>
   <section class="live" id="live" role="button" tabindex="0" aria-label="Open glance view">
     <p class="state"><span id="state">Connect your treadmill to start</span><span class="tapnote">Tap for big view</span></p>
     <div class="hero"><span class="n" id="dist">0.00</span><span class="u" id="distU">km</span></div>
@@ -592,6 +662,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
     <div class="tl" id="woTimeline"></div>
   </div>
   <p class="weekline" id="weekline"></p>
+  <p class="streakline" id="streakLine"></p>
 </section>
 
 <!-- ================= WORKOUTS ================= -->
@@ -608,19 +679,20 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <div id="bkNagH"></div>
   <div class="goalbox" id="goalbox"></div>
   <button class="sm" id="lastWeekBtn" style="margin-bottom:1.2rem">Last week’s summary</button>
+  <div id="streakBox"></div>
   <div class="seg" id="chartSeg" role="group" aria-label="Chart">
     <button data-c="week" aria-pressed="true">Weekly</button><button data-c="month" aria-pressed="false">Monthly</button><button data-c="pace" aria-pressed="false">Pace trend</button>
   </div>
   <div class="chart" id="chart"></div>
   <div class="stats" id="totals"></div>
-  <h3>Personal bests</h3>
-  <p class="fhint">Fastest efforts found anywhere inside your runs.</p>
-  <div class="stats two" id="pbs"></div>
-  <h3>Runs</h3>
+  <h3 id="runsHead">Runs</h3>
   <div class="chips" id="filters"></div>
   <ul class="runs" id="runs"></ul>
   <p class="muted" id="empty" hidden>No runs yet. Your runs appear here when you finish them.</p>
   <div class="foot"><span>Tap a run for details, tags and exports.</span><button class="link" id="export">Export all as CSV</button></div>
+  <h3>Personal bests</h3>
+  <p class="fhint">Fastest efforts found anywhere inside your runs.</p>
+  <div class="stats two" id="pbs"></div>
 </section>
 
 <!-- ================= LEADERS ================= -->
@@ -632,11 +704,14 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   <div class="podium" id="podium" role="list" aria-label="Distance podium"></div>
   <div class="podbase"></div>
   <p class="fhint podnote" id="podNote"></p>
-  <h3>Most distance</h3>
-  <ul class="lb" id="lbWeek"></ul>
   <h3>Medal table</h3>
   <p class="fhint">Every Sunday at midnight, the top three for the week win gold, silver and bronze.</p>
   <div id="lbMedals"></div>
+  <h3>Most distance</h3>
+  <ul class="lb" id="lbWeek"></ul>
+  <h3>Daily streaks</h3>
+  <p class="fhint">Days in a row with at least 10 minutes on the treadmill. Two freezes a week cover missed days.</p>
+  <ul class="lb streaks" id="lbStreaks"></ul>
   <h3>Badges earned</h3>
   <p class="fhint">Who has unlocked the most badges. Tap your own badges further down to replay their celebrations.</p>
   <ul class="lb" id="lbBadges"></ul>
@@ -659,6 +734,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
   </div>
   <div class="field"><span class="flabel">Profile</span>
     <div class="row"><button class="sm" id="manageProf">Manage profiles</button></div>
+    <label class="check"><input type="checkbox" id="setWhoPick"><span>Ask who’s running when the app opens (with two or more profiles)</span></label>
     <span class="fhint">Each profile keeps its own runs, workouts, plan and settings.</span>
   </div>
   <div class="field"><span class="flabel">Appearance</span>
@@ -737,7 +813,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 </nav>
 
 <div class="glance" id="glance" hidden>
-  <div class="gl-top"><span class="gl-state" id="glState"></span>
+  <div class="gl-top"><span class="gl-state"><span id="glState"></span><span class="glflame" id="glFlame"></span></span>
     <div class="gl-topbtns">
       <button class="gl-close gl-mute" id="glCtlBtn" aria-label="Hide treadmill controls" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
       <button class="gl-close gl-mute" id="glMute" aria-label="Mute audio" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="snd-on" d="M16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="snd-off" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -784,6 +860,7 @@ nav.tabs button{padding:0 .15rem;font-size:.86rem}
 <dialog id="sumDlg"></dialog>
 <dialog id="builder"></dialog>
 <div class="toast" id="toast" hidden></div>
+<div class="whopick" id="whoPick" role="dialog" aria-modal="true" aria-labelledby="whoQ" hidden></div>
 <div id="celGlow" aria-hidden="true"></div>
 <div class="livebadge" id="liveBadge" role="status" aria-live="assertive" hidden></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
@@ -1163,6 +1240,8 @@ function confettiFrame(){
       x.fillStyle = 'rgba(255,255,255,.45)'; x.beginPath(); x.ellipse(-r * .35, -ry * .4, r * .22, ry * .28, -.4, 0, 7); x.fill();
       x.strokeStyle = 'rgba(0,0,0,.35)'; x.lineWidth = 1; x.beginPath(); x.moveTo(0, ry + 3); x.quadraticCurveTo(r * .5, ry * 1.8, 0, ry * 2.6); x.stroke();
     }
+    else if (p.ring){ x.beginPath(); x.arc(0, 0, p.rad + p.life * p.grow, 0, 7); x.strokeStyle = p.c; x.lineWidth = Math.max(.5, 6 * (1 - p.life / p.max)); x.stroke(); }
+    else if (p.fire){ const f = Math.min(.999, p.life / p.max); x.beginPath(); x.arc(0, 0, p.dot * (1 - f * .7), 0, 7); x.fillStyle = FIRE_STAGES[(f * FIRE_STAGES.length) | 0]; x.fill(); }
     else if (p.dot){ x.beginPath(); x.arc(0, 0, p.dot, 0, 7); x.fillStyle = p.c; x.fill(); }
     else { x.rotate(p.r); x.scale(1, Math.cos(p.wob)); x.fillStyle = p.c; x.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
     x.restore();
@@ -1256,8 +1335,8 @@ function burstAt(ox, oy, kind){
 }
 
 /* ---------- celebrations: one per badge and medal, unlocked by earning it ---------- */
-const EFFECT_NAMES = { poo: 'Poo explosion', burst: 'Burst', fountain: 'Fountain', fireworks: 'Fireworks', spiral: 'Spiral', snow: 'Snowfall', balloons: 'Balloons', shooting: 'Shooting stars' };
-const SOUND_NAMES = { poo: 'plops and a sad trombone', brass: 'brass fanfare', glock: 'music box', marimba: 'marimba', pizz: 'pizzicato strings', synth: 'arcade synth', harp: 'harp', chimes: 'wind chimes' };
+const EFFECT_NAMES = { flames: 'Flames', explosion: 'Explosion', poo: 'Poo explosion', burst: 'Burst', fountain: 'Fountain', fireworks: 'Fireworks', spiral: 'Spiral', snow: 'Snowfall', balloons: 'Balloons', shooting: 'Shooting stars' };
+const SOUND_NAMES = { fire: 'crackling fire', poo: 'plops and a sad trombone', brass: 'brass fanfare', glock: 'music box', marimba: 'marimba', pizz: 'pizzicato strings', synth: 'arcade synth', harp: 'harp', chimes: 'wind chimes' };
 const GRAND = { plain: 1, bronze: 1, poo: 1.4, silver: 1.4, gold: 2, special: 3 };
 const TIER_EXTRA = { poo: ' + encore', silver: ' + encore', gold: ' + grand finale', special: ' + legendary finale' };
 const RAINBOW = ['#E63946', '#F4A261', '#E9C46A', '#2A9D8F', '#457B9D', '#9C6ADE'];
@@ -1284,7 +1363,9 @@ const CELEB_MAP = {
   week3: ['burst', 'glock', ['📅'], 0], streak4: ['spiral', 'synth', ['🔥'], 2], streak12: ['fireworks', 'synth', ['🛡️', '🔥'], 4], goal4: ['burst', 'brass', ['🎯'], 5],
   early: ['balloons', 'harp', ['☀️', '🐦'], 0], night: ['snow', 'chimes', ['⭐', '🌙'], 3], wo10: ['fountain', 'brass', ['💪'], 1], plan: ['fireworks', 'brass', ['📋', '🎓'], 4],
   gold1: ['fireworks', 'brass', ['🥇', '✨'], 7], pod5: ['spiral', 'brass', ['🎖️'], 3], gold5: ['fireworks', 'brass', ['👑', '💎'], 9],
-  losing5: ['poo', 'poo', [], 0], plans3: ['fireworks', 'brass', ['🎓', '📋', '🏆', '✨'], 10], presets: ['balloons', 'brass', ['🧩', '🌟', '🎈'], 8]
+  losing5: ['poo', 'poo', [], 0], plans3: ['fireworks', 'brass', ['🎓', '📋', '🏆', '✨'], 10], presets: ['balloons', 'brass', ['🧩', '🌟', '🎈'], 8], perfectweek: ['spiral', 'brass', ['🌟', '📅', '✨'], 9],
+  day7: ['flames', 'fire', ['🔥'], 0], day30: ['explosion', 'fire', ['🔥', '💥'], 2], day100: ['explosion', 'fire', ['💥', '🔥', '🧨'], 4],
+  day365: ['flames', 'fire', ['☄️', '🔥', '💥', '🌋'], 7], comeback: ['flames', 'fire', ['🔥', '💪'], 3]
 };
 const MEDAL_CELEBS = [
   { id: 'm:gold', name: 'Gold medal', icon: '🥇', tier: 'gold', effect: 'fireworks', sound: 'brass', extras: ['✨', '🏆'], key: 7, place: 0, unlockText: 'win a weekly gold medal' },
@@ -1295,7 +1376,7 @@ let celebCache = null;
 function celebList(){
   if (!celebCache) celebCache = BASE_CELEBS.concat(MEDAL_CELEBS, BADGES.map(b => {
     const [effect, sound, extras, key] = CELEB_MAP[b.id] || ['burst', 'glock', [], 0];
-    return { id: 'b:' + b.id, badge: b.id, name: b.name, icon: b.icon, tier: b.tier, effect, sound, extras, key, unlockText: `earn the ${b.name} badge (${b.desc.charAt(0).toLowerCase() + b.desc.slice(1)})` };
+    return { id: 'b:' + b.id, badge: b.id, name: b.name, icon: b.icon, tier: b.tier, effect, sound, extras, key, pal: sound === 'fire' ? FIRE_PAL : undefined, unlockText: `earn the ${b.name} badge (${b.desc.charAt(0).toLowerCase() + b.desc.slice(1)})` };
   }));
   return celebCache;
 }
@@ -1328,7 +1409,34 @@ function piece(spr, pal, i, x, y, vx, vy, o = {}){
 }
 const push = q => { confettiParts.push(q); kick(); };
 const cap = (n, max) => Math.min(max, Math.round(n));
+const FIRE_PAL = ['#FFF3B0', '#FFD54A', '#FF9F1C', '#FF4D00', '#D62828'];
+const FIRE_STAGES = ['#FFF6C8', '#FFD54A', '#FF9F1C', '#FF4D00', '#B5200D'];
+const DAY_CELEB = { id: 'day', name: 'Day secured', icon: '🔥', extras: [], tier: 'bronze', effect: 'flames', sound: 'fire', pal: FIRE_PAL, key: 0 };
 const EFFECTS = {
+  flames(ox, oy, spr, pal, big, m = 1){ // fire rising: glowing embers that cool from yellow to red as they climb, with emoji in the flames
+    const n = big ? cap(170 * m, 420) : 70, dur = big ? 1900 : 900;
+    for (let i = 0; i < n; i++) setTimeout(() => {
+      const x = big ? Math.random() * innerWidth : ox + (Math.random() - .5) * 140, y = big ? innerHeight + 10 : oy + 24, emoji = spr && i % 4 === 0;
+      push(piece(emoji ? spr : null, FIRE_PAL, i, x, y, (Math.random() - .5) * 1.2, -(big ? 6 : 4) - Math.random() * (big ? 9 : 5),
+        emoji ? { g: .025, dk: Math.pow(.99, CTS), sway: 1.4, max: 210, every: 1 }
+              : { dot: 3 + Math.random() * 5, fire: true, g: -.02, dk: Math.pow(.97, CTS), sway: 1.6, max: 70 + Math.random() * 70 }));
+    }, Math.random() * dur);
+  },
+  explosion(ox, oy, spr, pal, big, m = 1){ // a blast: shockwave ring, fireball sparks, debris and smoke
+    const cx = big ? innerWidth / 2 : ox, cy = big ? innerHeight * .42 : oy;
+    push({ x: cx, y: cy, vx: 0, vy: 0, g: 0, dk: 1, sway: 0, ring: true, rad: 8, grow: big ? 6 : 4, c: '#FFD54A', life: 0, max: 40, r: 0, vr: 0, wob: 0 });
+    push({ x: cx, y: cy, vx: 0, vy: 0, g: 0, dk: 1, sway: 0, ring: true, rad: 4, grow: big ? 4 : 3, c: '#FF4D00', life: 0, max: 46, r: 0, vr: 0, wob: 0 });
+    const n = cap((big ? 200 : 80) * m, 450);
+    for (let i = 0; i < n; i++){
+      const a = Math.random() * 6.283, sp = (big ? 6 : 4) + Math.random() * (big ? 16 : 10), emoji = spr && i % 6 === 0;
+      push(piece(emoji ? spr : null, FIRE_PAL, i, cx, cy, Math.cos(a) * sp, Math.sin(a) * sp,
+        emoji ? { g: .12, max: 190, every: 1 } : { dot: 2 + Math.random() * 3.5, fire: true, g: .06, dk: Math.pow(.95, CTS), max: 60 + Math.random() * 60, sway: .3 }));
+    }
+    for (let i = 0; i < (big ? 18 : 8); i++){ const a = Math.random() * 6.283, sp = 1 + Math.random() * 2.5;
+      push(piece(null, ['rgba(70,50,40,.35)', 'rgba(100,80,70,.3)'], i, cx, cy, Math.cos(a) * sp, Math.sin(a) * sp - 1, { dot: 10 + Math.random() * 14, g: -.01, dk: Math.pow(.97, CTS), max: 150, sway: .5 })); }
+    boom();
+    if (big) [550, 1100].forEach(t => setTimeout(() => EFFECTS.explosion(innerWidth * (.2 + Math.random() * .6), innerHeight * (.18 + Math.random() * .4), spr, pal, false, 1), t));
+  },
   poo(ox, oy, spr, pal, big, m = 1){ // poo explosion: a big burst, then poo fired from both bottom corners
     const n = big ? cap(70 * m, 160) : 30;
     for (let i = 0; i < n; i++){ const a = Math.random() * 6.283, sp = 3 + Math.random() * (big ? 13 : 9); push(piece(spr, pal, i, ox, oy, Math.cos(a) * sp, Math.sin(a) * sp - 6, { every: 2 })); }
@@ -1429,6 +1537,13 @@ const STEP = { brass: .14, glock: .16, marimba: .12, pizz: .12, synth: .07, harp
 function celebSound(c, big, g = 1){
   if (!sfxOK()) return;
   if (c.sound === 'poo') return themeSound('poo');
+  if (c.sound === 'fire'){
+    whoosh(.1, 180, 1900);
+    fireCrackle(big ? 3.2 : 1.5, big ? .07 : .05);
+    if (big && g >= 2){ drumroll(actx.currentTime + .5, .6); setTimeout(boom, 1200); }
+    if (big && g >= 3) setTimeout(boom, 2100);
+    return;
+  }
   const grandStart = big && g >= 2, now = actx.currentTime, t0 = now + (grandStart ? .75 : .05);
   if (grandStart) drumroll(now + .03, .7);
   const mel = MELODY[c.sound][big ? 1 : 0], step = STEP[c.sound], base = 60 + (c.key || 0) - (c.sound === 'chimes' ? 12 : 0);
@@ -1454,6 +1569,14 @@ function crash(t){
   const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4500;
   const gn = a.createGain(); gn.gain.setValueAtTime(.0001, t); gn.gain.exponentialRampToValueAtTime(.16, t + .01); gn.gain.exponentialRampToValueAtTime(.0001, t + 1.8);
   src.connect(hp).connect(gn).connect(a.destination); src.start(t); src.stop(t + 1.9);
+}
+function fireCrackle(dur, gain){ // a crackling fire: a warm noise bed plus random pops
+  if (!sfxOK()) return;
+  const a = actx, t = a.currentTime + .02, src = a.createBufferSource(); src.buffer = noiseBuffer(a); src.loop = true;
+  const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = .6;
+  const g = a.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + .3); g.gain.setValueAtTime(gain, t + dur - .5); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  src.connect(bp).connect(g).connect(a.destination); src.start(t); src.stop(t + dur + .05);
+  crackle(dur, gain * 1.8, .1);
 }
 function boom(){
   if (!sfxOK()) return;
@@ -1484,7 +1607,7 @@ function playCeleb(c, big, ox = innerWidth / 2, oy = innerHeight * .4){
     else { launch(ox, oy, 46, 0, 6.283, 3, 12, .9, themeSprites(c.id), 6); themeSound(c.id, false); }
     return kick();
   }
-  const g = GRAND[c.tier] || 1, m = big ? g : 1 + (g - 1) * .35, spr = celebSprites(c), pal = TIER_PAL[c.tier] || CONFETTI_COLOURS;
+  const g = GRAND[c.tier] || 1, m = big ? g : 1 + (g - 1) * .35, spr = celebSprites(c), pal = c.pal || TIER_PAL[c.tier] || CONFETTI_COLOURS;
   EFFECTS[c.effect](ox, oy, spr, pal, big, m);
   celebSound(c, big, g);
   if (!big) return;
@@ -1728,7 +1851,7 @@ function onData(r, now = performance.now()){
     if (moving && run.moving - run.lastSample >= 5){
       run.samples.push([Math.round(run.moving), +live.speed.toFixed(1), +live.incline.toFixed(1), live.hr || 0, Math.round(run.dist)]);
       run.lastSample = run.moving;
-      if (!run.demo){ store.set(DRAFT, toRecord(run)); liveBadgeCheck(); }
+      if (!run.demo){ store.set(DRAFT, toRecord(run)); dayStreakCheck(); liveBadgeCheck(); }
     }
     tickWorkout();
     checkFreeTarget();
@@ -1786,7 +1909,7 @@ function finishRun(){
 function discardRun(){
   if (!run) return;
   if (!run.demo && run.dist > 200 && !confirm('Discard this run without saving?')) return;
-  store.del(DRAFT); run = null; wo = null; releaseWake(); renderLive(); liveBadges.clear();
+  store.del(DRAFT); run = null; wo = null; releaseWake(); renderLive(); liveBadges.clear(); refreshStreak();
 }
 
 /* ---------- wake lock ---------- */
@@ -2187,6 +2310,7 @@ function renderConn(){
 }
 
 function renderLive(){
+  if ($('#stkCard').hidden !== !!run){ $('#stkCard').hidden = !!run; $('#streakLine').hidden = !run; }
   const r = run;
   $('#dist').textContent = fD(r ? r.dist : 0);
   $('#distU').textContent = dU();
@@ -2804,7 +2928,7 @@ function renderGlance(){
   $('#glDistU').textContent = isMi() ? 'miles' : 'km';
   $('#glPaceS').textContent = fP(paceFromSpeed(live.speed));
   $('#glPaceSU').textContent = `Pace /${dU()}`;
-  copy('#glState', '#state');
+  copy('#glState', '#state'); $('#glFlame').textContent = STK.todayActive && STK.current ? `🔥 ${STK.current}` : '';
   copy('#glSpeed', '#speed'); copy('#glSpeedL', '#speedL'); copy('#glTime', '#time');
   copy('#glHr', '#hr'); copy('#glHrL', '#hrL'); copy('#glSteps', '#steps'); copy('#glStepsL', '#stepsL'); copy('#glKcal', '#kcal');
   const canCtl = controlAvailable(), ctl = canCtl && settings.glControls !== false;
@@ -3265,9 +3389,158 @@ function sparkline(r){
 }
 
 /* ---------- profiles ---------- */
+/* ---------- daily streaks: 10+ minutes a day (walking counts), 2 freezes per week ---------- */
+const STREAK_MIN = 600, FREEZES_PER_WEEK = 2, DSEC = 'tm-day-secured-v1', RISKTOLD = 'tm-risk-told-v1';
+const dayKey = t => { const d = new Date(t); return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); };
+function computeStreak(runs, nowT = Date.now()){
+  const mins = new Map();
+  runs.forEach(r => { const k = dayKey(r.date); mins.set(k, (mins.get(k) || 0) + (r.moving || 0)); });
+  const active = new Set([...mins].filter(([, v]) => v >= STREAK_MIN).map(([k]) => k));
+  const out = { current: 0, best: 0, active, frozen: new Set(), todayActive: false, freezesLeft: FREEZES_PER_WEEK, milestones: {}, comeback: null, todayMins: (mins.get(dayKey(nowT)) || 0) / 60 };
+  if (!active.size) return out;
+  const firstT = Math.min(...runs.filter(r => active.has(dayKey(r.date))).map(r => r.date));
+  const d = new Date(firstT); d.setHours(12, 0, 0, 0); // midday steps cleanly over clock changes
+  const today = dayKey(nowT), used = new Map();
+  let streak = 0, lostBig = false;
+  for (let guard = 0; guard < 4000; guard++){
+    const k = dayKey(d.getTime()); if (k > today) break;
+    if (active.has(k)){
+      streak++; if (k === today) out.todayActive = true;
+      [7, 30, 100, 365].forEach(m => { if (streak === m && !out.milestones[m]) out.milestones[m] = d.getTime(); });
+      if (lostBig && streak === 3 && !out.comeback) out.comeback = d.getTime();
+    } else if (k !== today && streak > 0){ // today isn't over yet, so it can't break the streak
+      const wk = weekStart(d.getTime()).getTime(), u = used.get(wk) || 0;
+      if (u < FREEZES_PER_WEEK){ used.set(wk, u + 1); out.frozen.add(k); }
+      else { if (streak >= 7) lostBig = true; streak = 0; }
+    }
+    out.best = Math.max(out.best, streak);
+    d.setDate(d.getDate() + 1);
+  }
+  out.current = streak;
+  out.freezesLeft = FREEZES_PER_WEEK - (used.get(weekStart(nowT).getTime()) || 0);
+  return out;
+}
+let STK = { current: 0, todayActive: false };
+// this week's seven days, for the dots and the streak card
+function weekDays(st){
+  const out = [], d = weekStart(Date.now()), today = dayKey(Date.now());
+  for (let i = 0; i < 7; i++){ const k = dayKey(d.getTime()); out.push({ k, n: d.getDate(), on: st.active.has(k), fz: st.frozen.has(k), today: k === today, fut: k > today }); d.setDate(d.getDate() + 1); }
+  return out;
+}
+function streakStatus(st){
+  if (!st.current) return { t: 'Start a streak today', ok: false };
+  if (st.todayActive) return { t: 'Today secured', ok: true };
+  if (!st.freezesLeft) return { t: 'At risk: no freezes left', ok: false };
+  return { t: `Run 10 min to keep it (${st.freezesLeft} freeze${st.freezesLeft === 1 ? '' : 's'} left)`, ok: false };
+}
+// Run tab: the streak card sits above the live panel until the belt starts
+function renderStkCard(){
+  const el = $('#stkCard'), st = STK.active ? STK : computeStreak(allRuns()), ss = streakStatus(st), me = curProfile();
+  const msg = !st.current ? 'Be active for 10 minutes today to start a streak.' : st.todayActive ? `Today is secured. Nice work, ${esc(me.name)}.` : `${ss.t}.`;
+  el.innerHTML = `<div class="sk-top"><span class="sk-f" aria-hidden="true">🔥</span><span class="sk-n">${st.current}</span><span class="muted">day streak</span></div>
+    <p class="sk-msg${ss.ok ? ' ok' : ''}">${msg}</p>
+    <div class="sk-week" aria-label="This week">${weekDays(st).map((x, i) => `<div>${'MTWTFSS'[i]}<div class="sk-d${x.on ? ' on' : x.fz ? ' fz' : ''}${x.today ? ' tdy' : ''}${x.fut ? ' fut' : ''}">${x.fz ? '❄️' : x.n}</div></div>`).join('')}</div>`;
+  el.hidden = !!run; $('#streakLine').hidden = !run;
+}
+
+/* ---------- who's running? ---------- */
+const WPKEY = 'tm-whopick-v1', WPJUST = 'tm-wp-just';
+const whoPickOn = () => { try { return localStorage.getItem(WPKEY) !== 'off'; } catch(e){ return true; } };
+let pickWaiters = [];
+const whenPickerClosed = fn => { if ($('#whoPick').hidden) fn(); else pickWaiters.push(fn); };
+function closeWhoPick(){ $('#whoPick').hidden = true; document.body.classList.remove('picking'); const w = pickWaiters; pickWaiters = []; w.forEach(fn => fn()); }
+function openWhoPick(){
+  if (!whoPickOn() || profiles.list.length < 2 || run) return;
+  const el = $('#whoPick'), n = profiles.list.length, layout = n === 2 ? 'wp-two' : n <= 4 ? 'wp-four' : 'wp-list';
+  const h = new Date().getHours(), hello = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  const cards = profiles.list.map(x => {
+    const st = computeStreak(profileRuns(x.id)), ss = streakStatus(st), days = weekDays(st), act = days.filter(d => d.on).length, last = x.id === profiles.current;
+    return `<button class="wp-card${last ? ' last' : ''}" data-who="${esc(x.id)}" aria-label="${esc(x.name)}: ${st.current}-day streak, ${ss.t}${last ? ', last runner' : ''}">
+      <span class="wp-last">${last ? 'Last runner' : ''}</span>${avatar(x)}
+      <span class="wp-body"><span class="wp-name">${esc(x.name)}</span><span class="wp-fl${st.current ? '' : ' dim'}">🔥 ${st.current}</span>
+      <span class="wp-st${ss.ok ? ' ok' : ''}">${ss.t}</span>
+      ${n === 2 ? `<span class="wp-dots" aria-hidden="true">${days.map(d => `<span class="wp-dot${d.on ? ' on' : d.fz ? ' fz' : ''}${d.today ? ' tdy' : ''}">${d.fz ? '❄' : ''}</span>`).join('')}</span><span class="wp-wk">${act} active day${act === 1 ? '' : 's'} this week</span>` : ''}</span></button>`;
+  }).join('');
+  el.innerHTML = `<div class="wp-in"><p class="wp-hello">${hello}</p><h2 class="wp-q" id="whoQ">Who’s running?</h2>
+    <div class="wp-grid ${layout}">${cards}</div>
+    <button class="link wp-skip" data-who="${esc(profiles.current)}">Carry on as ${esc(curProfile().name)}</button></div>`;
+  el.hidden = false; document.body.classList.add('picking');
+}
+$('#whoPick').addEventListener('click', e => {
+  const b = e.target.closest('[data-who]'); if (!b) return;
+  const id = b.dataset.who;
+  if (id === profiles.current){ closeWhoPick(); return; }
+  try { sessionStorage.setItem(WPJUST, String(Date.now())); } catch(err){}
+  profiles.current = id; saveProfiles(); location.reload();
+});
+let awayAt = 0; // coming back after half an hour or more asks again
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) awayAt = Date.now();
+  else if (awayAt && Date.now() - awayAt > 30 * 60e3 && $('#whoPick').hidden) openWhoPick();
+});
+
+function refreshStreak(st){
+  STK = st || computeStreak(allRuns());
+  const f = $('#profFlame');
+  f.hidden = !STK.current; f.textContent = `🔥 ${STK.current}`; f.classList.toggle('risk', !STK.todayActive);
+  f.setAttribute('aria-label', `${STK.current}-day streak${STK.todayActive ? ', today done' : ', run today to keep it'}`);
+  const line = $('#streakLine');
+  renderStkCard();
+  line.textContent = STK.todayActive ? `🔥 Day ${STK.current} secured. See you tomorrow.`
+    : STK.current ? `🔥 ${STK.current}-day streak. Run 10 minutes today to keep it going${STK.freezesLeft ? ` (${STK.freezesLeft} freeze${STK.freezesLeft === 1 ? '' : 's'} left this week)` : ''}.`
+    : 'Run 10 minutes to start a daily streak.';
+}
+// mid-run: the moment today's total passes 10 minutes
+function dayStreakCheck(){
+  if (!run || run.demo) return;
+  const today = dayKey(Date.now()); if (store.get(DSEC, 0) === today) return;
+  const saved = allRuns().filter(r => dayKey(r.date) === today).reduce((a, r) => a + (r.moving || 0), 0);
+  if (saved >= STREAK_MIN){ store.set(DSEC, today); return; } // already secured earlier today
+  if (saved + run.moving < STREAK_MIN) return;
+  store.set(DSEC, today);
+  const st = computeStreak(allRuns().concat([toRecord(run)]));
+  refreshStreak(st);
+  liveQ.push({ special: true, kicker: 'Daily streak', name: `Day ${st.current} secured`, icon: '🔥', tier: 'bronze', big: false, cel: DAY_CELEB,
+    desc: st.current === 1 ? 'A new streak begins. Come back tomorrow to build it.' : '10 minutes done today. Your streak lives on.', say: `Day ${st.current} secured.` });
+  if (!liveT) nextLiveBadge();
+}
+let calOff = 0, calSel = null;
+// the runs recorded on the tapped calendar day
+function calDayPanel(m){
+  if (!calSel || Math.floor(calSel / 100) !== m.getFullYear() * 100 + m.getMonth() + 1) return '';
+  const rs = allRuns().filter(r => dayKey(r.date) === calSel).sort((a, b) => a.date - b.date);
+  const day = new Date(m.getFullYear(), m.getMonth(), calSel % 100).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  const dist = rs.reduce((a, r) => a + r.dist, 0), time = rs.reduce((a, r) => a + r.moving, 0);
+  return `<div class="calruns"><p class="calruns-h"><strong>${day}</strong>${rs.length ? `<span class="muted">${rs.length} run${rs.length === 1 ? '' : 's'}, ${fD(dist)} ${dU()}, ${fmtTime(time)}</span>` : ''}</p>
+    ${rs.length ? `<ul class="runs">${rs.map(r => `<li><button class="runrow" data-id="${esc(r.id)}">
+      <span class="rl"><span class="rd">${fmtClock(r.date)}</span><span class="rs">${r.workout ? esc(r.workout) : 'Free run'}</span></span>
+      <span class="spark" aria-hidden="true">${sparkline(r)}</span>
+      <span class="rr"><span class="rk">${fD(r.dist)} ${dU()}</span><span class="rp">${fmtTime(r.moving)}, ${fP(avgPaceKm(r.moving, r.dist))} /${dU()}</span></span></button></li>`).join('')}</ul>`
+      : '<p class="muted" style="margin:.2rem 0 0">No runs recorded on this day.</p>'}</div>`;
+}
+function renderStreakBox(st){
+  const now = new Date(), m = new Date(now.getFullYear(), now.getMonth() - calOff, 1), today = dayKey(Date.now());
+  const runs = allRuns(), first = runs.length ? new Date(Math.min(...runs.map(r => r.date))) : now;
+  const maxOff = (now.getFullYear() - first.getFullYear()) * 12 + now.getMonth() - first.getMonth();
+  const pad = (m.getDay() + 6) % 7, days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+  let cells = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(x => `<span class="cal-h" aria-hidden="true">${x}</span>`).join('') + '<span></span>'.repeat(pad);
+  for (let dd = 1; dd <= days; dd++){
+    const k = m.getFullYear() * 10000 + (m.getMonth() + 1) * 100 + dd, act = st.active.has(k), frz = st.frozen.has(k);
+    const lab = `${dd} ${m.toLocaleDateString('en-GB', { month: 'long' })}: ${act ? 'active' : frz ? 'freeze used' : k > today ? 'to come' : 'no run'}`;
+    cells += `<button class="cal-d${act ? ' act' : ''}${frz ? ' frz' : ''}${k === today ? ' today' : ''}${k > today ? ' fut' : ''}${k === calSel ? ' sel' : ''}" data-day="${k}" aria-label="${lab}" aria-pressed="${k === calSel}"${k > today ? ' disabled' : ''}>${frz ? '❄️' : dd}</button>`;
+  }
+  $('#streakBox').innerHTML = `<div class="stk">
+    <div class="stk-top"><span class="stk-n">🔥 ${st.current}</span><span class="stk-meta">day streak${st.todayActive ? ', today done' : ''}</span></div>
+    <p class="stk-meta" style="margin:.2rem 0 0">Best: ${st.best} day${st.best === 1 ? '' : 's'}. Freezes left this week: ${st.freezesLeft ? '❄️'.repeat(st.freezesLeft) : 'none'}</p>
+    <div class="cal-nav"><button class="sm" data-cal="prev" aria-label="Previous month"${calOff >= maxOff ? ' disabled' : ''}>‹</button><strong>${m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</strong><button class="sm" data-cal="next" aria-label="Next month"${calOff <= 0 ? ' disabled' : ''}>›</button></div>
+    <div class="cal">${cells}</div>
+    <p class="stk-meta" style="margin:.6rem 0 0">Tap a day to show its runs in the list below. Days with 10 minutes or more count towards your streak (walking too), and two freezes a week cover days you miss.</p></div>`;
+}
+
 function renderProfile(){
   const p = curProfile();
   $('#profName').textContent = p.name;
+  refreshStreak();
   $('#profAv').innerHTML = avatarInner(p);
   $('#profAv').classList.toggle('has-photo', !!p.photo);
 }
@@ -3415,6 +3688,8 @@ function untilMedals(){
   return d ? `${d} day${d === 1 ? '' : 's'} ${h} hour${h === 1 ? '' : 's'}` : h ? `${h} hour${h === 1 ? '' : 's'} ${m} min` : `${m} min`;
 }
 function renderLeaders(){
+  const SM = {}; profiles.list.forEach(pp => { SM[pp.id] = computeStreak(profileRuns(pp.id)); });
+  const flameOf = id => SM[id] && SM[id].current ? `<span class="flame">🔥 ${SM[id].current}</span>` : '';
   const maxOff = earliestWeekOffset(); lbWeek = Math.min(lbWeek, maxOff);
   const ws = weekStart(Date.now()); ws.setDate(ws.getDate() - 7 * lbWeek);
   const we = new Date(ws); we.setDate(we.getDate() + 7);
@@ -3440,7 +3715,7 @@ function renderLeaders(){
     return `<div class="pod p${place}${has ? '' : ' empty'}${zero ? ' zero' : ''}${has && x.p.id === profiles.current ? ' me' : ''}" role="listitem"
       aria-label="${place}${suffix[place]} place: ${has ? `${esc(x.p.name)}, ${fD(x.wkDist, 1)} ${dU()}` : 'open'}">
       <div class="pod-who">${has ? avatar(x.p) : '<span class="pav" aria-hidden="true">?</span>'}
-        <span class="pod-name">${has ? esc(x.p.name) : 'Open'}</span>
+        <span class="pod-name">${has ? esc(x.p.name) : 'Open'}</span>${has ? flameOf(x.p.id) : ''}
         <span class="pod-dist">${has ? `${fD(x.wkDist, 1)} ${dU()}` : '–'}</span></div>
       <div class="pod-block" aria-hidden="true">${place}</div></div>`;
   }).join('');
@@ -3451,10 +3726,17 @@ function renderLeaders(){
     : 'Final standings: medals awarded. Tap a photo on the podium.';
   $('#lbWeek').innerHTML = ranked.map((x, i) => `<li class="lbrow${x.p.id === profiles.current ? ' me' : ''}${i === 0 && x.wkDist > 0 ? ' first' : ''}">
     <span class="lbrank">${x.wkDist > 0 ? i + 1 : '–'}</span>${avatar(x.p)}
-    <span class="lbname">${esc(x.p.name)}<span class="wsum">${x.wkRuns} run${x.wkRuns === 1 ? '' : 's'}${x.wkRuns ? `, ${fmtTime(x.wkTime)}` : ''}</span></span>
+    <span class="lbname"><span class="lbn">${esc(x.p.name)} ${flameOf(x.p.id)}</span><span class="wsum">${x.wkRuns} run${x.wkRuns === 1 ? '' : 's'}${x.wkRuns ? `, ${fmtTime(x.wkTime)}` : ''}</span></span>
     <span class="lbval">${fD(x.wkDist, 1)} ${dU()}</span>
     <span class="lbbar"><i style="width:${(x.wkDist / top * 100).toFixed(1)}%"></i></span></li>`).join('');
   renderMedals();
+  const srows = profiles.list.map(pp => ({ p: pp, st: SM[pp.id] })).sort((a, b) => b.st.current - a.st.current || b.st.best - a.st.best || a.p.name.localeCompare(b.p.name));
+  const topS = Math.max(1, ...srows.map(x => x.st.current));
+  $('#lbStreaks').innerHTML = srows.map((x, i) => `<li class="lbrow${x.p.id === profiles.current ? ' me' : ''}${i === 0 && x.st.current > 0 ? ' first' : ''}">
+    <span class="lbrank">${x.st.current ? i + 1 : '–'}</span>${avatar(x.p)}
+    <span class="lbname"><span class="lbn">${esc(x.p.name)}</span><span class="wsum">Best ${x.st.best} day${x.st.best === 1 ? '' : 's'}${x.st.current ? (x.st.todayActive ? ', today done' : ', not yet today') : ''}</span></span>
+    <span class="lbval">🔥 ${x.st.current}</span>
+    <span class="lbbar"><i style="width:${(x.st.current / topS * 100).toFixed(1)}%"></i></span></li>`).join('');
   $('#lbPrs').innerHTML = BESTS.map(([k, , label]) => {
     const e = people.map(x => {
       let best = null;
@@ -3540,7 +3822,13 @@ const BADGES = [
   ['gold5', 'Dynasty', 'Win 5 weekly gold medals', 'special', '👑'],
   ['losing5', 'Losing Streak', 'Run in 5 weeks in a row without finishing first', 'poo', '💩'],
   ['plans3', 'Plan master', 'Finish all three training plans', 'special', '🎓'],
-  ['presets', 'Workout completionist', 'Finish every ready-made workout', 'special', '🧩']
+  ['presets', 'Workout completionist', 'Finish every ready-made workout', 'special', '🧩'],
+  ['day7', 'Week on fire', 'Keep a daily streak going for 7 days', 'bronze', '🔥'],
+  ['day30', 'Month on fire', 'Keep a daily streak going for 30 days', 'silver', '💥'],
+  ['day100', 'Inferno', 'Keep a daily streak going for 100 days', 'gold', '🧨'],
+  ['day365', 'Eternal flame', 'Keep a daily streak going for a whole year', 'special', '🌋'],
+  ['comeback', 'Comeback', 'Build a 3-day streak after losing one of a week or more', 'bronze', '❤️‍🔥'],
+  ['perfectweek', 'Perfect week', 'Be active for 10 minutes every day from Monday to Sunday, with no freezes', 'gold', '🌟']
 ].map(([id, name, desc, tier, icon]) => ({ id, name, desc, tier, icon }));
 function computeBadges(pid, extra = []){
   const runs = profileRuns(pid).concat(extra).sort((a, b) => a.date - b.date);
@@ -3615,6 +3903,19 @@ function computeBadges(pid, extra = []){
     mi8: [0, bestTxt('1mi', 'mile')], mi7: [0, bestTxt('1mi', 'mile')], k1_4: [0, bestTxt('1k', '1 km')]
   });
   ['t50', 't100', 't250', 't500', 't1000'].forEach(id => prog[id][1] = `${fD(tDist, 0)} of ${fD({ t50: 5e4, t100: 1e5, t250: 2.5e5, t500: 5e5, t1000: 1e6 }[id], 0)} ${dU()}`);
+  const stk = computeStreak(runs);
+  [[7, 'day7'], [30, 'day30'], [100, 'day100'], [365, 'day365']].forEach(([m, id]) => { if (stk.milestones[m]) earn(id, stk.milestones[m]); prog[id] = [stk.current / m, `Current streak: ${stk.current} of ${m} days`]; });
+  if (stk.comeback) earn('comeback', stk.comeback);
+  // Perfect week: every day Monday to Sunday has at least 10 minutes (the run in progress counts, so it can unlock live)
+  const midnight = t => { const x = new Date(t); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const dayTot = new Map(); runs.forEach(r => { const k = midnight(r.date); dayTot.set(k, (dayTot.get(k) || 0) + r.moving); });
+  [...new Set([...dayTot.keys()].map(k => weekStart(k).getTime()))].sort((a, b) => a - b).forEach(ws => {
+    const x = new Date(ws); let ok = true;
+    for (let i = 0; i < 7; i++){ if ((dayTot.get(x.getTime()) || 0) < 600){ ok = false; break; } if (i < 6) x.setDate(x.getDate() + 1); }
+    if (ok) earn('perfectweek', x.getTime() + 432e5);
+  });
+  { const x = weekStart(Date.now()); let n = 0; for (let i = 0; i < 7; i++){ if ((dayTot.get(x.getTime()) || 0) >= 600) n++; x.setDate(x.getDate() + 1); }
+    prog.perfectweek = [n / 7, `${n} of 7 days this week`]; }
   const nPlans = Object.keys(firstDone).length;
   prog.plans3 = [nPlans / 3, `${nPlans} of 3 plans finished`];
   prog.presets = [presetsDone.size / presetIds.size, `${presetsDone.size} of ${presetIds.size} ready-made workouts finished`];
@@ -3649,13 +3950,13 @@ function liveBadgeCheck(){
 function nextLiveBadge(){
   const el = $('#liveBadge'), b = liveQ.shift();
   if (!b){ el.hidden = true; liveT = 0; return; }
-  const cel = celebById('b:' + b.id);
-  el.innerHTML = `<div class="lbcard"><span class="lbkick">Badge unlocked</span><span class="bdisc ${b.tier}"><span>${b.icon}</span></span>
+  const cel = b.cel || celebById('b:' + b.id);
+  el.innerHTML = `<div class="lbcard"><span class="lbkick">${esc(b.kicker || 'Badge unlocked')}</span><span class="bdisc ${b.tier}"><span>${b.icon}</span></span>
     <strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span><span class="lbtap">Tap to close</span></div>`;
   el.hidden = false; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
   audio();
-  if (settings.confetti) playCeleb(cel, true);          // the celebration plays behind the card
-  if (settings.cues) say(`Badge unlocked. ${b.name}.`);
+  if (settings.confetti) playCeleb(cel, b.big !== false);          // the celebration plays behind the card
+  if (settings.cues) say(b.say || `Badge unlocked. ${b.name}.`);
   if (navigator.vibrate && !settings.confetti) navigator.vibrate([60, 40, 120]);
   liveT = setTimeout(nextLiveBadge, 5200);
 }
@@ -3746,6 +4047,7 @@ function paceChart(runs){
 }
 
 function renderHistory(){
+  { const st = computeStreak(allRuns()); refreshStreak(st); renderStreakBox(st); }
   $('#bkNagH').innerHTML = backupDue() ? backupNag() : '';
   const runs = allRuns();
   const goal = settings.weeklyGoal || 0;
@@ -3809,11 +4111,19 @@ function renderHistory(){
   // tag filters
   const used = TAGS.filter(t => runs.some(r => (r.tags || []).includes(t)));
   if (filterTag && !used.includes(filterTag)) filterTag = null;
-  $('#filters').innerHTML = used.length ? `<button class="chip" data-tag="" aria-pressed="${!filterTag}">All</button>` + used.map(t => `<button class="chip" data-tag="${esc(t)}" aria-pressed="${filterTag === t}">${esc(t)}</button>`).join('') : '';
+  let dayChip = '';
+  if (calSel){
+    const dr = runs.filter(r => dayKey(r.date) === calSel), dd = new Date(Math.floor(calSel / 10000), Math.floor(calSel / 100) % 100 - 1, calSel % 100);
+    const lab = dd.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    dayChip = `<button class="chip daychip" data-clearday aria-label="Showing ${lab}. Tap to show all runs" aria-pressed="true">${lab}: ${dr.length ? `${dr.length} run${dr.length === 1 ? '' : 's'}, ${fD(dr.reduce((a, r) => a + r.dist, 0))} ${dU()}` : 'no runs'} ✕</button>`;
+  }
+  $('#filters').innerHTML = dayChip + (used.length ? `<button class="chip" data-tag="" aria-pressed="${!filterTag}">All</button>` + used.map(t => `<button class="chip" data-tag="${esc(t)}" aria-pressed="${filterTag === t}">${esc(t)}</button>`).join('') : '');
 
   // run list
-  const shown = filterTag ? runs.filter(r => (r.tags || []).includes(filterTag)) : runs;
-  $('#empty').hidden = runs.length > 0;
+  let shown = filterTag ? runs.filter(r => (r.tags || []).includes(filterTag)) : runs;
+  if (calSel) shown = shown.filter(r => dayKey(r.date) === calSel);
+  $('#empty').hidden = shown.length > 0;
+  $('#empty').textContent = !runs.length ? 'No runs yet. Your runs appear here when you finish them.' : calSel ? 'No runs recorded on this day.' : 'No runs with this tag.';
   $('#export').hidden = !runs.length;
   $('#runs').innerHTML = shown.map(r => {
     const tags = (r.tags || []).map(t => `<span class="tagchip">${esc(t)}</span>`).join('');
@@ -4089,6 +4399,7 @@ function renderSettings(){
   $('#setControl').checked = settings.control;
   $('#setConfetti').checked = settings.confetti;
   $('#setGhost').checked = settings.ghost !== false;
+  $('#setWhoPick').checked = whoPickOn();
   renderCelebs();
   populateVoices();
   $('#setConfettiSound').checked = settings.confettiSound;
@@ -4186,7 +4497,7 @@ $('#setup').addEventListener('click', e => {
 });
 
 $('#chartSeg').addEventListener('click', e => { const b = e.target.closest('button[data-c]'); if (b){ chartMode = b.dataset.c; renderHistory(); } });
-$('#filters').addEventListener('click', e => { const b = e.target.closest('button[data-tag]'); if (b){ filterTag = b.dataset.tag || null; renderHistory(); } });
+$('#filters').addEventListener('click', e => { if (e.target.closest('[data-clearday]')){ calSel = null; renderHistory(); return; } const b = e.target.closest('button[data-tag]'); if (b){ filterTag = b.dataset.tag || null; renderHistory(); } });
 $('#runs').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openDetail(b.dataset.id); });
 $('#export').onclick = exportCsv;
 
@@ -4202,6 +4513,7 @@ $('#setGoal').addEventListener('change', e => { const v = parseFloat(e.target.va
 $('#setAnnounce').onchange = e => { settings.announce = e.target.checked; saveSettings(); };
 $('#setCues').onchange = e => { settings.cues = e.target.checked; saveSettings(); };
 $('#setConfetti').onchange = e => { settings.confetti = e.target.checked; saveSettings(); };
+$('#setWhoPick').onchange = e => { try { localStorage.setItem(WPKEY, e.target.checked ? 'on' : 'off'); } catch(err){} };
 $('#setGhost').onchange = e => { settings.ghost = e.target.checked; saveSettings(); };
 $('#setConfettiSound').onchange = e => { settings.confettiSound = e.target.checked; saveSettings(); if (e.target.checked){ popSound(.55, 1300); crackle(.9, .07, .1); } };
 $('#exportSeg').addEventListener('click', e => { const b = e.target.closest('button[data-x]'); if (b){ settings.autoExport = b.dataset.x; saveSettings(); renderSettings(); } });
@@ -4242,6 +4554,13 @@ $('#live').addEventListener('click', openGlance);
 $('#live').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openGlance(); } });
 $('#glMain').addEventListener('click', () => closeGlance(false));
 $('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun(); });
+$('#streakBox').addEventListener('click', e => {
+  const run_ = e.target.closest('[data-id]'); if (run_){ openDetail(run_.dataset.id); return; }
+  const day = e.target.closest('[data-day]');
+  if (day){ const k = +day.dataset.day; calSel = calSel === k ? null : k; renderHistory(); if (calSel) $('#runsHead').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  const b = e.target.closest('[data-cal]'); if (!b) return;
+  calOff = Math.max(0, calOff + (b.dataset.cal === 'prev' ? 1 : -1)); renderStreakBox(computeStreak(allRuns()));
+});
 $('#glCtlBtn').addEventListener('click', e => {
   e.stopPropagation();
   settings.glControls = settings.glControls === false; saveSettings();
@@ -4371,11 +4690,17 @@ if (navigator.storage && navigator.storage.persist) navigator.storage.persist().
 applyTheme();
 renderAll();
 restoreDevices();
-maybeWeeklySummary();
+{ let just = 0; try { just = +sessionStorage.getItem(WPJUST) || 0; sessionStorage.removeItem(WPJUST); } catch(e){}
+  if (Date.now() - just > 20000 && !store.get(DRAFT, null)) openWhoPick(); }
+whenPickerClosed(maybeWeeklySummary);
 renderBackupStatus();
 initBadgeSeen();
+setTimeout(() => { // once a day, if the streak is waiting on today's run
+  const today = dayKey(Date.now());
+  if (STK.current && !STK.todayActive && store.get(RISKTOLD, 0) !== today){ store.set(RISKTOLD, today); toast(STK.freezesLeft ? `🔥 Your ${STK.current}-day streak is waiting. Run 10 minutes today to keep it going.` : `🔥 Your ${STK.current}-day streak is at risk: no freezes left this week, so run 10 minutes today to keep it.`); }
+}, 4200);
 initCelebs();
-setTimeout(() => { if ($('#sumDlg').open) $('#sumDlg').addEventListener('close', () => setTimeout(checkNewBadges, 400), { once: true }); else checkNewBadges(); }, 1500);
+setTimeout(() => whenPickerClosed(() => { if ($('#sumDlg').open) $('#sumDlg').addEventListener('close', () => setTimeout(checkNewBadges, 400), { once: true }); else checkNewBadges(); }), 1500);
 if (backupDue()) setTimeout(() => toast('Backup reminder: it’s been a while. Open History to back up your runs.'), 2600);
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-bk]'); if (!b) return;
