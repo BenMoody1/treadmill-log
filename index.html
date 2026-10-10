@@ -711,7 +711,7 @@ body.picking{overflow:hidden}
 <section class="tab" id="tab-history" hidden>
   <h2 class="vh">Profile</h2>
   <div class="pcard" id="pcard"></div>
-  <div class="psub" id="psub" role="tablist" aria-label="Profile sections"><button data-p="over" role="tab">Overview</button><button data-p="cal" role="tab">Calendar</button><button data-p="runs" role="tab">Runs</button></div>
+  <div class="psub" id="psub" role="tablist" aria-label="Profile sections"><button data-p="over" role="tab">Overview</button><button data-p="runs" role="tab">Runs</button><button data-p="badges" role="tab">Badges</button></div>
   <div class="ppane" data-pane="over">
   <div id="bkNagH"></div>
   <div class="goalbox" id="goalbox"></div>
@@ -725,13 +725,17 @@ body.picking{overflow:hidden}
   <p class="fhint">Fastest efforts found anywhere inside your runs.</p>
   <div class="stats two" id="pbs"></div>
   </div>
-  <div class="ppane" data-pane="cal"><div id="streakBox"></div></div>
   <div class="ppane" data-pane="runs">
+  <div id="streakBox"></div>
   <h3 id="runsHead">Runs</h3>
   <div class="chips" id="filters"></div>
   <div id="runs"></div>
   <p class="muted" id="empty" hidden>No runs yet. Your runs appear here when you finish them.</p>
   <div class="foot"><span>Tap a run for details, tags and exports.</span><button class="link" id="export">Export all as CSV</button></div>
+  </div>
+  <div class="ppane" data-pane="badges">
+  <p class="fhint" id="badgeCount"></p>
+  <div class="badges" id="badges"></div>
   </div>
 </section>
 <dialog id="pEditDlg" aria-labelledby="pEditH">
@@ -772,9 +776,6 @@ body.picking{overflow:hidden}
   <div class="prgrid" id="lbPrs"></div>
   <h3>All-time</h3>
   <div class="prgrid" id="lbAll"></div>
-  <h3>Badges</h3>
-  <p class="fhint" id="badgeCount"></p>
-  <div class="badges" id="badges"></div>
 </section>
 <dialog id="badgeDlg"></dialog>
 
@@ -3597,7 +3598,7 @@ function renderStreakBox(st){
     <p class="stk-meta" style="margin:.2rem 0 0">Best: ${st.best} day${st.best === 1 ? '' : 's'}. Freezes left this week: ${st.freezesLeft ? '❄️'.repeat(st.freezesLeft) : 'none'}</p>
     <div class="cal-nav"><button class="sm" data-cal="prev" aria-label="Previous month"${calOff >= maxOff ? ' disabled' : ''}>‹</button><strong>${m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</strong><button class="sm" data-cal="next" aria-label="Next month"${calOff <= 0 ? ' disabled' : ''}>›</button></div>
     <div class="cal">${cells}</div>
-    <p class="stk-meta" style="margin:.6rem 0 0">Tap a day to see its runs. Days with 10 minutes or more count towards your streak (walking too), and two freezes a week cover days you miss.</p></div>`;
+    <p class="stk-meta" style="margin:.6rem 0 0">Tap a day to show its runs below. Days with 10 minutes or more count towards your streak (walking too), and two freezes a week cover days you miss.</p></div>`;
 }
 
 function renderProfile(){
@@ -4049,7 +4050,7 @@ function checkNewBadges(){
     ${fresh.map(b => `<div class="bcard"><span class="bdisc ${b.tier}"><span>${b.icon}</span></span><div><strong>${esc(b.name)}</strong><span class="wsum">${esc(b.desc)}</span><span class="wdur">New celebration: ${esc(celebDesc(celebById('b:' + b.id)))}</span></div></div>`).join('')}
     <div class="drow"><button class="sm" id="bdAll">See all badges</button><button class="sm primary" id="bdOk">Brilliant</button></div>`;
   d.querySelector('#bdOk').onclick = () => d.close();
-  d.querySelector('#bdAll').onclick = () => { d.close(); showTab('leaders'); setTimeout(() => $('#badges').scrollIntoView({ block: 'start', behavior: 'smooth' }), 80); };
+  d.querySelector('#bdAll').onclick = () => { d.close(); showTab('history'); showPsub('badges'); setTimeout(() => $('#psub').scrollIntoView({ block: 'start', behavior: 'smooth' }), 80); };
   const cel = fresh.length ? celebById('b:' + fresh[0].id) : celebById('m:' + ['gold', 'silver', 'bronze'][newMedals[0].place]);
   d.addEventListener('close', () => { audio(); if (settings.confetti){ playCeleb(cel, true); showBadgeText(cel.name); } }, { once: true });
   d.showModal();
@@ -4111,7 +4112,7 @@ function paceChart(runs){
 
 const ageOf = dob => { if (!dob) return null; const b = new Date(dob + 'T12:00'), n = new Date(); if (isNaN(b)) return null; let a = n.getFullYear() - b.getFullYear(); if (n.getMonth() < b.getMonth() || (n.getMonth() === b.getMonth() && n.getDate() < b.getDate())) a--; return a > 0 && a < 120 ? a : null; };
 const effMaxHr = () => settings.maxHr || (ageOf(settings.dob) ? Math.round(208 - .7 * ageOf(settings.dob)) : null); // Tanaka estimate
-let psub = (() => { try { return localStorage.getItem('tm-psub-v1') || 'over'; } catch(e){ return 'over'; } })();
+let psub = (() => { try { const v = localStorage.getItem('tm-psub-v1') || 'over'; return v === 'cal' ? 'runs' : v; } catch(e){ return 'over'; } })();
 function showPsub(k){
   psub = k; try { localStorage.setItem('tm-psub-v1', k); } catch(e){}
   $$('#psub button').forEach(b => { b.setAttribute('aria-selected', b.dataset.p === k); b.classList.toggle('on', b.dataset.p === k); });
@@ -4139,7 +4140,7 @@ function openPEdit(){
   d.showModal();
 }
 function renderHistory(){
-  renderPcard(); showPsub(psub);
+  renderPcard(); showPsub(psub); renderBadges();
   { const st = computeStreak(allRuns()); refreshStreak(st); renderStreakBox(st); }
   $('#bkNagH').innerHTML = backupDue() ? backupNag() : '';
   const runs = allRuns();
@@ -4684,7 +4685,7 @@ $('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun()
 $('#streakBox').addEventListener('click', e => {
   const run_ = e.target.closest('[data-id]'); if (run_){ openDetail(run_.dataset.id); return; }
   const day = e.target.closest('[data-day]');
-  if (day){ const k = +day.dataset.day; calSel = calSel === k ? null : k; if (calSel) psub = 'runs'; renderHistory(); if (calSel) $('#psub').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (day){ const k = +day.dataset.day; calSel = calSel === k ? null : k; renderHistory(); if (calSel) $('#runsHead').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   const b = e.target.closest('[data-cal]'); if (!b) return;
   calOff = Math.max(0, calOff + (b.dataset.cal === 'prev' ? 1 : -1)); renderStreakBox(computeStreak(allRuns()));
 });
