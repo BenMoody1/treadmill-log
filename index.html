@@ -598,6 +598,32 @@ body.picking{overflow:hidden}
 #connOpen{display:none !important}
 .mtot{font-weight:500;color:var(--muted);font-size:.85rem;margin-left:.6rem}
 #runs .sect .sbody{padding:0}
+.pcard{background:var(--surface);border-radius:18px;padding:.9rem 1rem;margin:.2rem 0 .9rem}
+.pcard{overflow:hidden}
+.pc-banner{background:var(--track);height:4.2rem;margin:-.9rem -1rem 0;display:flex;justify-content:flex-end;align-items:flex-start;padding:.6rem .7rem 0}
+.pc-banner .pc-edit{background:transparent;color:#FBF6EE;border-color:#FBF6EE;min-height:36px}
+.pc-top{display:flex;gap:.8rem;align-items:flex-start;margin-top:-1.6rem}
+.pc-top .pc-av{width:5.1rem;height:5.1rem}
+.pc-top .pc-av{box-shadow:0 0 0 4px var(--surface)}
+.pc-top .pc-name{margin-top:1.95rem}
+.pc-av{width:4.7rem;height:4.7rem;font-size:2rem}
+.pc-name{flex:1;min-width:0;display:flex;flex-direction:column}
+.pc-name strong{font-family:var(--num);font-size:1.45rem;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ppills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.ppill{font-size:.82rem;padding:.25rem .7rem;border-radius:14px;background:var(--rule);font-weight:600;color:var(--ink);min-height:0;border:none}
+.ppills2{margin-top:.45rem}
+.ppill.add{background:transparent;border:1.5px dashed var(--muted);color:var(--muted)}
+.ppill.f{background:#FFE3CC;color:#9A3412}.ppill.b{background:#E8E0F5;color:#5B3D8F}.ppill.g{background:#F7E6B5;color:#7A5A00}
+.pc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.8rem;padding-top:.7rem;border-top:1px solid var(--rule)}
+.pc-nums b{display:block;font-family:var(--num);font-size:1.15rem}
+.pc-nums .muted{font-size:.78rem}
+.psub{display:grid;grid-template-columns:repeat(3,1fr);background:var(--rule);border-radius:12px;padding:3px;margin:0 0 .9rem}
+.psub button{border:none;background:transparent;min-height:40px;border-radius:10px;font-weight:600;color:var(--muted);padding:0}
+.psub button.on{background:var(--surface);color:var(--ink)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.swatches{display:flex;flex-wrap:wrap;gap:.55rem;margin:.2rem 0 .3rem}
+.swatch{width:44px;height:44px;min-height:44px;border-radius:50%;padding:0;border:3px solid transparent;color:#FBF6EE;font-weight:700;font-size:1.1rem}
+.swatch.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--paper)}
 </style>
 </head>
 <body>
@@ -683,11 +709,13 @@ body.picking{overflow:hidden}
 
 <!-- ================= HISTORY ================= -->
 <section class="tab" id="tab-history" hidden>
-  <h2>History</h2>
+  <h2 class="vh">Profile</h2>
+  <div class="pcard" id="pcard"></div>
+  <div class="psub" id="psub" role="tablist" aria-label="Profile sections"><button data-p="over" role="tab">Overview</button><button data-p="cal" role="tab">Calendar</button><button data-p="runs" role="tab">Runs</button></div>
+  <div class="ppane" data-pane="over">
   <div id="bkNagH"></div>
   <div class="goalbox" id="goalbox"></div>
   <button class="sm" id="lastWeekBtn" style="margin-bottom:1.2rem">Last week’s summary</button>
-  <div id="streakBox"></div>
   <div class="seg" id="chartSeg" role="group" aria-label="Chart">
     <button data-c="week" aria-pressed="true">Weekly</button><button data-c="month" aria-pressed="false">Monthly</button><button data-c="pace" aria-pressed="false">Pace trend</button>
   </div>
@@ -696,12 +724,28 @@ body.picking{overflow:hidden}
   <h3>Personal bests</h3>
   <p class="fhint">Fastest efforts found anywhere inside your runs.</p>
   <div class="stats two" id="pbs"></div>
+  </div>
+  <div class="ppane" data-pane="cal"><div id="streakBox"></div></div>
+  <div class="ppane" data-pane="runs">
   <h3 id="runsHead">Runs</h3>
   <div class="chips" id="filters"></div>
   <div id="runs"></div>
   <p class="muted" id="empty" hidden>No runs yet. Your runs appear here when you finish them.</p>
   <div class="foot"><span>Tap a run for details, tags and exports.</span><button class="link" id="export">Export all as CSV</button></div>
+  </div>
 </section>
+<dialog id="pEditDlg" aria-labelledby="pEditH">
+  <h3 id="pEditH">Your details</h3>
+  <div class="fg">
+    <label class="f"><span>Height</span><input type="text" id="peHeight" placeholder="e.g. 178 cm or 5'10"" autocomplete="off"></label>
+    <label class="f"><span>Weight (kg)</span><input type="number" inputmode="decimal" id="peWeight" min="30" max="250" step="0.1"></label>
+    <label class="f wide"><span>Date of birth</span><input type="date" id="peDob"></label>
+  </div>
+  <div class="frgrp">Gender</div>
+  <div class="frchips" id="peGender"><button class="frc" data-g="male">Male</button><button class="frc" data-g="female">Female</button><button class="frc" data-g="other">Other</button><button class="frc" data-g="none">Prefer not to say</button></div>
+  <p class="fhint">Your details stay on this phone. Height counts your steps, weight estimates calories, and your age estimates your maximum heart rate if you haven’t set one in Settings.</p>
+  <div class="drow"><button id="peCancel">Cancel</button><button class="primary" id="peSave">Save</button></div>
+</dialog>
 
 <!-- ================= LEADERS ================= -->
 <section class="tab" id="tab-leaders" hidden>
@@ -752,6 +796,9 @@ body.picking{overflow:hidden}
   <div class="field"><span class="flabel">Appearance</span>
     <div class="seg" id="themeSeg"><button data-th="auto">Auto</button><button data-th="light">Light</button><button data-th="dark">Dark</button></div>
   </div>
+  <div class="field"><span class="flabel">Live stats colour</span>
+    <div class="swatches" id="glColours" role="radiogroup" aria-label="Live stats colour"></div>
+    <span class="fhint">The background of the live stats panel and the big view. Each profile can pick their own.</span></div>
   <label class="field"><span class="flabel">Your weight (kg)</span>
     <input type="number" inputmode="decimal" id="setWeight" min="30" max="250" step="0.1" placeholder="e.g. 75">
     <span class="fhint">Used to estimate calories from your speed and incline. Leave blank to use the treadmill’s own figure.</span></label>
@@ -819,7 +866,7 @@ body.picking{overflow:hidden}
 <nav class="tabs" role="tablist">
   <button role="tab" data-tab="run" aria-selected="true">Run</button>
   <button role="tab" data-tab="workouts" aria-selected="false">Workouts</button>
-  <button role="tab" data-tab="history" aria-selected="false">History</button>
+  <button role="tab" data-tab="history" aria-selected="false">Profile</button>
   <button role="tab" data-tab="leaders" aria-selected="false">Leaders</button>
 </nav>
 
@@ -1756,8 +1803,9 @@ function stepLength(kmh){
 const cadenceAt = kmh => settings.height && kmh > MOVING ? Math.round(kmh / 3.6 / stepLength(kmh) * 60) : 0;
 
 function zoneOf(hr){
-  if (!settings.maxHr || !hr) return 0;
-  const p = hr / settings.maxHr;
+  const mx = effMaxHr();
+  if (!mx || !hr) return 0;
+  const p = hr / mx;
   return p < .6 ? 1 : p < .7 ? 2 : p < .8 ? 3 : p < .9 ? 4 : 5;
 }
 function kcalPerMin(kmh, inc, kg){ // ACSM walking/running equations
@@ -3549,7 +3597,7 @@ function renderStreakBox(st){
     <p class="stk-meta" style="margin:.2rem 0 0">Best: ${st.best} day${st.best === 1 ? '' : 's'}. Freezes left this week: ${st.freezesLeft ? '❄️'.repeat(st.freezesLeft) : 'none'}</p>
     <div class="cal-nav"><button class="sm" data-cal="prev" aria-label="Previous month"${calOff >= maxOff ? ' disabled' : ''}>‹</button><strong>${m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</strong><button class="sm" data-cal="next" aria-label="Next month"${calOff <= 0 ? ' disabled' : ''}>›</button></div>
     <div class="cal">${cells}</div>
-    <p class="stk-meta" style="margin:.6rem 0 0">Tap a day to show its runs in the list below. Days with 10 minutes or more count towards your streak (walking too), and two freezes a week cover days you miss.</p></div>`;
+    <p class="stk-meta" style="margin:.6rem 0 0">Tap a day to see its runs. Days with 10 minutes or more count towards your streak (walking too), and two freezes a week cover days you miss.</p></div>`;
 }
 
 function renderProfile(){
@@ -4061,7 +4109,37 @@ function paceChart(runs){
   return svg + '</svg>';
 }
 
+const ageOf = dob => { if (!dob) return null; const b = new Date(dob + 'T12:00'), n = new Date(); if (isNaN(b)) return null; let a = n.getFullYear() - b.getFullYear(); if (n.getMonth() < b.getMonth() || (n.getMonth() === b.getMonth() && n.getDate() < b.getDate())) a--; return a > 0 && a < 120 ? a : null; };
+const effMaxHr = () => settings.maxHr || (ageOf(settings.dob) ? Math.round(208 - .7 * ageOf(settings.dob)) : null); // Tanaka estimate
+let psub = (() => { try { return localStorage.getItem('tm-psub-v1') || 'over'; } catch(e){ return 'over'; } })();
+function showPsub(k){
+  psub = k; try { localStorage.setItem('tm-psub-v1', k); } catch(e){}
+  $$('#psub button').forEach(b => { b.setAttribute('aria-selected', b.dataset.p === k); b.classList.toggle('on', b.dataset.p === k); });
+  $$('#tab-history .ppane').forEach(x => x.hidden = x.dataset.pane !== k);
+}
+function renderPcard(){
+  const me = curProfile(), runs = allRuns(), first = runs.length ? Math.min(...runs.map(r => r.date)) : null;
+  const h = parseHeight(settings.height), age = ageOf(settings.dob), g = { male: 'Male', female: 'Female', other: 'Other' }[settings.gender];
+  const { got } = computeBadges(profiles.current), nb = BADGES.filter(b => got[b.id]).length, golds = myMedals(profiles.current).filter(m => m.place === 0).length;
+  const st = computeStreak(runs);
+  const hTxt = h ? (isMi() ? `${Math.floor(h / 30.48)}'${Math.round((h / 2.54) % 12)}"` : `${Math.round(h)} cm`) : '';
+  const pills = [hTxt, settings.weight ? `${+settings.weight} kg` : '', age ? `${age} years` : '', g || ''].filter(Boolean).map(t => `<span class="ppill">${t}</span>`).join('');
+  const dist = runs.reduce((a, r) => a + r.dist, 0), time = runs.reduce((a, r) => a + r.moving, 0);
+  $('#pcard').innerHTML = `<div class="pc-banner"><button class="sm pc-edit" id="pcEdit">Edit</button></div><div class="pc-top"><span class="pav pc-av${me.photo ? ' has-photo' : ''}" aria-hidden="true">${avatarInner(me)}</span>
+      <div class="pc-name"><strong>${esc(me.name)}</strong><span class="muted">${first ? `Running since ${new Date(first).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}` : 'No runs yet'}</span></div>
+</div>
+    <div class="ppills">${pills || '<button class="ppill add" id="pcAdd">Add your details</button>'}</div>
+    <div class="ppills ppills2"><span class="ppill f">🔥 ${st.current} day${st.current === 1 ? '' : 's'}</span><span class="ppill b">🏅 ${nb} badge${nb === 1 ? '' : 's'}</span><span class="ppill g">🥇 ${golds} gold${golds === 1 ? '' : 's'}</span></div>
+    <div class="pc-nums"><div><b>${fD(dist, 0)} ${dU()}</b><span class="muted">All time</span></div><div><b>${runs.length}</b><span class="muted">Runs</span></div><div><b>${fmtTime(time)}</b><span class="muted">On the belt</span></div></div>`;
+}
+function openPEdit(){
+  const d = $('#pEditDlg');
+  $('#peHeight').value = settings.height || ''; $('#peWeight').value = settings.weight || ''; $('#peDob').value = settings.dob || '';
+  $$('#peGender button').forEach(b => b.classList.toggle('on', b.dataset.g === (settings.gender || '')));
+  d.showModal();
+}
 function renderHistory(){
+  renderPcard(); showPsub(psub);
   { const st = computeStreak(allRuns()); refreshStreak(st); renderStreakBox(st); }
   $('#bkNagH').innerHTML = backupDue() ? backupNag() : '';
   const runs = allRuns();
@@ -4422,6 +4500,7 @@ function renderSettings(){
   $('#setControl').checked = settings.control;
   $('#setConfetti').checked = settings.confetti;
   $('#setGhost').checked = settings.ghost !== false;
+  renderGlColours();
   $('#setWhoPick').checked = whoPickOn();
   renderCelebs();
   populateVoices();
@@ -4526,6 +4605,16 @@ $('#setup').addEventListener('click', e => {
 });
 
 $('#chartSeg').addEventListener('click', e => { const b = e.target.closest('button[data-c]'); if (b){ chartMode = b.dataset.c; renderHistory(); } });
+$('#psub').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) showPsub(b.dataset.p); });
+$('#pcard').addEventListener('click', e => { if (e.target.closest('#pcEdit, #pcAdd')) openPEdit(); });
+$('#peGender').addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (!b) return; $$('#peGender button').forEach(x => x.classList.toggle('on', x === b)); });
+$('#peCancel').onclick = () => $('#pEditDlg').close();
+$('#peSave').onclick = () => {
+  const ht = $('#peHeight').value.trim(), wt = parseFloat($('#peWeight').value), dob = $('#peDob').value, gb = $('#peGender .on');
+  if (ht && !parseHeight(ht)){ toast('That height doesn’t look right. Try 178 cm or 5\'10"'); return; }
+  settings.height = ht || null; settings.weight = wt >= 30 && wt <= 250 ? wt : null; settings.dob = ageOf(dob) ? dob : null; settings.gender = gb ? gb.dataset.g : null;
+  saveSettings(); $('#pEditDlg').close(); renderHistory(); renderSettings(); renderLive(); toast('Details saved');
+};
 $('#filters').addEventListener('click', e => { if (e.target.closest('[data-clearday]')){ calSel = null; renderHistory(); return; } const b = e.target.closest('button[data-tag]'); if (b){ filterTag = b.dataset.tag || null; renderHistory(); } });
 $('#runs').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openDetail(b.dataset.id); });
 $('#export').onclick = exportCsv;
@@ -4543,6 +4632,7 @@ $('#setAnnounce').onchange = e => { settings.announce = e.target.checked; saveSe
 $('#setCues').onchange = e => { settings.cues = e.target.checked; saveSettings(); };
 $('#setConfetti').onchange = e => { settings.confetti = e.target.checked; saveSettings(); };
 $('#setWhoPick').onchange = e => { try { localStorage.setItem(WPKEY, e.target.checked ? 'on' : 'off'); } catch(err){} };
+$('#glColours').addEventListener('click', e => { const b = e.target.closest('[data-glc]'); if (!b) return; settings.glColour = b.dataset.glc; saveSettings(); renderGlColours(); applyGlColour(); toast(`Live stats colour: ${GL_COLOURS.find(x => x[0] === b.dataset.glc)[1]}`); });
 $('#setGhost').onchange = e => { settings.ghost = e.target.checked; saveSettings(); };
 $('#setConfettiSound').onchange = e => { settings.confettiSound = e.target.checked; saveSettings(); if (e.target.checked){ popSound(.55, 1300); crackle(.9, .07, .1); } };
 $('#exportSeg').addEventListener('click', e => { const b = e.target.closest('button[data-x]'); if (b){ settings.autoExport = b.dataset.x; saveSettings(); renderSettings(); } });
@@ -4563,7 +4653,15 @@ $('#themeSeg').addEventListener('click', e => { const b = e.target.closest('butt
 $('#lastWeekBtn').onclick = () => { const ws = weekStart(Date.now()); ws.setDate(ws.getDate() - 7); openSummary(ws); };
 
 /* glance view */
+const GL_COLOURS = [['red', 'Red', '#B5372A'], ['blue', 'Blue', '#1F4E8C'], ['green', 'Green', '#2D6A45'], ['teal', 'Teal', '#0F6670'],
+  ['purple', 'Purple', '#5B3D8F'], ['pink', 'Pink', '#A3245F'], ['orange', 'Orange', '#B4501A'], ['charcoal', 'Charcoal', '#2B3033']];
+function applyGlColour(){ const c = GL_COLOURS.find(x => x[0] === settings.glColour) || GL_COLOURS[0]; $('#glance').style.setProperty('--track', c[2]); $('#live').style.setProperty('--track', c[2]); $('#pcard').style.setProperty('--track', c[2]); }
+function renderGlColours(){
+  const cur = settings.glColour || 'red';
+  $('#glColours').innerHTML = GL_COLOURS.map(([id, name, hex]) => `<button class="swatch${id === cur ? ' on' : ''}" data-glc="${id}" role="radio" aria-checked="${id === cur}" aria-label="${name}" style="background:${hex}">${id === cur ? '✓' : ''}</button>`).join('');
+}
 function openGlance(){
+  applyGlColour();
   if (glanceOpen()) return;
   $('#glance').hidden = false;
   $('#glNums').style.zoom = ''; glTlMax = 0;
@@ -4586,7 +4684,7 @@ $('#glFinish').addEventListener('click', () => { closeGlance(false); finishRun()
 $('#streakBox').addEventListener('click', e => {
   const run_ = e.target.closest('[data-id]'); if (run_){ openDetail(run_.dataset.id); return; }
   const day = e.target.closest('[data-day]');
-  if (day){ const k = +day.dataset.day; calSel = calSel === k ? null : k; renderHistory(); if (calSel) $('#runsHead').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (day){ const k = +day.dataset.day; calSel = calSel === k ? null : k; if (calSel) psub = 'runs'; renderHistory(); if (calSel) $('#psub').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
   const b = e.target.closest('[data-cal]'); if (!b) return;
   calOff = Math.max(0, calOff + (b.dataset.cal === 'prev' ? 1 : -1)); renderStreakBox(computeStreak(allRuns()));
 });
@@ -4724,6 +4822,7 @@ restoreDevices();
 whenPickerClosed(maybeWeeklySummary);
 renderBackupStatus();
 initBadgeSeen();
+applyGlColour();
 ['detail', 'sumDlg', 'badgeDlg'].forEach(id => { const d = document.getElementById(id); if (!d) return;
   d.addEventListener('click', e => { if (e.target !== d) return; const r = d.getBoundingClientRect();
     if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close(); }); });
